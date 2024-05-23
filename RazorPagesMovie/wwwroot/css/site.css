@@ -1,0 +1,54 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.card {
+    max-height: 200px; /* Adjust this value to control the card height */
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .card-header:hover {
+        background-color: #f8f9fa;
+    }
+
+.card-body {
+ /*   max-height: 100px; *//* Adjust this value to control the expanded card body height */
+    overflow-y: auto;
+    transition: max-height 0.3s ease-in-out;
+    padding: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+    .card-body.show {
+        max-height: none; /* Remove max-height when expanded */
+    }
+
+    .card-body.collapse {
+        max-height: 0;
+    }

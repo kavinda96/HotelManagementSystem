@@ -1,0 +1,179 @@
+﻿@page
+@model RazorPagesMovie.Pages.Reserve.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Reservations</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary btn-warning">Create New</a>
+</p>
+
+
+
+
+
+@* <form>
+    <p>
+        <div class="col-md-4">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" class="form-control" asp-for="startDate">
+        </div>
+        <div class="col-md-4">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" class="form-control" asp-for="endDate">
+        </div>
+        <input type="submit" value="Filter" /> 
+    </p>
+</form> *@
+
+<div class="form-row mb-3">
+    <div class="col-md-4">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" class="form-control" asp-for="startDate">
+    </div>
+    <div class="col-md-4">
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" class="form-control" asp-for="endDate">
+    </div>
+    <div class="col-md-4">
+        <button id="filterBtn" class="btn btn-primary">Filter</button>
+    </div>
+</div>
+
+
+<table class="table  table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Reservations[0].CustomerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reservations[0].NIN)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reservations[0].Mobile)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reservations[0].CheckInDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reservations[0].ExpectedCheckOutDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reservations[0].GuestCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reservations[0].SelectedRooms)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="reservationGrid">
+        @foreach (var item in Model.Reservations)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NIN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mobile)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CheckInDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GuestCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SelectedRooms)
+                </td>
+                <td>
+                    <button type="button" class="btn btn-info btn-sm" onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile')">Cust Info</button> |
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                    <button type="button" class="btn btn-warning  btn-sm" onclick="">Billing</button> |
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerInfoModalLabel">Customer Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                <p><strong>NIN:</strong> <span id="modalNIN"></span></p>
+                <p><strong>Address:</strong> <span id="modalAddress"></span></p>
+                <p><strong>Country:</strong> <span id="modalCountry"></span></p>
+                <p><strong>Mobile:</strong> <span id="modalMobile"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showCustomerInfo(customerName, nin, address, country, mobile) {
+            document.getElementById('modalCustomerName').textContent = customerName;
+            document.getElementById('modalNIN').textContent = nin;
+            document.getElementById('modalAddress').textContent = address;
+            document.getElementById('modalCountry').textContent = country;
+            document.getElementById('modalMobile').textContent = mobile;
+            $('#customerInfoModal').modal('show');
+        }
+
+        $(document).ready(function () {
+            $('#filterBtn').click(function () {
+                fetchReservations();
+            });
+        });
+
+        function fetchReservations() {
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+
+            $.ajax({
+                url: '/Reserve?handler=GetReservations', // Change the URL to match your Razor Page handler
+                type: 'GET',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate
+                },
+                success: function (data) {
+                    $('#reservationGrid').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        // Initial fetch of reservations on page load
+        fetchReservations();
+        
+    </script>
+}
+
+
