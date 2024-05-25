@@ -118,6 +118,7 @@
                 <th>Item Amount</th>
                 <th>Item Quantity</th>
                 <th>Total</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -145,6 +146,18 @@
                     <td>@transaction.ItemPrice</td>
                     <td>@transaction.ItemQty</td>
                     <td>@itemTotal</td>
+
+
+                    <td>
+                        <form method="post" asp-page-handler="Delete">
+                            <input type="hidden" name="id" value="@transaction.Id" />
+                            <button type="submit" class="delete-button">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+
+
                 </tr>
                 @if (Model.TotalAmount == 0) // Avoid redundant calculations
                 {
@@ -218,3 +231,11 @@ else
 
     </script>
 }
+<style>
+    .delete-button {
+        background: none;
+        border: none;
+        color: red;
+        cursor: pointer;
+    }
+</style>

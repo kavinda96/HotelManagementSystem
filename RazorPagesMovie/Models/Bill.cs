@@ -34,5 +34,7 @@ namespace RazorPagesMovie.Models
 
         public DateTime? createdDate { get; set; } = DateTime.Now;
 
+        public int? tranStatus { get; set; } = 1;
+
     }
 }

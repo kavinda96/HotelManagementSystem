@@ -25,6 +25,7 @@ namespace RazorPagesMovie.Pages.Billing
        [BindProperty]
         public Reservations Reservation { get; set; }
         public List<Bill> BillingTransactions { get; set; }
+        //public List<Bill> BillingTransactions { get; set; }
 
         [BindProperty]
         public Bill NewTransaction { get; set; }
@@ -60,6 +61,24 @@ namespace RazorPagesMovie.Pages.Billing
                 return RedirectToPage("./Index", new { id = NewTransaction.InvoiceNo });
             }
 
+            return RedirectToPage("./Index");
+        }
+
+
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
+        {
+            // Find the transaction by ID
+            var transaction = await _context.BillingTransactions.FindAsync(id);
+
+            if (transaction != null )//&& transaction.tranStatus == 1)
+            {
+                // Update its status to 2 (Deleted)
+                transaction.tranStatus = 2;
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index", new { id = transaction.InvoiceNo });
+            }
+
+            // Redirect to the same page to see the updated list
             return RedirectToPage("./Index");
         }
     }
