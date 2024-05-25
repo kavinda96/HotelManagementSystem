@@ -34,7 +34,7 @@ namespace RazorPagesMovie.Pages.Rooms
             {
                 return Page();
             }
-
+            Room.IsAvailable = 1;
             _context.Room.Add(Room);
             await _context.SaveChangesAsync();
 

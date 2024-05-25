@@ -23,19 +23,32 @@ namespace RazorPagesMovie.Pages.Reserve
         [BindProperty]
         public Reservations Reservations { get; set; } = default!;
 
+        public IList<Room> Rooms { get; set; } = new List<Room>();
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
+            try
+            {
+                Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and handle as necessary
+                ModelState.AddModelError(string.Empty, "Unable to load rooms.");
+            }
             var reservations =  await _context.Reservations.FirstOrDefaultAsync(m => m.Id == id);
             if (reservations == null)
             {
                 return NotFound();
             }
             Reservations = reservations;
+
+
+
             return Page();
         }
 
@@ -48,6 +61,29 @@ namespace RazorPagesMovie.Pages.Reserve
                 return Page();
             }
 
+            var selectedRoomIds = Request.Form["SelectedRoomIds"];
+            var selectedRoomNumbers = Request.Form["SelectedRoomIds"];
+
+            if (selectedRoomIds.Count == 0)
+            {
+                ModelState.AddModelError(string.Empty, "No rooms selected.");
+                Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
+                return Page();
+            }
+
+            Reservations.SelectedRooms = string.Join(",", selectedRoomIds);
+
+
+            foreach (var roomId in selectedRoomIds)
+            {
+                var room = await _context.Room.FindAsync(int.Parse(roomId));
+                if (room != null)
+                {
+                    room.IsAvailable = 0;
+                    _context.Room.Update(room);
+                }
+            }
+          
             _context.Attach(Reservations).State = EntityState.Modified;
 
             try

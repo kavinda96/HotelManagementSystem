@@ -59,6 +59,42 @@
                 <input asp-for="Reservations.RealCheckOutDate" class="form-control" />
                 <span asp-validation-for="Reservations.RealCheckOutDate" class="text-danger"></span>
             </div>
+
+
+            <div class="form-group">
+                <label>Select Rooms:</label>
+                <div>
+                    @if (Model.Rooms != null && Model.Rooms.Any())
+                    {
+                        @foreach (var room in Model.Rooms)
+                        {
+                            <div class="card mb-3" style="cursor: pointer; width: 18rem;" onclick="toggleCardDetails(@room.Id)">
+                                <div class="card-header">
+                                    Room @room.RoomNo (@room.RoomType)
+                                    <input type="checkbox" class="form-check-input float-right"
+                                           name="SelectedRoomIds"
+                                           value="@room.Id"
+                                           style="border: 2px solid #000;" />
+                                </div>
+                                <div class="card-body collapse" id="roomDetails-@room.Id">
+                                    <p>Details about Room @room.RoomNo</p>
+                                    <p>Room Type: @room.RoomType</p>
+                                    <p>Price: $100</p>
+                                    <!-- Additional room details can go here -->
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">No vacant rooms available.</div>
+                    }
+                </div>
+            </div>
+
+
+
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -72,4 +108,17 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function toggleCardDetails(roomId) {
+            var details = document.getElementById('roomDetails-' + roomId);
+            if (details.classList.contains('collapse')) {
+                details.classList.remove('collapse');
+                details.classList.add('show');
+            } else {
+                details.classList.add('collapse');
+                details.classList.remove('show');
+            }
+        }
+    </script>
 }

@@ -16,5 +16,9 @@ namespace RazorPagesMovie.Data
 
         public DbSet<RazorPagesMovie.Models.Room> Room { get; set; } = default!;
         public DbSet<RazorPagesMovie.Models.Reservations> Reservations { get; set; } = default!;
+
+        public DbSet<Bill> BillingTransactions { get; set; } = default!;
     }
+
+
 }

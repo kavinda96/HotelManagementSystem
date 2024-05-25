@@ -1,0 +1,220 @@
+﻿@page
+@model RazorPagesMovie.Pages.Billing.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="card mb-2" style="background-color:darkslateblue">
+    <div class="card-body d-flex justify-content-center align-items-center mb-2" style="height: 50px ; overflow: hidden;">
+        <h2 style="color: white">Billing Information</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-bordered invoice-info">
+            <thead>
+                <tr>
+                    <th colspan="2">Invoice Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Reservation != null)
+                {
+                    <tr>
+                        <td>Invoice No:</td>
+                        <td>@Model.Reservation.CheckInDate.ToString("yyyyMMdd") - @Model.Reservation.Id</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Name:</td>
+                        <td>@Model.Reservation.CustomerName</td>
+                    </tr>
+                    <tr>
+                        <td>Reserved Rooms:</td>
+                        <td>@Model.Reservation.SelectedRooms</td>
+                    </tr>
+                    <tr>
+                        <td>Check-In Date:</td>
+                        <td>@Model.Reservation.CheckInDate.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td>Check-Out Date:</td>
+                        <td>@Model.Reservation.ExpectedCheckOutDate.ToShortDateString()</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="2">Reservation not found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6 mt-4 mt-md-0">
+        <container class="billing-form-container">
+            <h4>Add Billing Transactions</h4>
+            <div class="alert alert-primary d-flex" role="alert">
+                <span>Please fill all the mandatory items!</span>
+                <div id="mandatory">(*)</div>
+            </div>
+            <form method="post" id="billingForm">
+                <!-- Hidden fields to retain Reservation data -->
+                <input type="hidden" asp-for="Reservation.MasterbillId">
+                <input type="hidden" asp-for="Reservation.Id">
+                <input type="hidden" asp-for="Reservation.CustomerName">
+                <input type="hidden" asp-for="Reservation.SelectedRooms">
+                <input type="hidden" asp-for="Reservation.CheckInDate">
+                <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate">
+                <input type="hidden" asp-for="Reservation.Mobile">
+                <input type="hidden" asp-for="Reservation.Address">
+                <input type="hidden" asp-for="Reservation.Country">
+                <input type="hidden" asp-for="Reservation.GuestCount">
+                <input type="hidden" asp-for="Reservation.NIN">
+
+                <div class="form-group">
+                    <label asp-for="NewTransaction.Category">Billing Category</label>
+                    <select asp-for="NewTransaction.Category" class="form-control">
+                        <option value="1">Food</option>
+                        <option value="2">VAS</option>
+                        <option value="3">ETC</option>
+                    </select>
+                    <span asp-validation-for="NewTransaction.Category" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewTransaction.BillingItem">Bill Item</label>
+                    <input asp-for="NewTransaction.BillingItem" class="form-control" required />
+                    <span asp-validation-for="NewTransaction.BillingItem" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewTransaction.ItemPrice">Item Amount</label>
+                    <input asp-for="NewTransaction.ItemPrice" class="form-control" type="number" step="0.01" required />
+                    <span asp-validation-for="NewTransaction.ItemPrice" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewTransaction.ItemQty">Item Quantity</label>
+                    <input asp-for="NewTransaction.ItemQty" class="form-control" type="number" step="0.01" required />
+                    <span asp-validation-for="NewTransaction.ItemQty" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewTransaction.Description">Description</label>
+                    <textarea asp-for="NewTransaction.Description" class="form-control"></textarea>
+                    <span asp-validation-for="NewTransaction.Description" class="text-danger"></span>
+                </div>
+                <button type="submit" id="submitBtn" class="btn btn-success rounded-pill mt-2 mb-4" disabled>Add Transaction</button>
+            </form>
+        </container>
+    </div>
+</div>
+<!-- Display Billing Transactions -->
+<h4 class="border border-2 border" style="background-color: #8294C4; color:azure;">Billing Transactions</h4>
+@if (Model.BillingTransactions != null && Model.BillingTransactions.Any())
+{
+    <table class="table table-bordered" id="invoiceTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Bill Item</th>
+                <th>Description</th>
+                <th>Item Amount</th>
+                <th>Item Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model.BillingTransactions)
+            {
+                decimal? itemTotal = @transaction.ItemPrice * @transaction.ItemQty;
+                <tr>
+                    <td>@transaction.createdDate?.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        @if (@transaction.Category == "1")
+                        {
+                            <div>Food</div>
+                        }
+                        else if (@transaction.Category == "2")
+                        {
+                            <div>VAS</div>
+                        }
+                        else if (@transaction.Category == "3")
+                        {
+                            <div>ETC</div>
+                        }
+                    </td>
+                    <td>@transaction.BillingItem</td>
+                    <td>@transaction.Description</td>
+                    <td>@transaction.ItemPrice</td>
+                    <td>@transaction.ItemQty</td>
+                    <td>@itemTotal</td>
+                </tr>
+                @if (Model.TotalAmount == 0) // Avoid redundant calculations
+                {
+                    Model.TotalAmount = Model.BillingTransactions.Sum(t => t.ItemPrice * t.ItemQty);
+                }
+            }
+            <tr>
+                <th colspan="6" style="text-align: right;">Grand Total</th>
+                <td>@Model.BillingTransactions.Sum(t => t.ItemPrice * t.ItemQty)</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">No billing transactions found..</div>
+}
+@section Scripts {
+    <script>
+        // function PrintInvoice() {
+        //     const invoiceTable = document.getElementById("invoiceTable");
+        //     if (invoiceTable !== null) {
+        //         console.log("Invoice table element found!");
+        //     } else {
+        //         console.log("Invoice table element not found!");
+        //     }
+
+
+        //     const clonedTable = invoiceTable.cloneNode(true);
+
+        //     // Remove unnecessary elements
+        // //    clonedTable.querySelector("nav").remove(); // Assuming navigation bar with ID "nav"
+
+        //     // Adjust styles for printing
+        //     clonedTable.style.fontSize = "1.2rem";
+        //     clonedTable.style.margin = "20px";
+
+        //     const printWindow = window.open();
+        //     printWindow.document.write(clonedTable.outerHTML);
+        //     printWindow.document.close();
+        //     printWindow.focus();
+        //     printWindow.print(); // Optionally trigger printing
+
+        // }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('billingForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+
+            function checkFields() {
+                let allFilled = true;
+                requiredFields.forEach(function (field) {
+                    console.log(field.name, field.value); // Debugging: Log field name and value
+                    if (!field.value.trim()) {
+                        allFilled = false;
+                    }
+                });
+                console.log('All fields filled:', allFilled); // Debugging: Log allFilled status
+                submitBtn.disabled = !allFilled;
+                console.log('Submit button status:', submitBtn.disabled); // Debugging: Log button status
+            }
+
+            requiredFields.forEach(function (field) {
+                field.addEventListener('input', checkFields);
+            });
+            checkFields(); // Initial check
+        });
+
+
+
+    </script>
+}

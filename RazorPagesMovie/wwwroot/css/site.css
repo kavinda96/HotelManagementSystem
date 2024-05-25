@@ -52,3 +52,17 @@ body {
     .card-body.collapse {
         max-height: 0;
     }
+#mainNav {
+    background-color: #70342B;
+}
+#mandatory {
+    color: red ;
+   
+}
+
+
+
+.alert-primary #mandatory {
+   /* Pushes the mandatory div to the right end */
+}
+

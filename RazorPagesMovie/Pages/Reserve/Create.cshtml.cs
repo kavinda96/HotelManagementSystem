@@ -7,18 +7,22 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RazorPagesMovie.Data;
 using RazorPagesMovie.Models;
+using RazorPagesMovie.Services;
 
 namespace RazorPagesMovie.Pages.Reserve
 {
     public class CreateModel : PageModel
     {
         private readonly RazorPagesMovieContext _context;
+        private readonly InvoiceNoGenerator _invoiceNoGenerator;
 
-        public CreateModel(RazorPagesMovieContext context)
+
+        public CreateModel(RazorPagesMovieContext context, InvoiceNoGenerator invoiceNoGenerator)
         {
+            _invoiceNoGenerator = invoiceNoGenerator;
             _context = context;
         }
-
+        public int InvoiceNumber { get; set; }
         [BindProperty]
         public Reservations Reservations { get; set; } = new Reservations();
 
@@ -76,14 +80,7 @@ namespace RazorPagesMovie.Pages.Reserve
             }
 
             Reservations.SelectedRooms = string.Join(",", selectedRoomIds);
-
-
-
-
-            //int lastCustomer = _context.Reservations.OrderByDescending(c => c.Id).FirstOrDefault();
-            //int nextId = (lastCustomer != null ? lastCustomer.MasterbillId.t : 0) + 1;
-            //Customer.MainBillId = int.Parse("100" + nextId.ToString());
-
+            Reservations.MasterbillId = Reservations.Id;//_invoiceNoGenerator.GenerateInvoiceNumber();
 
 
             _context.Reservations.Add(Reservations);

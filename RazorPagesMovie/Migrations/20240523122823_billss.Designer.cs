@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RazorPagesMovie.Data;
 
@@ -11,9 +12,11 @@ using RazorPagesMovie.Data;
 namespace RazorPagesMovie.Migrations
 {
     [DbContext(typeof(RazorPagesMovieContext))]
-    partial class RazorPagesMovieContextModelSnapshot : ModelSnapshot
+    [Migration("20240523122823_billss")]
+    partial class billss
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,12 +50,6 @@ namespace RazorPagesMovie.Migrations
 
                     b.Property<int?>("ItemQty")
                         .HasColumnType("int");
-
-                    b.Property<int?>("categoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("createdDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<decimal?>("itemVat")
                         .HasColumnType("decimal(18,2)");

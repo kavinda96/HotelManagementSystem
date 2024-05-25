@@ -1,53 +1,38 @@
-﻿@page 
+﻿@page
 @model RazorPagesMovie.Pages.Rooms.IndexModel
-
 @{
     ViewData["Title"] = "Index";
 }
-
 <h1>Room Reservation</h1>
-
-
-
-
-
 <div class="container">
-@if (Model.VacantRooms != null && Model.VacantRooms.Any())
-                    {
-
-
-    <h2>Vacant Rooms</h2>
-    <div class="row">
-        @foreach (var room in Model.VacantRooms)
-        {
-            <div class="col-md-2 mb-5">
-                <div class="card" id="vr">
-                    <div class="card-body">
-                        <h5 class="card-title">Room @room.RoomNo</h5>
-                        <p class="card-text">
-                            Type: @room.RoomType
-                        </p>
-                        <a href="/Reserve?roomId=@room.Id" class="btn btn-primary">Reserve</a>
+    @if (Model.VacantRooms != null && Model.VacantRooms.Any())
+    {
+        <h2>Vacant Rooms</h2>
+        <div class="row">
+            @foreach (var room in Model.VacantRooms)
+            {
+                <div class="col-md-2 mb-5">
+                    <div class="card" id="vr">
+                        <div class="card-body">
+                            <h5 class="card-title">Room @room.RoomNo</h5>
+                            <p class="card-text">
+                                Type: @room.RoomType
+                            </p>
+                            <a href="/Reserve?roomId=@room.Id" class="btn btn-primary">Reserve</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-   
-}
-else
-{
-  
+            }
+        </div>
+    }
+    else
+    {
         <div class="alert alert-warning">No vacant rooms available.</div>
-
     }
 </div>
 <p>
     <a asp-page="Create" class="btn btn-success">Create New</a>
 </p>
-
-
-
 <form>
     <p>
         <select asp-for="RoomType" asp-items="Model.RoomTypes">
@@ -57,47 +42,59 @@ else
         <input type="submit" value="Filter" />
     </p>
 </form>
+<div class="table-container">
+    <table class="table  table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Room[0].RoomNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Room[0].RoomType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Room[0].Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Room[0].BedsCount)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Room)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoomNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoomType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BedsCount)
+                    </td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<style>
+    .table-container {
+        max-height: 700px; /* Set your desired max height here */
+        overflow-y: auto; /* Enable vertical scrolling */
+        overflow-x: auto; /* Enable horizontal scrolling (if needed) */
+    }
 
-
-<table class="table  table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Room[0].RoomNo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Room[0].RoomType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Room[0].Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Room[0].BedsCount)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Room) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BedsCount)
-                </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        .table-container table {
+            width: 100%;
+        }
+</style>
