@@ -16,7 +16,6 @@ namespace RazorPagesMovie.Pages.Reserve
         private readonly RazorPagesMovieContext _context;
         private readonly InvoiceNoGenerator _invoiceNoGenerator;
 
-
         public CreateModel(RazorPagesMovieContext context, InvoiceNoGenerator invoiceNoGenerator)
         {
             _invoiceNoGenerator = invoiceNoGenerator;
@@ -70,7 +69,18 @@ namespace RazorPagesMovie.Pages.Reserve
             }
 
             var selectedRoomIds = Request.Form["SelectedRoomIds"];
-            var selectedRoomNumbers = Request.Form["SelectedRoomIds"];
+            //var selectedRoomNumbers = Request.Form["SelectedRoomIds"];
+
+            var selectedRoomIdsList = selectedRoomIds.ToString().Split(',').Select(int.Parse).ToList();
+
+            // Fetch room numbers based on selected room IDs
+            var selectedRooms = await _context.Room
+                .Where(r => selectedRoomIdsList.Contains(r.Id))
+                .ToListAsync();
+
+            var selectedRoomNumbersString = string.Join(",", selectedRooms.Select(r => r.RoomNo));
+
+
 
             if (selectedRoomIds.Count == 0)
             {
@@ -80,23 +90,37 @@ namespace RazorPagesMovie.Pages.Reserve
             }
 
             Reservations.SelectedRooms = string.Join(",", selectedRoomIds);
-            Reservations.MasterbillId = Reservations.Id;//_invoiceNoGenerator.GenerateInvoiceNumber();
+            Reservations.SelectedRoomsNos = selectedRoomNumbersString;
+            Reservations.MasterbillId = Reservations.Id; // reservations table master bill id is reservation id itself
 
 
             _context.Reservations.Add(Reservations);
             await _context.SaveChangesAsync();
 
-            // Optionally, update the IsAvailable status of the selected rooms
+           
             foreach (var roomId in selectedRoomIds)
             {
                 var room = await _context.Room.FindAsync(int.Parse(roomId));
                 if (room != null)
                 {
+                    // Optionally, update the IsAvailable status of the selected rooms
                     room.IsAvailable = 0;
                     _context.Room.Update(room);
                 }
+                
+                //adding records to RoomReservations table 
+                var roomReservations = new RoomReservationcs
+                {
+                    ResevationId = Reservations.Id,
+                    RoomId = int.Parse(roomId),
+                    CheckInDate = Reservations.CheckInDate,
+                    CheckOutDate = Reservations.ExpectedCheckOutDate
+                   
+                };
+                _context.RoomReservationcs.Add(roomReservations);
+                await _context.SaveChangesAsync();
+
             }
-            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

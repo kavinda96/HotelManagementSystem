@@ -32,7 +32,7 @@ namespace RazorPagesMovie.Pages.Billing
 
         public decimal? TotalAmount { get; set; }
         public string? SelectedBillingCategory { get; set; }
-
+        public decimal TotalRoomCharge { get;  set; }
         public IActionResult OnGet(int id)
         {
             Reservation = _reservationService.GetReservationById(id);
@@ -65,7 +65,7 @@ namespace RazorPagesMovie.Pages.Billing
         }
 
 
-        public async Task<IActionResult> OnPostDeleteAsync(int id)
+        public async Task<IActionResult> OnPostDeletedddAsync(int id)
         {
             // Find the transaction by ID
             var transaction = await _context.BillingTransactions.FindAsync(id);
@@ -80,6 +80,33 @@ namespace RazorPagesMovie.Pages.Billing
 
             // Redirect to the same page to see the updated list
             return RedirectToPage("./Index");
+        }
+
+        public async Task<IActionResult> OnPostChecksAsync(int sid)
+        {
+            Reservation = _reservationService.GetReservationById(sid);
+            TimeSpan difference =Reservation.ExpectedCheckOutDate - Reservation.CheckInDate;
+            int datediff = (int)difference.TotalDays;
+            string selectedRooms = Reservation.SelectedRoomsNos;
+
+
+            TotalRoomCharge = await _context.CalculateRoomChargeAsync(sid);
+           
+            
+            var newTransaction = new Bill
+            {
+                InvoiceNo = sid,
+                createdDate = DateTime.Now,
+                Category = "3",
+                Description = "Check out Initialized: Room Charges for " + datediff + " days stay at Room No " + selectedRooms,
+                ItemPrice = TotalRoomCharge,
+                ItemQty = 1
+            };
+
+         
+            _context.BillingTransactions.Add(newTransaction);
+            await _context.SaveChangesAsync();
+            return RedirectToPage("./Index", new { id = sid });
         }
     }
 }

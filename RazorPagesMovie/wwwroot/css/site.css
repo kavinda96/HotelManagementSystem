@@ -66,3 +66,17 @@ body {
    /* Pushes the mandatory div to the right end */
 }
 
+.center-text {
+    text-align: center;
+}
+
+.right-text {
+    text-align: right;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+}

@@ -48,7 +48,7 @@ namespace RazorPagesMovie.Pages.Reserve
             {
                 reservationId = reservation.Id,
                 customerName = reservation.CustomerName,
-                room = reservation.SelectedRooms,
+                room = reservation.SelectedRoomsNos,
                 checkInDate = reservation.CheckInDate.ToString("yyyy-MM-dd"),
                 checkOutDate = reservation.ExpectedCheckOutDate.ToString("yyyy-MM-dd"),
                 InvoiceNo = reservation.MasterbillId

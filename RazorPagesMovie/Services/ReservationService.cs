@@ -22,5 +22,10 @@ namespace RazorPagesMovie.Services
         {
             return _dbContext.Reservations.FirstOrDefault(r => r.Id == reservationId);
         }
+
+        public Room GetRoomDeatailById(int roomId)
+        {
+            return _dbContext.Room.FirstOrDefault(r => r.Id == roomId);
+        }
     }
 }

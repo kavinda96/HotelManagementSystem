@@ -47,7 +47,7 @@ namespace RazorPagesMovie.Models
         public int GuestCount { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime? RealCheckOutDate { get; set; }
+        public DateTime RealCheckOutDate { get; set; }
 
         [Display(Name = "Selected Rooms")]
         public string? SelectedRooms { get; set; }
@@ -56,5 +56,6 @@ namespace RazorPagesMovie.Models
 
 
         public long? MasterbillId {  get; set; }
+
     }
 }
