@@ -57,6 +57,22 @@ namespace RazorPagesMovie.Services
             // Save changes to the database
             _dbContext.SaveChanges();
         }
+        public void UpdateCusNameForReservation(int reservationId, string NewName)
+        {
+            // Retrieve room reservations associated with the reservation ID
+            var roomReservations = _dbContext.Reservations
+                .Where(r => r.Id == reservationId)
+                .ToList();
+
+            // Update the checkout date for each room reservation
+            foreach (var reservation in roomReservations)
+            {
+                reservation.CustomerName = NewName;
+            }
+
+            // Save changes to the database
+            _dbContext.SaveChanges();
+        }
 
         public void UpdateRoomStatusWhenCheckout(int reservationId)
         {

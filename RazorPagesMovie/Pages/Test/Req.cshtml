@@ -1,0 +1,86 @@
+﻿@page
+@model RazorPagesMovie.Pages.Test.ReqModel
+@{
+    ViewData["Title"] = "Update Reservation";
+}
+
+<h2>Update Reservation</h2>
+
+<div>
+    <form id="updateForm" method="POST" asp-antiforgery="false">
+        <div class="form-group">
+            <label asp-for="CurrentCustomerName">Current Customer Name</label>
+            <input asp-for="CurrentCustomerName" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+            <label asp-for="NewCustomerName">New Customer Name</label>
+            <input asp-for="NewCustomerName" class="form-control" />
+        </div>
+        <div class="form-group flex-item">
+            <input asp-for="OldCheckoutDate" type="date" class="form-control mr-2" />
+            <span asp-validation-for="OldCheckoutDate" class="text-danger"></span>
+        </div>
+        <div class="form-group flex-item">
+            <input asp-for="NewCheckoutDate" type="date" class="form-control mr-2" />
+            <span asp-validation-for="NewCheckoutDate" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="ReservationId" />
+@*         <input name="RequestVerificationToken" type="hidden" value="@Html.AntiForgeryToken()" />
+ *@
+        <input name="RequestVerificationToken" type="hidden" />
+ <button type="button" id="updateButton" class="btn btn-primary"> Update </button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#updateButton").click(function () {
+                var data = {
+                    ReservationId: $("input[name='ReservationId']").val(),
+                    NewCustomerName: $("input[name='NewCustomerName']").val(),
+                    NewCheckoutDate: $("input[name='NewCheckoutDate']").val()
+                  //  RequestVerificationToken: $('input[name="RequestVerificationToken"]').val()
+                };
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: "/Test/Req?handler=UpdateCustomerName",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(data),
+                    dataType:'json',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("RequestVerificationToken", "");
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+
+                            // var formattedDate = new Date(response.newCheckoutDate).toLocaleDateString().split('T')[0];
+                            // var newformattedDate = formattedDate.toLocaleDateString('yyyy-mm-dd');
+
+                            var date = new Date(response.newCheckoutDate);
+
+                           // var date = new Date(response.newCheckoutDate + "T00:00:00Z"); // Ensure it's parsed in UTC
+                            var formattedDate = date.toISOString().split('T')[0];
+
+
+                            // alert(response.message);
+                            $("input[name='CurrentCustomerName']").val(response.newCustomerName);
+                            $("input[name='OldCheckoutDate']").val(formattedDate);
+
+                            $("input[name='NewCustomerName']").val('');
+                            $("input[name='NewCheckoutDate']").val('');
+                        } else {
+                            alert("Error updating customer name.");
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while updating the customer name.");
+                    }
+                });
+            });
+        });
+    </script>
+}
