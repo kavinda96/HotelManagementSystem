@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using RazorPagesMovie.Models;
 using RazorPagesMovie.Services;
 using System.Collections.Generic;
@@ -22,8 +23,10 @@ namespace RazorPagesMovie.Pages.Billing
             _logger = logger;
         }
 
+
        [BindProperty]
         public Reservations Reservation { get; set; }
+        public RoomReservationcs RoomReservation { get; set; }
         public List<Bill> BillingTransactions { get; set; }
         //public List<Bill> BillingTransactions { get; set; }
 
@@ -36,6 +39,7 @@ namespace RazorPagesMovie.Pages.Billing
         public IActionResult OnGet(int id)
         {
             Reservation = _reservationService.GetReservationById(id);
+            //RoomReservation = _reservationService.GetRoomReservationsById(id);
             var invoice_no = Reservation.Id;
             BillingTransactions = _billingTransactionService.GetBillingTransactionsByReservationId(invoice_no);
             NewTransaction = new Bill { Id = id };
@@ -82,7 +86,7 @@ namespace RazorPagesMovie.Pages.Billing
             return RedirectToPage("./Index");
         }
 
-        public async Task<IActionResult> OnPostChecksAsync(int sid)
+        public async Task<IActionResult> OnPostCheckOutAsync(int sid)
         {
             Reservation = _reservationService.GetReservationById(sid);
             TimeSpan difference =Reservation.ExpectedCheckOutDate - Reservation.CheckInDate;
@@ -92,7 +96,7 @@ namespace RazorPagesMovie.Pages.Billing
 
             TotalRoomCharge = await _context.CalculateRoomChargeAsync(sid);
            
-            
+
             var newTransaction = new Bill
             {
                 InvoiceNo = sid,
@@ -105,8 +109,44 @@ namespace RazorPagesMovie.Pages.Billing
 
          
             _context.BillingTransactions.Add(newTransaction);
+            _reservationService.UpdateRoomStatusWhenCheckout(sid);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index", new { id = sid });
         }
+
+        public async Task<IActionResult> OnPostEditCheckoutDateAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            var reservationToUpdate = await _context.Reservations.FindAsync(Reservation.Id);
+
+            if (reservationToUpdate == null)
+            {
+                return NotFound();
+            }
+            _reservationService.UpdateCheckoutDateForReservation(Reservation.Id, Reservation.ExpectedCheckOutDate);
+            
+
+            reservationToUpdate.ExpectedCheckOutDate = Reservation.ExpectedCheckOutDate;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("./Index", new { id = Reservation.Id }); // Adjust the redirection as needed
+        }
+
+
+
+
+
+
     }
+}
+
+public class UpdateCheckoutDateRequest
+{
+    public int reservationId { get; set; }
+    public DateTime newCheckoutDate { get; set; }
 }

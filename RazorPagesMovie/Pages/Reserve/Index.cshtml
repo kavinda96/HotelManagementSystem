@@ -66,14 +66,20 @@
                     @Html.DisplayFor(modelItem => item.SelectedRoomsNos)
                 </td>
                 <td>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile')">Cust Info</button> 
+                    <button type="button" class="btn btn-warning btn-sm" onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile')"> Info</button> 
 
                 </td>
                 <td>
                     
-                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                  @*   <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> | *@
                    @*  <a asp-page="./Details" asp-route-id="@item.Id">Details</a> | *@
-                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a> 
+@*                     <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+ *@
+                      <a asp-page="./Delete" asp-route-id="@item.Id" class="edit-button">  <i class="fas fa-edit"></i></a> | 
+                      <a asp-page="./Delete" asp-route-id="@item.Id" class="delete-button"><i class="fas fa-trash-alt"></i></a>
+                    @* <button class="delete-button" asp-page="./Delete" asp-route-id="@item.Id">
+                        <i class="fas fa-trash-alt"></i>
+                    </button> *@
                 </td>
                 <td>
                     <a asp-page="/Billing/Index" asp-route-id="@item.Id" class="btn btn-info btn-sm">Billing</a>
@@ -101,7 +107,7 @@
                 <p><strong>Mobile:</strong> <span id="modalMobile"></span></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

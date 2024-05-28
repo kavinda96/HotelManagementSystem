@@ -1,0 +1,50 @@
+﻿@model RazorPagesMovie.Models.Reservations
+
+<form method="post" asp-page-handler="EditCheckoutDate" class="d-flex justify-content-between align-items-center" onsubmit="return confirmUpdateCheckOut();">
+    <div class="form-group flex-item">
+        <input asp-for="ExpectedCheckOutDate" class="form-control mr-2" />
+        <span asp-validation-for="ExpectedCheckOutDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group flex-item">
+        <button type="submit" class="btn btn-primary">Save Date</button>
+    </div>
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="MasterbillId" />
+    <input type="hidden" asp-for="CustomerName" />
+    <input type="hidden" asp-for="SelectedRooms" />
+    <input type="hidden" asp-for="SelectedRoomsNos" />
+    <input type="hidden" asp-for="CheckInDate" />
+    <input type="hidden" asp-for="ExpectedCheckOutDate" />
+    <input type="hidden" asp-for="Mobile" />
+    <input type="hidden" asp-for="Address" />
+    <input type="hidden" asp-for="Country" />
+    <input type="hidden" asp-for="GuestCount" />
+    <input type="hidden" asp-for="NIN" />
+</form>
+
+@section Scripts {
+    <script>
+        function confirmUpdateCheckOut() {
+            alert("Function called");
+            return confirm("Are you sure you want to update the check-out date?");
+        }
+    </script>
+}
+
+<style>
+    .d-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .flex-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+    }
+</style>

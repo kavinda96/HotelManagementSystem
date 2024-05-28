@@ -1,3 +1,11 @@
 ﻿@{
    Layout = "_Layout";
 }
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.DependencyInjection
+
+@{
+    var builder = new ApplicationBuilder(null);
+    var middleware = new AntiForgeryMiddleware();
+    middleware.Configure(builder);
+}
