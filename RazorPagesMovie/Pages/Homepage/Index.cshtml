@@ -1,0 +1,116 @@
+﻿@page
+@model RazorPagesMovie.Pages.Homepage.IndexModel
+@{
+}
+
+
+<div class="container mt-5">
+    <div class="row text-center mb-4">
+        <div class="col">
+            <h1>Hotel Management Dashboard</h1>
+            <p class="lead">Welcome to the hotel management system. Here you can manage reservations, check-ins, and check-outs.</p>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reservations</h5>
+                    <p class="card-text display-4">@Model.DashboardData.TotalReservation</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Upcoming Reservations</h5>
+                    <p class="card-text display-4">@Model.DashboardData.UpcomingReservation</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Active Reservations</h5>
+                    <p class="card-text display-4">@Model.DashboardData.ActiveReservation</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reservations</h5>
+                    <p class="card-text display-4">@Model.TotalReservations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Active Reservations</h5>
+                    <p class="card-text display-4">@Model.TotalReservations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Upcoming Reservations</h5>
+                    <p class="card-text display-4">@Model.TotalReservations</p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <a href="/Reservations" class="btn btn-primary btn-lg btn-block">Make a Reservation</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="/CheckIn" class="btn btn-success btn-lg btn-block">Check In</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="/CheckOut" class="btn btn-danger btn-lg btn-block">Check Out</a>
+        </div>
+    </div>
+</div>
+
+
+<style>
+
+    /*  body {
+         font-family: Arial, sans-serif;
+         background-color: #f4f4f4;
+         margin: 0;
+     }
+
+     .container {
+         max-width: 960px;
+     }
+
+     .card {
+         border: none;
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     }
+
+     .card-body {
+         padding: 30px;
+     }
+
+     .card-title {
+         font-size: 1.25rem;
+         color: #333;
+     }
+
+     .card-text {
+         font-size: 2.5rem;
+         color: #666;
+     }
+
+     .btn-block {
+         padding: 15px;
+         font-size: 1.25rem;
+     } */
+
+</style>

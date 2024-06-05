@@ -10,7 +10,7 @@ namespace RazorPagesMovie.Data
 {
     public class RazorPagesMovieContext : DbContext
     {
-        public RazorPagesMovieContext (DbContextOptions<RazorPagesMovieContext> options)
+        public RazorPagesMovieContext(DbContextOptions<RazorPagesMovieContext> options)
             : base(options)
         {
         }
@@ -64,11 +64,70 @@ namespace RazorPagesMovie.Data
             return 0;
         }
 
+
+
+        public async Task<DashboardViewModel> GetDashboardValuesAsync()
+        {
+            var query = @"
+        WITH TotalReservations AS (
+    SELECT COUNT(*) AS total_reservation
+    FROM Reservations
+),
+UpcomingReservations AS (
+    SELECT COUNT(*) AS upcoming_reservation
+    FROM Reservations
+    WHERE CheckInDate > CAST(GETDATE() AS DATE)
+),
+ActiveReservations AS (
+    SELECT COUNT(*) AS active_reservation
+    FROM Reservations
+    WHERE status  = 0
+)
+SELECT 
+    t.total_reservation,
+    u.upcoming_reservation,
+	a.active_reservation
+FROM 
+    TotalReservations t,
+    UpcomingReservations u,
+	ActiveReservations a;";
+
+            using (var command = this.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = query;
+
+                await this.Database.OpenConnectionAsync();
+
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    if (await result.ReadAsync())
+                    {
+                        var model = new DashboardViewModel
+                        {
+                            TotalReservation = result.IsDBNull(0) ? 0 : result.GetInt32(0),
+                            UpcomingReservation = result.IsDBNull(1) ? 0 : result.GetInt32(1),
+                            ActiveReservation = result.IsDBNull(2) ? 0 : result.GetInt32(2)
+
+                        };
+                        return model;
+                    }
+                }
+            }
+
+            return new DashboardViewModel
+            {
+                TotalReservation = 0,
+                UpcomingReservation = 0,
+                ActiveReservation = 0
+            };
+        }
+
+
+
+
     }
-
-
-}
-public class RoomChargeResult
-{
-    public decimal TotalRoomCharge { get; set; }
+    public class RoomChargeResult
+    {
+        public decimal TotalRoomCharge { get; set; }
+    }
 }

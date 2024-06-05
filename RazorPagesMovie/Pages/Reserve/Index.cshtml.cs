@@ -30,10 +30,16 @@ namespace RazorPagesMovie.Pages.Reserve
 
         public long? InvoiceNo { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public DateTime? StartDate { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public DateTime? EndDate { get; set; }
 
         public async Task OnGetAsync()
-        {         
-            Reservations = _reservationService.GetAllReservations();
+        {
+            //Reservations = _reservationService.GetAllReservations();
+            Reservations = GetReservations(StartDate, EndDate);
         }
 
         public IActionResult OnGetBilling(int reservationId)
@@ -54,5 +60,23 @@ namespace RazorPagesMovie.Pages.Reserve
                 InvoiceNo = reservation.MasterbillId
             });
         }
+
+        private List<Reservations> GetReservations(DateTime? startDate, DateTime? endDate)
+        {
+            var query = _context.Reservations.AsQueryable();
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(r => r.CheckInDate >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(r => r.CheckInDate <= endDate.Value);
+            }
+
+            return query.ToList();
+        }
+
     }
 }

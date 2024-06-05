@@ -5,89 +5,33 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Reservations List</h1>
+@* <h1>Reservations List</h1>
+ *@
+<div class="card mb-2" style="background-color:darkslateblue">
+    <div class="card-body d-flex justify-content-center align-items-center mb-2" style="height: 50px ; overflow: hidden;">
+        <h2 style="color: white">Reservations List</h2>
+    </div>
+</div>
+
 
 <p>
-    <a asp-page="Create" class="btn btn-primary btn-secondary">Create New</a>
+    <a asp-page="Create" class="btn btn-primary btn-success">Create New</a>
 </p>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Reservations[0].CustomerName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reservations[0].NIN)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reservations[0].Mobile)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reservations[0].CheckInDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reservations[0].ExpectedCheckOutDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reservations[0].GuestCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reservations[0].SelectedRooms)
-            </th>
+<form method="get">
+    <label for="startDate">From:</label>
+    <input type="date" id="startDate" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
 
-            <th colspan="3"></th>
-            
-        </tr>
-    </thead>
-    <tbody id="reservationGrid">
-        @foreach (var item in Model.Reservations)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CustomerName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NIN)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Mobile)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CheckInDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GuestCount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SelectedRoomsNos)
-                </td>
-                <td>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile')"> Info</button> 
+    <label for="endDate">To:</label>
+    <input type="date" id="endDate" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
 
-                </td>
-                <td>
-                    
-                  @*   <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> | *@
-                   @*  <a asp-page="./Details" asp-route-id="@item.Id">Details</a> | *@
-@*                     <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
- *@
-                      <a asp-page="./Edit" asp-route-id="@item.Id" class="edit-button">  <i class="fas fa-edit"></i></a> | 
-                      <a asp-page="./Delete" asp-route-id="@item.Id" class="delete-button"><i class="fas fa-trash-alt"></i></a>
-                    @* <button class="delete-button" asp-page="./Delete" asp-route-id="@item.Id">
-                        <i class="fas fa-trash-alt"></i>
-                    </button> *@
-                </td>
-                <td>
-                    <a asp-page="/Billing/Index" asp-route-id="@item.Id" class="btn btn-info btn-sm">Billing</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <button type="submit">Filter</button>
+</form>
+
+
+<div id="reservationTable">
+    @await Html.PartialAsync("_ReservationTable", Model.Reservations)
+</div>
 
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
@@ -115,6 +59,25 @@
 
 @section Scripts {
     <script>
+        // $(document).ready(function () {
+        //     $("#filterButton").click(function () {
+        //         var startDate = $("#startDate").val();
+        //         var endDate = $("#endDate").val();
+
+        //         $.ajax({
+        //             type: "GET",
+        //             url: "/Index/",
+        //             data: { startDate: startDate, endDate: endDate },
+        //             success: function (response) {
+        //                 $("#reservationTable").html(response);
+        //             },
+        //             error: function () {
+        //                 alert("Error occurred while filtering reservations.");
+        //             }
+        //         });
+        //     });
+        // });
+
         function showCustomerInfo(customerName, nin, address, country, mobile) {
             document.getElementById('modalCustomerName').textContent = customerName;
             document.getElementById('modalNIN').textContent = nin;
@@ -125,3 +88,39 @@
         }
     </script>
 }
+
+        <style>
+    .card {
+        max-height: 200px; /* Adjust this value to control the card height */
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .card-header:hover {
+            background-color: #f8f9fa;
+        }
+
+    .card-body {
+        /*   max-height: 100px; */ /* Adjust this value to control the expanded card body height */
+        overflow-y: auto;
+        transition: max-height 0.3s ease-in-out;
+        padding: 15px;
+        border-top: 1px solid #e9ecef;
+    }
+
+        .card-body.show {
+            max-height: none; /* Remove max-height when expanded */
+        }
+
+        .card-body.collapse {
+            max-height: 0;
+        }
+
+
+        </style>

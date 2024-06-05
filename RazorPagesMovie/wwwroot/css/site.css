@@ -21,9 +21,9 @@ body {
   margin-bottom: 60px;
 }
 
-.card {
-    max-height: 200px; /* Adjust this value to control the card height */
-    overflow: hidden;
+/*.card {
+    max-height: 200px;*/ /* Adjust this value to control the card height */
+    /*overflow: hidden;
     transition: max-height 0.3s ease-in-out;
 }
 
@@ -37,21 +37,21 @@ body {
         background-color: #f8f9fa;
     }
 
-.card-body {
+.card-body {*/
  /*   max-height: 100px; *//* Adjust this value to control the expanded card body height */
-    overflow-y: auto;
+    /*overflow-y: auto;
     transition: max-height 0.3s ease-in-out;
     padding: 15px;
     border-top: 1px solid #e9ecef;
 }
 
     .card-body.show {
-        max-height: none; /* Remove max-height when expanded */
-    }
+        max-height: none;*/ /* Remove max-height when expanded */
+    /*}
 
     .card-body.collapse {
         max-height: 0;
-    }
+    }*/
 #mainNav {
     background-color: #70342B;
 }
@@ -79,4 +79,36 @@ body {
     border: none;
     color: red;
     cursor: pointer;
+}
+@media print {
+    .print-exclude {
+        display: none;
+    }
+}
+
+
+
+
+.header-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .header-table td {
+        vertical-align: top;
+    }
+
+.logo {
+    width: 100px; /* Adjust the width as needed */
+}
+
+.name {
+    text-align: center;
+    font-size: 35px;
+    /* Adjust the font size as needed */
+}
+
+.address {
+    text-align: center;
+    font-size: 12px; /* Adjust the font size as needed */
 }

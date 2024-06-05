@@ -1,0 +1,21 @@
+﻿@* @model RazorPagesMovie.Models.FilterViewModel
+
+<form method="get" id="filterForm">
+    <label for="startDate">From:</label>
+    <input type="date" id="startDate" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+
+    <label for="endDate">To:</label>
+    <input type="date" id="endDate" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+
+    <label for="filterColumn">Filter by:</label>
+    <select id="filterColumn" name="filterColumn">
+        @foreach (var column in Model.FilterColumns)
+        {
+            <option value="@column.Value" @(Model.FilterColumn == column.Value ? "selected" : "")>@column.Text</option>
+        }
+    </select>
+
+    <input type="text" id="filterValue" name="filterValue" value="@Model.FilterValue" />
+
+    <button type="submit">Filter</button>
+</form> *@

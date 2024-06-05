@@ -88,10 +88,17 @@ namespace RazorPagesMovie.Pages.Billing
 
         public async Task<IActionResult> OnPostCheckOutAsync(int sid)
         {
-            Reservation = _reservationService.GetReservationById(sid);
-            TimeSpan difference =Reservation.ExpectedCheckOutDate - Reservation.CheckInDate;
+            var reservationToUpdate = _reservationService.GetReservationById(sid);
+            if (reservationToUpdate == null)
+            {
+                return NotFound();
+            }
+            reservationToUpdate.status = 2;
+
+           // Reservation = _reservationService.GetReservationById(sid);
+            TimeSpan difference = reservationToUpdate.ExpectedCheckOutDate.Date - reservationToUpdate.CheckInDate.Date;
             int datediff = (int)difference.TotalDays;
-            string selectedRooms = Reservation.SelectedRoomsNos;
+            string selectedRooms = reservationToUpdate.SelectedRoomsNos;
 
 
             TotalRoomCharge = await _context.CalculateRoomChargeAsync(sid);
@@ -109,10 +116,54 @@ namespace RazorPagesMovie.Pages.Billing
 
          
             _context.BillingTransactions.Add(newTransaction);
-            _reservationService.UpdateRoomStatusWhenCheckout(sid);
+            _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 1);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index", new { id = sid });
         }
+
+
+
+
+
+
+        public async Task<IActionResult> OnPostCheckInAsync(int sid)
+        {
+            var reservationToUpdate = _reservationService.GetReservationById(sid);
+
+            if (reservationToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            // Update the check-in date
+            reservationToUpdate.CheckInDate = Reservation.CheckInDate;
+            reservationToUpdate.status = 1; // Active when check-in
+
+            string selectedRooms = reservationToUpdate.SelectedRoomsNos;
+
+            var newTransaction = new Bill
+            {
+                InvoiceNo = sid,
+                createdDate = DateTime.Now,
+                Category = "3",
+                Description = "Check In Initialized for rooms: " + selectedRooms + " On Date: " + Reservation.CheckInDate.ToString("yyyy-MM-dd")
+            };
+
+            _context.BillingTransactions.Add(newTransaction);
+            _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 2);
+            _reservationService.UpdateCheckInDateForReservation(reservationToUpdate.Id, Reservation.CheckInDate);
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("./Index", new { id = sid });
+        }
+
+
+
+
+
+
+
+
 
         public async Task<IActionResult> OnPostEditCheckoutDateAsync()
         {

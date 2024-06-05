@@ -34,12 +34,12 @@ namespace RazorPagesMovie.Models
         [Display(Name = "Check-in Date")]
         [Required]
         [DataType(DataType.Date)]
-        public DateTime CheckInDate { get; set; }= DateTime.Now;
+        public DateTime CheckInDate { get; set; } = DateTime.Now;
 
         [Display(Name = "Check-out Date")]
         [Required]
         [DataType(DataType.Date)]
-        public DateTime ExpectedCheckOutDate { get; set; }  = DateTime.Now;
+        public DateTime ExpectedCheckOutDate { get; set; } = DateTime.Now;
 
         [Display(Name = "Guest Count")]
         [Required]
@@ -53,9 +53,11 @@ namespace RazorPagesMovie.Models
         public string? SelectedRooms { get; set; }
 
         public string? SelectedRoomsNos { get; set; }
+        public long? MasterbillId { get; set; }
 
+        public int status { get; set; }
 
-        public long? MasterbillId {  get; set; }
-
+        [DataType(DataType.Date)]
+        public DateTime? ExpectedCheckInDate { get; set; }
     }
 }
