@@ -1,4 +1,5 @@
-﻿using RazorPagesMovie.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using RazorPagesMovie.Data;
 using RazorPagesMovie.Models;
 using System.Linq;
 
@@ -148,6 +149,20 @@ namespace RazorPagesMovie.Services
         public Room GetRoomDeatailById(int roomId)
         {
             return _dbContext.Room.FirstOrDefault(r => r.Id == roomId);
+        }
+
+
+        public async Task<List<Room>> GetAvailableRooms(DateTime checkInDate, DateTime checkOutDate)
+        {
+            var availableRooms = await _dbContext.Room
+                .Where(room => !_dbContext.RoomReservationcs
+                    .Any(reservation =>
+                        reservation.RoomId == room.Id &&
+                        reservation.CheckInDate <= checkOutDate &&
+                        reservation.CheckOutDate >= checkInDate))
+                .ToListAsync();
+
+            return availableRooms;
         }
     }
 }

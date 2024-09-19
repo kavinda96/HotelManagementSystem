@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RazorPagesMovie.Models;
 using RazorPagesMovie.Services;
@@ -28,6 +29,9 @@ namespace RazorPagesMovie.Pages.Billing
         public Reservations Reservation { get; set; }
         public RoomReservationcs RoomReservation { get; set; }
         public List<Bill> BillingTransactions { get; set; }
+
+        public IList<Food> FoodItems { get; set; } = new List<Food>();
+
         //public List<Bill> BillingTransactions { get; set; }
 
         [BindProperty]
@@ -36,13 +40,23 @@ namespace RazorPagesMovie.Pages.Billing
         public decimal? TotalAmount { get; set; }
         public string? SelectedBillingCategory { get; set; }
         public decimal TotalRoomCharge { get;  set; }
-        public IActionResult OnGet(int id)
+        public IActionResult OnGet(int? id)
         {
-            Reservation = _reservationService.GetReservationById(id);
-            //RoomReservation = _reservationService.GetRoomReservationsById(id);
-            var invoice_no = Reservation.Id;
-            BillingTransactions = _billingTransactionService.GetBillingTransactionsByReservationId(invoice_no);
-            NewTransaction = new Bill { Id = id };
+            if (id.HasValue)
+            {
+                Reservation = _reservationService.GetReservationById(id.Value);
+
+                if (Reservation == null)
+                {
+                    _logger.LogError($"Reservation with ID {id} not found.");
+                    return NotFound($"Reservation with ID {id} not found.");
+                }
+
+                var invoice_no = Reservation.Id;
+                BillingTransactions = _billingTransactionService.GetBillingTransactionsByReservationId(invoice_no);
+                NewTransaction = new Bill { Id = id.Value };
+            }
+
             return Page();
         }
 
@@ -187,6 +201,62 @@ namespace RazorPagesMovie.Pages.Billing
 
             return RedirectToPage("./Index", new { id = Reservation.Id }); // Adjust the redirection as needed
         }
+
+        //public async Task<IActionResult> OnGetFoodItemsAsync(string term)
+        //{
+        //    if (string.IsNullOrEmpty(term))
+        //    {
+        //        return new JsonResult(new List<object>()); // Return empty list if term is not provided
+        //    }
+
+        //    var foodItems = await _context.Food
+        //        .Where(f => f.FoodName.Contains(term))
+        //        .Select(f => new { id = f.Id, name = f.FoodName })
+        //        .ToListAsync();
+
+        //    return new JsonResult(foodItems);
+        //}
+
+        public async Task<JsonResult> OnGetFoodItemsAsync(string term)
+        {
+            try
+            {
+                // Assume you have logic to get the food items matching the term
+                var foodItems = await _context.Food
+                                              .Where(f => f.FoodName.Contains(term))
+                                              .Select(f => new { id = f.Id, name = f.FoodName })
+                                              .ToListAsync();
+
+                return new JsonResult(foodItems);
+            }
+            catch (Exception ex)
+            {
+                // Return a valid JSON error response
+                return new JsonResult(new { success = false, message = ex.Message });
+            }
+        }
+
+        //    public JsonResult OnGetFoodItemsAsync(string term)
+        //    {
+        //        // Hardcoded list of food items using tuples
+        //        var foodItems = new List<(int id, string name)>
+        //{
+        //    (1, "Pizza"),
+        //    (2, "Burger"),
+        //    (3, "Pasta"),
+        //    (4, "Sushi")
+        //};
+
+        //        // Filter the list based on the search term (case-insensitive)
+        //        var filteredItems = foodItems
+        //            .Where(f => f.name.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0)
+        //            .Select(f => new { id = f.id, name = f.name })  // Project back to anonymous object
+        //            .ToList();
+
+        //        // Return the filtered list as JSON
+        //        return new JsonResult(filteredItems);
+        //    }
+
 
 
 

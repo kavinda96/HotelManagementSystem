@@ -2,13 +2,8 @@
 @model RazorPagesMovie.Pages.Reserve.CreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Reservation";
 }
-
-@* <h1>Create</h1>
-
-<h4>Reservations</h4>
-<hr /> *@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -23,6 +18,7 @@
 
                         <table class="table table-borderless">
                             <tbody>
+                                <!-- Reservation Details Form Fields -->
                                 <tr>
                                     <td>
                                         <div class="form-group">
@@ -63,7 +59,6 @@
                                             <span asp-validation-for="Reservations.Mobile" class="text-danger"></span>
                                         </div>
                                     </td>
-                                   
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.GuestCount" class="control-label"></label>
@@ -72,8 +67,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                   
+                               @*  <tr>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.CheckInDate" class="control-label"></label>
@@ -88,71 +82,39 @@
                                             <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
                                         </div>
                                     </td>
-                                </tr>
-                                @* <tr>
+                                </tr> *@
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.CheckInDate" class="control-label"></label>
+                                            @* <input asp-for="Reservations.CheckInDate" class="form-control" id="checkInDate" name="checkInDate" /> *@
+
+                                            <input asp-for="Reservations.CheckInDate" class="form-control" id="checkInDate" name="checkInDate" />
+
+                                            <span asp-validation-for="Reservations.CheckInDate" class="text-danger"></span>
+                                        </div>
+                                    </td>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.ExpectedCheckOutDate" class="control-label"></label>
-                                            <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" />
+                                            @* <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" /> *@
+                                           <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" />
+
                                             <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
                                         </div>
                                     </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <label asp-for="Reservations.GuestCount" class="control-label"></label>
-                                            <input asp-for="Reservations.GuestCount" class="form-control" />
-                                            <span asp-validation-for="Reservations.GuestCount" class="text-danger"></span>
-                                        </div>
-                                    </td>
                                 </tr>
-                                 <tr>
-                                    <div>
-                                        <div class="form-group">
-                                            <label asp-for="Reservations.RealCheckOutDate" class="control-label"></label>
-                                            <input asp-for="Reservations.RealCheckOutDate" class="form-control" />
-                                            <span asp-validation-for="Reservations.RealCheckOutDate" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                     <div>
-                                        <div class="form-group">
-                                            <label asp-for="Reservations.RealCheckOutDate" class="control-label"></label>
-                                            <input asp-for="Reservations.RealCheckOutDate" class="form-control" />
-                                            <span asp-validation-for="Reservations.RealCheckOutDate" class="text-danger"></span>
-                                        </div>
-                                     </div>   
-                                   
-                                </tr> *@
                             </tbody>
                         </table>
 
+                        <!-- Check Availability Form -->
                         <div class="form-group">
-                            <label>Select Rooms:</label>
-                            <div>
-                                @if (Model.Rooms != null && Model.Rooms.Any())
-                                {
-                                    @foreach (var room in Model.Rooms)
-                                    {
-                                        <div class="card mb-3" style="cursor: pointer;" onclick="toggleCardDetails(@room.Id)">
-                                            <div class="card-header d-flex justify-content-between align-items-center">
-                                                <span>Room @room.RoomNo (@room.RoomType)</span>
-                                                <input type="checkbox" class="form-check-input"
-                                                       name="SelectedRoomIds"
-                                                       value="@room.Id" />
-                                            </div>
-                                            <div class="card-body collapse" id="roomDetails-@room.Id">
-                                                <p>Details about Room @room.RoomNo</p>
-                                                <p>Room Type: @room.RoomType</p>
-                                                <p>Price: $100</p>
-                                                <!-- Additional room details can go here -->
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="alert alert-warning">No vacant rooms available.</div>
-                                }
-                            </div>
+                            <button type="button" onclick="checkAvailability()" class="btn btn-primary">Check Availability</button>
+                        </div>
+
+                        <h2>Available Rooms</h2>
+                        <div id="availableRooms">
+                            <p>Select check-in and check-out dates to see available rooms.</p>
                         </div>
 
                         <div class="form-group">
@@ -172,6 +134,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function toggleCardDetails(roomId) {
             var details = document.getElementById('roomDetails-' + roomId);
@@ -183,5 +146,30 @@
                 details.classList.remove('show');
             }
         }
+
+        function checkAvailability() {
+            var checkInDate = document.getElementById('checkInDate').value;
+            var checkOutDate = document.getElementById('checkOutDate').value;
+
+            if (checkInDate && checkOutDate) {
+                $.ajax({
+                    url: '/Reserve/Create?handler=AvailableRooms',
+                    type: 'GET',
+                    data: {
+                        checkInDate: new Date(checkInDate).toISOString(),
+                        checkOutDate: new Date(checkOutDate).toISOString()
+                    },
+                    success: function (result) {
+                        $('#availableRooms').html(result);
+                    },
+                    error: function () {
+                        alert("Error fetching available rooms.");
+                    }
+                });
+            } else {
+                alert("Please select both check-in and check-out dates.");
+            }
+        }
+
     </script>
 }

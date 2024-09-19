@@ -1,0 +1,56 @@
+﻿@model IEnumerable<RazorPagesMovie.Models.Room>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="list-group">
+        @foreach (var room in Model)
+        {
+            <div class="card mb-3" style="cursor: pointer;" onclick="toggleCardDetails(@room.Id)">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Room @room.RoomNo (@room.RoomType)</span>
+                    <input type="checkbox" class="form-check-input"
+                           name="SelectedRoomIds"
+                           value="@room.Id" />
+                </div>
+                <div class="card-body collapse" id="roomDetails-@room.Id">
+                    <p>Details about Room @room.RoomNo</p>
+                    <p>Room Type: @room.RoomType</p>
+                    <p>Price: $100</p>
+                    <!-- Additional room details can go here -->
+                </div>
+            </div>
+        }
+    </ul>
+}
+else
+{
+    <div class="alert alert-warning">No rooms available for the selected dates.</div>
+}
+
+@* 
+<div>
+    @if (Model.Rooms != null && Model.Rooms.Any())
+    {
+        @foreach (var room in Model.Rooms)
+        {
+            <div class="card mb-3" style="cursor: pointer;" onclick="toggleCardDetails(@room.Id)">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Room @room.RoomNo (@room.RoomType)</span>
+                    <input type="checkbox" class="form-check-input"
+                           name="SelectedRoomIds"
+                           value="@room.Id" />
+                </div>
+                <div class="card-body collapse" id="roomDetails-@room.Id">
+                    <p>Details about Room @room.RoomNo</p>
+                    <p>Room Type: @room.RoomType</p>
+                    <p>Price: $100</p>
+                    <!-- Additional room details can go here -->
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning">No vacant rooms available.</div>
+    }
+</div> *@

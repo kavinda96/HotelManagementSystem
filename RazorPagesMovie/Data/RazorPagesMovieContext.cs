@@ -18,6 +18,9 @@ namespace RazorPagesMovie.Data
         public DbSet<RazorPagesMovie.Models.Room> Room { get; set; } = default!;
         public DbSet<RazorPagesMovie.Models.Reservations> Reservations { get; set; } = default!;
 
+        public DbSet<RazorPagesMovie.Models.Food> Food { get; set; } = default!;
+
+
         public DbSet<Bill> BillingTransactions { get; set; } = default!;
 
         public DbSet<RazorPagesMovie.Models.RoomReservationcs> RoomReservationcs { get; set; } = default!;
@@ -63,6 +66,9 @@ namespace RazorPagesMovie.Data
 
             return 0;
         }
+
+
+       
 
 
 

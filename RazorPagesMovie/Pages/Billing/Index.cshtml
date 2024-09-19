@@ -177,17 +177,33 @@
                         </td>
                     </tr>
                     <tr>
+                       @*  <td class="fw-bold">Bill Item</td>
+                        <td> *@
+                          @*   <input asp-for="NewTransaction.BillingItem" class="form-control" required />
+                            <span asp-validation-for="NewTransaction.BillingItem" class="text-danger"></span> *@
+
+                            <!-- Bill Item Input Field with Autocomplete -->
+@*                             <input id="foodItemSearch" class="form-control" placeholder="Search for a food item" required />
+ *@
+                            <!-- Hidden field to hold the selected food item ID -->
+@*                             <input type="hidden" id="selectedFoodId" asp-for="NewTransaction.BillingItem" />
+ *@
+
                         <td class="fw-bold">Bill Item</td>
                         <td>
-                            <input asp-for="NewTransaction.BillingItem" class="form-control" required />
-                            <span asp-validation-for="NewTransaction.BillingItem" class="text-danger"></span>
+                            <input id="foodItemSearch" class="form-control" placeholder="Search for a food item" required />
+                            <input type="hidden" id="selectedFoodId" asp-for="NewTransaction.BillingItem" />
                         </td>
-                    </tr>
+
+@*                         </td>
+ *@                    </tr>
                     <tr>
                         <td class="fw-bold">Item Amount</td>
                         <td>
                             <input asp-for="NewTransaction.ItemPrice" class="form-control" type="number" step="0.01" required />
                             <span asp-validation-for="NewTransaction.ItemPrice" class="text-danger"></span>
+
+
                         </td>
                     </tr>
                     <tr>
@@ -241,13 +257,24 @@
 <div class="col-md-12" id="invoice_header">
 <table class="header-table" style="display:none">
     <tr>
-@*         <td><img src="~/logo-black.png" alt="Logo" class="logo"></td>
- *@        <td>
-            <h1 class="name">Billing Summary</h1>
-         @*    <div class="address">1234 Street Name, City, State, ZIP</div> *@
-        </td>
+      <th>
+            <h1 class="name">Hotel Ritas</h1>
+        
+        </th>
        
     </tr>
+        <tbody>
+    <tr>
+         
+            <td>
+               
+                Narigama, Hikkaduwa
+               
+            </td>
+
+    </tr>
+
+        </tbody>
 </table>
 </div>
 
@@ -480,81 +507,115 @@ else
     <div class="alert alert-warning">No billing transactions found..</div>
 }
 @section Scripts {
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- jQuery UI library -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
     <script>
+        $(document).ready(function () {
+            $('#foodItemSearch').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Billing/Index?handler=OnGetFoodItemsAsync',
+                        type: 'GET',
+                        dataType: 'json',  // Expect JSON response
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            // Check if the response is an array (or valid JSON)
+                            if (Array.isArray(data)) {
+                                response($.map(data, function (item) {
+                                    return {
+                                        label: item.name,  // Display name in autocomplete suggestions
+                                        value: item.id     // Set the value to the item's ID
+                                    };
+                                }));
+                            } else {
+                                console.error('Unexpected response format:', data);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('AJAX Error:', status, error);
+                            console.error('Response Text:', xhr.responseText);  // Log detailed response for debugging
+
+                            // Check if the response is HTML (error page)
+                            if (xhr.responseText.startsWith('<!DOCTYPE html>')) {
+                                console.error('Received an HTML page instead of JSON. Possible server error.');
+                            }
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    event.preventDefault();  // Prevent the default action only on item selection
+                    $('#selectedFoodId').val(ui.item.value);  // Set the hidden field with the selected item ID
+                    $('#submitBtn').prop('disabled', false);  // Enable the submit button after a valid selection
+                }
+            });
+        });
 
 
 
 
 
-
-
-
-       
-
-      
-       
         async function printPDF() {
-    
+            // Ensure jsPDF is loaded
+            if (window.jspdf) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+                doc.autoTable({
+                    html: '#invoice_header table',
+                    startY: 20,
+                    styles: {
+                        halign: 'center',
+                        fontSize: 16,
+                        font: 'PTSans'
+                    },
+                    headStyles: {},
+                });
 
-            doc.autoTable({
-                html: '#invoice_header table',
-                startY: 20,
+                const afterFirstTableY1 = doc.lastAutoTable.finalY + 10;
 
-                styles: { halign: 'center',
-                fontSize: 16,
-                font: 'PTSans'
-                },
-                headStyles: {
-                   
-                },
+                doc.autoTable({
+                    html: '#invoice_display table',
+                    startY: afterFirstTableY1,
+                    theme: 'plain',
+                    tableWidth: 'wrap',
+                    columnStyles: {
+                        0: { cellWidth: 40 },
+                        1: { cellWidth: 60 },
+                    },
+                    styles: {
+                        overflow: 'linebreak',
+                        cellPadding: 2,
+                        fontSize: 10
+                    },
+                });
 
-            });
-            //invoice_header
-            const afterFirstTableY1 = doc.lastAutoTable.finalY + 10;
+                const afterFirstTableY = doc.lastAutoTable.finalY + 10;
 
+                doc.autoTable({
+                    html: '#billing_table table',
+                    startY: afterFirstTableY,
+                    headStyles: {
+                        fillColor: [33, 47, 60]
+                    },
+                });
 
-            doc.autoTable({
-                html: '#invoice_display table',
-                startY: afterFirstTableY1,
-                theme: 'plain',
-                tableWidth: 'wrap', // Adjust table width
-                columnStyles: {
-                    0: { cellWidth: 40 }, // Column 1 width
-                    1: { cellWidth: 60 }, // Column 2 width
-                  
-                },
-                styles: {
-                  
-                    overflow: 'linebreak',
-                    cellPadding: 2,
-                    fontSize: 10
-                },
-              
-                        
-                
-                        
-
-            });
-            const afterFirstTableY = doc.lastAutoTable.finalY + 10;
-            // Add billing table
-            doc.autoTable({
-                html: '#billing_table table',
-                startY: afterFirstTableY,
-                headStyles: {
-                    fillColor: [33, 47, 60]
-                },
-            });
-            //
-
-            // Generate PDF and create a Blob
-            const pdfBlob = doc.output('blob');
-
-            // Create a URL for the Blob and open it in a new tab
-            const url = URL.createObjectURL(pdfBlob);
-            window.open(url);
+                const pdfBlob = doc.output('blob');
+                const url = URL.createObjectURL(pdfBlob);
+                window.open(url);
+            } else {
+                console.error('jsPDF is not loaded');
+            }
         }
 
 
@@ -686,6 +747,8 @@ else
                 }
             });
         });
+
+
 
     </script>
 
