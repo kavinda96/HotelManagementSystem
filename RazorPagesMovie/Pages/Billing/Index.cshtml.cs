@@ -57,6 +57,8 @@ namespace RazorPagesMovie.Pages.Billing
                 NewTransaction = new Bill { Id = id.Value };
             }
 
+            FoodItems = _context.Food.Where(f => f.IsAvailable == 1).ToList();
+
             return Page();
         }
 
@@ -171,13 +173,16 @@ namespace RazorPagesMovie.Pages.Billing
             return RedirectToPage("./Index", new { id = sid });
         }
 
+        public async Task<JsonResult> OnGetFoodItems()
+        {
+            var foodItems = await _context.Food.Where(f => f.IsAvailable == 1).Select(f => new {
+                f.Id,
+                f.FoodName,
+                f.Price
+            }).ToListAsync();
 
-
-
-
-
-
-
+            return new JsonResult(foodItems);
+        }
 
         public async Task<IActionResult> OnPostEditCheckoutDateAsync()
         {
@@ -201,68 +206,6 @@ namespace RazorPagesMovie.Pages.Billing
 
             return RedirectToPage("./Index", new { id = Reservation.Id }); // Adjust the redirection as needed
         }
-
-        //public async Task<IActionResult> OnGetFoodItemsAsync(string term)
-        //{
-        //    if (string.IsNullOrEmpty(term))
-        //    {
-        //        return new JsonResult(new List<object>()); // Return empty list if term is not provided
-        //    }
-
-        //    var foodItems = await _context.Food
-        //        .Where(f => f.FoodName.Contains(term))
-        //        .Select(f => new { id = f.Id, name = f.FoodName })
-        //        .ToListAsync();
-
-        //    return new JsonResult(foodItems);
-        //}
-
-        public async Task<JsonResult> OnGetFoodItemsAsync(string term)
-        {
-            try
-            {
-                // Assume you have logic to get the food items matching the term
-                var foodItems = await _context.Food
-                                              .Where(f => f.FoodName.Contains(term))
-                                              .Select(f => new { id = f.Id, name = f.FoodName })
-                                              .ToListAsync();
-
-                return new JsonResult(foodItems);
-            }
-            catch (Exception ex)
-            {
-                // Return a valid JSON error response
-                return new JsonResult(new { success = false, message = ex.Message });
-            }
-        }
-
-        //    public JsonResult OnGetFoodItemsAsync(string term)
-        //    {
-        //        // Hardcoded list of food items using tuples
-        //        var foodItems = new List<(int id, string name)>
-        //{
-        //    (1, "Pizza"),
-        //    (2, "Burger"),
-        //    (3, "Pasta"),
-        //    (4, "Sushi")
-        //};
-
-        //        // Filter the list based on the search term (case-insensitive)
-        //        var filteredItems = foodItems
-        //            .Where(f => f.name.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0)
-        //            .Select(f => new { id = f.id, name = f.name })  // Project back to anonymous object
-        //            .ToList();
-
-        //        // Return the filtered list as JSON
-        //        return new JsonResult(filteredItems);
-        //    }
-
-
-
-
-
-
-
     }
 }
 

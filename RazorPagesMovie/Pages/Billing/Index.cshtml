@@ -177,33 +177,17 @@
                         </td>
                     </tr>
                     <tr>
-                       @*  <td class="fw-bold">Bill Item</td>
-                        <td> *@
-                          @*   <input asp-for="NewTransaction.BillingItem" class="form-control" required />
-                            <span asp-validation-for="NewTransaction.BillingItem" class="text-danger"></span> *@
-
-                            <!-- Bill Item Input Field with Autocomplete -->
-@*                             <input id="foodItemSearch" class="form-control" placeholder="Search for a food item" required />
- *@
-                            <!-- Hidden field to hold the selected food item ID -->
-@*                             <input type="hidden" id="selectedFoodId" asp-for="NewTransaction.BillingItem" />
- *@
-
                         <td class="fw-bold">Bill Item</td>
                         <td>
                             <input id="foodItemSearch" class="form-control" placeholder="Search for a food item" required />
                             <input type="hidden" id="selectedFoodId" asp-for="NewTransaction.BillingItem" />
                         </td>
-
-@*                         </td>
- *@                    </tr>
+                    </tr>
                     <tr>
                         <td class="fw-bold">Item Amount</td>
                         <td>
-                            <input asp-for="NewTransaction.ItemPrice" class="form-control" type="number" step="0.01" required />
+                            <input id="itemPrice" asp-for="NewTransaction.ItemPrice" class="form-control" type="number" step="0.01" required readonly />
                             <span asp-validation-for="NewTransaction.ItemPrice" class="text-danger"></span>
-
-
                         </td>
                     </tr>
                     <tr>
@@ -213,6 +197,7 @@
                             <span asp-validation-for="NewTransaction.ItemQty" class="text-danger"></span>
                         </td>
                     </tr>
+
                     <tr>
                         <td class="fw-bold">Description</td>
                         <td>
@@ -519,50 +504,31 @@ else
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
     <script>
-        $(document).ready(function () {
-            $('#foodItemSearch').autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '/Billing/Index?handler=OnGetFoodItemsAsync',
-                        type: 'GET',
-                        dataType: 'json',  // Expect JSON response
-                        data: {
-                            term: request.term
-                        },
-                        success: function (data) {
-                            // Check if the response is an array (or valid JSON)
-                            if (Array.isArray(data)) {
-                                response($.map(data, function (item) {
-                                    return {
-                                        label: item.name,  // Display name in autocomplete suggestions
-                                        value: item.id     // Set the value to the item's ID
-                                    };
-                                }));
-                            } else {
-                                console.error('Unexpected response format:', data);
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error('AJAX Error:', status, error);
-                            console.error('Response Text:', xhr.responseText);  // Log detailed response for debugging
-
-                            // Check if the response is HTML (error page)
-                            if (xhr.responseText.startsWith('<!DOCTYPE html>')) {
-                                console.error('Received an HTML page instead of JSON. Possible server error.');
-                            }
-                        }
-                    });
-                },
-                select: function (event, ui) {
-                    event.preventDefault();  // Prevent the default action only on item selection
-                    $('#selectedFoodId').val(ui.item.value);  // Set the hidden field with the selected item ID
-                    $('#submitBtn').prop('disabled', false);  // Enable the submit button after a valid selection
-                }
-            });
+    $(document).ready(function() {
+        $("#foodItemSearch").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "/Billing?handler=FoodItems",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.foodName,
+                                value: item.foodName,
+                                id: item.id,
+                                price: item.price
+                            };
+                        }));
+                    }
+                });
+            },
+            select: function(event, ui) {
+                $('#selectedFoodId').val(ui.item.id);
+                $('#itemPrice').val(ui.item.price);
+            }
         });
-
-
-
+    });
 
 
         async function printPDF() {
