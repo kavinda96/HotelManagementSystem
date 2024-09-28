@@ -173,15 +173,22 @@ namespace RazorPagesMovie.Pages.Billing
             return RedirectToPage("./Index", new { id = sid });
         }
 
-        public async Task<JsonResult> OnGetFoodItems()
+        public async Task<JsonResult> OnGetFoodItems(string term)
         {
-            var foodItems = await _context.Food.Where(f => f.IsAvailable == 1).Select(f => new {
-                f.Id,
-                f.FoodName,
-                f.Price
-            }).ToListAsync();
+            try
+            {
+                var foodItems = await _context.Food
+                                              .Where(f => f.FoodName.Contains(term))
+                                              .Select(f => new { id = f.Id, foodName = f.FoodName, price = f.Price })
+                                              .ToListAsync();
 
-            return new JsonResult(foodItems);
+                return new JsonResult(foodItems);
+            } 
+            catch (Exception ex)
+            {
+                // Return a valid JSON error response
+                return new JsonResult(new { success = false, message = ex.Message });
+            }
         }
 
         public async Task<IActionResult> OnPostEditCheckoutDateAsync()
@@ -205,6 +212,31 @@ namespace RazorPagesMovie.Pages.Billing
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index", new { id = Reservation.Id }); // Adjust the redirection as needed
+        }
+
+        public async Task<IActionResult> OnPostBillFinalizedAsync(int ReservationId)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return new JsonResult(new { success = false, message = "Invalid data." });
+            //}
+
+            // Find the reservation in the database
+            var reservationToUpdate = await _context.Reservations.FindAsync(ReservationId);
+
+            if (reservationToUpdate == null)
+            {
+                return new JsonResult(new { success = false, message = "Reservation not found." });
+            }
+
+            // Update the reservation status to 'finalized'
+            reservationToUpdate.status = 3; // 3 = finalized
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            // Return success response
+            return new JsonResult(new { success = true, message = "Bill finalized successfully." });
         }
     }
 }

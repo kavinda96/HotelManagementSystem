@@ -73,7 +73,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-page="/Homepage/Index">XXXXXX</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Homepage/Index">RITAS GROUP</a>
             </div>
         </nav>
     </header>
@@ -82,11 +82,29 @@
     <div class="sidebar-left">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index">Reservations</a>
+                <a class="nav-link text-muted" asp-area="" asp-page="/Homepage/Index">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index">All Reservations</a>
+            </li>
+            <li class="nav-item">
+
+                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-handler="Upcoming">Upcoming Reservations</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-handler="Finalized">Finalized Reservations</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-muted" asp-area="" asp-page="/Rooms/Index">Rooms</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-muted" asp-area="" asp-page="/Calender/CalenderView">Calender</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-muted" asp-area="" asp-page="/FoodData/Index">Foods</a>
+            </li>
+           
             <!-- Add more nav items as needed -->
         </ul>
     </div>

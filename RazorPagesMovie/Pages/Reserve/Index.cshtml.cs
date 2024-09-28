@@ -36,10 +36,14 @@ namespace RazorPagesMovie.Pages.Reserve
         [BindProperty(SupportsGet = true)]
         public DateTime? EndDate { get; set; }
 
+        public int status {  get; set; }
+
+        public string PageTitle { get; set; } = "All Reservations";
+
         public async Task OnGetAsync()
         {
             //Reservations = _reservationService.GetAllReservations();
-            Reservations = GetReservations(StartDate, EndDate);
+            Reservations = GetReservations(StartDate, EndDate,status);
         }
 
         public IActionResult OnGetBilling(int reservationId)
@@ -61,7 +65,22 @@ namespace RazorPagesMovie.Pages.Reserve
             });
         }
 
-        private List<Reservations> GetReservations(DateTime? startDate, DateTime? endDate)
+        public async Task OnGetUpcomingAsync()
+        {
+            // Fetch only reservations where CheckInDate is in the future
+           
+            Reservations = GetReservations(DateTime.Now, EndDate, status);
+            PageTitle = "Upcoming Reservations";
+        }
+
+        public async Task OnGetFinalizedAsync()
+        {
+
+            Reservations = GetReservations(startDate, EndDate, 3);
+            PageTitle = "Finalized Reservations";
+        }
+
+        private List<Reservations> GetReservations(DateTime? startDate, DateTime? endDate, int status)
         {
             var query = _context.Reservations.AsQueryable();
 
@@ -73,6 +92,10 @@ namespace RazorPagesMovie.Pages.Reserve
             if (endDate.HasValue)
             {
                 query = query.Where(r => r.CheckInDate <= endDate.Value);
+            }
+            if(status == 3) 
+            {
+                query = query.Where(r => r.status == 3);
             }
 
             return query.ToList();

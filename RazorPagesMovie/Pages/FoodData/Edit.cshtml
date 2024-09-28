@@ -30,8 +30,12 @@
                 <span asp-validation-for="Food.Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Food.IsAvailable" class="control-label"></label>
-                <input asp-for="Food.IsAvailable" class="form-control" />
+                <label asp-for="Food.IsAvailable" class="control-label">Is Available? </label>
+                <select asp-for="Food.IsAvailable" class="form-control">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+
+                </select>
                 <span asp-validation-for="Food.IsAvailable" class="text-danger"></span>
             </div>
             <div class="form-group">

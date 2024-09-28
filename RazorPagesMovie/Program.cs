@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RazorPagesMovie.Data;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services.AddDbContext<RazorPagesMovieContext>(options =>
 builder.Services.AddSingleton<RazorPagesMovie.Services.InvoiceNoGenerator>();
 builder.Services.AddScoped<RazorPagesMovie.Services.ReservationService>();
 builder.Services.AddScoped<RazorPagesMovie.Services.BillingTransactionService>();
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<RazorPagesMovieContext>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -31,7 +35,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthentication(); // Enable authentication
+app.UseAuthorization(); // Enable authorization
 
 app.MapRazorPages();
 
