@@ -1,12 +1,27 @@
 ﻿@page
 @model RazorPagesMovie.Pages.Calender.CalendarViewModel
 
-<div class="card mb-2" style="background-color:#295F98">
-    <div class="card-body d-flex justify-content-center align-items-center mb-2" style="height: 50px ; overflow: hidden;">
-        <h2 style="color: white">Reservations Calender</h2>
+<link rel="stylesheet" href="~/css/calender.css" />
+
+
+<div class="card mb-2" id="headbox">
+    <div class="card-body d-flex justify-content-center align-items-center mb-2">
+        <h2 class="m-0">Reservations Calendar</h2>
     </div>
 </div>
-<!-- Wrapper for the calendar table to enable horizontal scrolling -->
+
+<!-- Date Range Selector -->
+<div class="d-flex justify-content-center mb-3">
+    <label for="startDate" class="me-2">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control me-2" />
+
+    <label for="endDate" class="me-2">End Date:</label>
+    <input type="date" id="endDate" name="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control me-2" />
+
+    <button id="filterButton" class="btn btn-primary">Filter</button>
+</div>
+
+<!-- Calendar Table (same as before) -->
 <div class="calendar-wrapper">
     <table>
         <thead>
@@ -19,18 +34,31 @@
             </tr>
         </thead>
         <tbody>
+            @{
+                // Create a lookup for reservations based on RoomId and Date
+                var reservationLookup = Model.Reservations
+                .Select(r => new { r.RoomId, r.CheckInDate, r.CheckOutDate, r.ResevationId }) // Include reservation Id
+                .ToList();
+            }
             @foreach (var room in Model.Rooms)
             {
                 <tr>
                     <td>@room.RoomNo</td>
                     @foreach (var date in Model.DateRange)
                     {
-                        var reservation = Model.Reservations
-                        .FirstOrDefault(r => r.RoomId == room.Id && r.CheckInDate <= date && r.CheckOutDate >= date);
+                        // Find the reservation for this room and date
+                        var reservation = reservationLookup
+                        .FirstOrDefault(r =>
+                        r.RoomId == room.Id &&
+                        r.CheckInDate <= date &&
+                        r.CheckOutDate >= date);
 
                         if (reservation != null)
                         {
-                            <td class="reserved"></td>
+                            // Create a link for the reserved date
+                            <td class="reserved">
+                                <a href="/Billing?id=@reservation.ResevationId" style="color: white; text-decoration: none;">...</a>
+                            </td>
                         }
                         else
                         {
@@ -43,31 +71,30 @@
     </table>
 </div>
 
-<!-- Styles for the calendar -->
-<style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
 
-    table, th, td {
-        border: 1px solid black;
-        padding: 10px;
-        text-align: center;
-    }
 
-    .reserved {
-        background-color: #FFD700;
-    }
+<script>
+    $(document).ready(function () {
+        $('#filterButton').click(function () {
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
 
-    /* Wrapper to enable horizontal scrolling */
-    .calendar-wrapper {
-        overflow-x: auto; /* Adds horizontal scroll when necessary */
-        max-width: 100%; /* Ensures the calendar doesn't overflow beyond the container */
-    }
-
-        /* To ensure the table takes full width but can be scrolled */
-        .calendar-wrapper table {
-            width: max-content; /* Ensures the table doesn't shrink and respects its full content */
-        }
-</style>
+            // Trigger AJAX request to update the calendar view
+            $.ajax({
+                url: '@Url.Page("/Calender/CalendarView")',
+                type: 'GET',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate
+                },
+                success: function (response) {
+                    // Update the calendar with the new data
+                    $('body').html(response);
+                },
+                error: function (error) {
+                    alert("Error fetching data.");
+                }
+            });
+        });
+    });
+</script>

@@ -5,50 +5,49 @@
     ViewData["Title"] = "Index";
 }
 
-<div class="card mb-2" style="background-color:#295F98">
-    <div class="card-body d-flex justify-content-center align-items-center mb-2" style="height: 50px ; overflow: hidden;">
-        <h2 style="color: white">Foods</h2>
+<link rel="stylesheet" href="~/css/table.css" />
+
+
+<div class="card mb-2" id="headbox">
+    <div class="card-body d-flex justify-content-center align-items-center mb-2">
+        <h2 class="m-0">Foods</h2>
     </div>
 </div>
-
-
 <p>
     <a asp-page="Create" class="btn btn-primary btn-success">Add Food</a>
 </p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Food[0].FoodName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Food[0].FoodDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Food[0].Price)
-            </th>
-            <th>
-                Availability
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Food) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FoodName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FoodDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-       
-
-
+ 
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Food[0].FoodName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Food[0].FoodDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Food[0].Price)
+                </th>
+                <th>
+                    Availability
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Food) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FoodName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FoodDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
                 <td>
                     @{
                         string IsAvailableText = item.IsAvailable switch
@@ -59,15 +58,13 @@
                     }
                     @IsAvailableText
                 </td>
-
-
-
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

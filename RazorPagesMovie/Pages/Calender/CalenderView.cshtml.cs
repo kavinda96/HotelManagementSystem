@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 namespace RazorPagesMovie.Pages.Calender
 {
     [Authorize]
@@ -25,22 +26,26 @@ namespace RazorPagesMovie.Pages.Calender
         public List<DateTime> DateRange { get; set; }
 
         public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }  // New EndDate property
 
         // OnGet method to fetch room and reservation data
-        public async Task OnGetAsync(DateTime? startDate)
+        public async Task OnGetAsync(DateTime? startDate, DateTime? endDate)
         {
             // Set default start date to today if not provided
             StartDate = startDate ?? DateTime.Today;
 
-            // Create a 30-day date range starting from StartDate
-            DateRange = Enumerable.Range(0, 30).Select(i => StartDate.AddDays(i)).ToList();
+            // Set default end date to one month from start date if not provided
+            EndDate = endDate ?? StartDate.AddDays(29);
+
+            // Create a date range based on the start and end date
+            DateRange = Enumerable.Range(0, (EndDate - StartDate).Days + 1).Select(i => StartDate.AddDays(i)).ToList();
 
             // Fetch all rooms
             Rooms = await _context.Room.ToListAsync();
 
             // Fetch reservations that overlap with the selected date range
             Reservations = await _context.RoomReservationcs
-                .Where(r => r.CheckInDate <= DateRange.Last() && r.CheckInDate >= DateRange.First())
+                .Where(r => r.CheckInDate <= DateRange.Last() && r.CheckOutDate >= DateRange.First())
                 .ToListAsync();
         }
     }

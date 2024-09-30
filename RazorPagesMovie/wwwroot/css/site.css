@@ -60,10 +60,32 @@ html {
    
 }
 
+#headbox {
+    background-color: #324960;
+}
+
+#headbox {
+    margin-bottom: 10px; /* This handles the 'mb-2' (margin-bottom) */
+}
+
+    #headbox .card-body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        overflow: hidden;
+        margin-bottom: 10px; /* Handles the 'mb-2' on card-body */
+    }
+
+    #headbox h2 {
+        color: white;
+        margin: 0; /* Removes default margin (m-0) */
+        line-height: 50px; /* Vertically centers the text */
+    }
 
 
 .alert-primary #mandatory {
-   /* Pushes the mandatory div to the right end */
+    /* Pushes the mandatory div to the right end */
 }
 
 .center-text {
@@ -116,3 +138,15 @@ html {
 body {
     font-family: 'Open Sans', sans-serif;
 }
+
+
+
+
+
+
+
+
+
+
+
+

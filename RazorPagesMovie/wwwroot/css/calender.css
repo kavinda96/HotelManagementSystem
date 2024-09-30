@@ -1,0 +1,42 @@
+﻿/* Date Range Selector styling */
+.date-range-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+    .date-range-selector input {
+        margin: 0 5px;
+    }
+
+/* Calendar Styles */
+.calendar-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+.reserved {
+    background-color: #FFD700;
+}
+
+@media (max-width: 768px) {
+    .calendar-wrapper table {
+        width: auto;
+    }
+
+    .date-range-selector {
+        flex-direction: column;
+        align-items: center;
+    }
+}
