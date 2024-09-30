@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorPagesMovie.Models;
 
 namespace RazorPagesMovie.Pages.Homepage
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;

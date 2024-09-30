@@ -1,0 +1,28 @@
+﻿@page
+@model RazorPagesMovie.Pages.UserManagement.IndexModel
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<h1>User Management</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>
+                    <a asp-page="EditUser" asp-route-id="@user.Id">Edit</a>
+                    <a asp-page-handler="Delete" asp-route-id="@user.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -74,6 +74,32 @@
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-page="/Homepage/Index">RITAS GROUP</a>
+
+                <!-- Authentication Links -->
+                <ul class="navbar-nav ms-auto">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                Hello, @User.Identity.Name!
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                        </li>
+                    }
+                </ul>
             </div>
         </nav>
     </header>
@@ -88,7 +114,6 @@
                 <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index">All Reservations</a>
             </li>
             <li class="nav-item">
-
                 <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-handler="Upcoming">Upcoming Reservations</a>
             </li>
             <li class="nav-item">
@@ -100,12 +125,9 @@
             <li class="nav-item">
                 <a class="nav-link text-muted" asp-area="" asp-page="/Calender/CalenderView">Calender</a>
             </li>
-
             <li class="nav-item">
                 <a class="nav-link text-muted" asp-area="" asp-page="/FoodData/Index">Foods</a>
             </li>
-           
-            <!-- Add more nav items as needed -->
         </ul>
     </div>
 
