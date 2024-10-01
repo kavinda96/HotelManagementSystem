@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RazorPagesMovie.Data;
 using RazorPagesMovie.Models;
+using RazorPagesMovie.Services;
 
 namespace RazorPagesMovie.Pages.Reserve
 {
@@ -16,10 +17,13 @@ namespace RazorPagesMovie.Pages.Reserve
     public class EditModel : PageModel
     {
         private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
+        private readonly ReservationService _reservationService;
 
-        public EditModel(RazorPagesMovie.Data.RazorPagesMovieContext context)
+
+        public EditModel(RazorPagesMovie.Data.RazorPagesMovieContext context, ReservationService reservationService)
         {
             _context = context;
+            _reservationService = reservationService;
         }
 
         [BindProperty]
@@ -106,6 +110,39 @@ namespace RazorPagesMovie.Pages.Reserve
 
             return RedirectToPage("./Index");
         }
+
+        public async Task<IActionResult> OnGetAvailableRoomsAsync(string checkInDate, string checkOutDate, string[] selectedRoomIds)
+        {
+            if (DateTime.TryParse(checkInDate, out DateTime parsedCheckInDate) &&
+                DateTime.TryParse(checkOutDate, out DateTime parsedCheckOutDate))
+            {
+                // Get all available rooms
+                var availableRooms = await _reservationService.GetAvailableRooms(parsedCheckInDate, parsedCheckOutDate);
+
+                // Get previously selected rooms
+                var selectedRooms = await _context.Room
+                    .Where(r => selectedRoomIds.Contains(r.Id.ToString()))
+                    .ToListAsync();
+
+                // Add selected rooms to available rooms list
+                if (selectedRooms != null && selectedRooms.Any())
+                {
+                    availableRooms = availableRooms.Union(selectedRooms).ToList(); // Combine both lists
+                }
+
+                if (availableRooms == null || !availableRooms.Any())
+                {
+                    return Content("<div class='alert alert-warning'>No rooms available for the selected dates.</div>", "text/html");
+                }
+
+                return Partial("_AvailableRoomsPartial", availableRooms);
+            }
+            else
+            {
+                return Content("<div class='alert alert-danger'>Invalid date format.</div>", "text/html");
+            }
+        }
+
 
         private bool ReservationsExists(int id)
         {

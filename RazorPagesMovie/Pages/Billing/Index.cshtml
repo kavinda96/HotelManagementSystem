@@ -3,11 +3,9 @@
 @{
     ViewData["Title"] = "Index";
 }
-@* <div class="card mb-2" id="headbox">
-    <div class="card-body d-flex justify-content-center align-items-center mb-2" style="height: 50px ; overflow: hidden;">
-        <h2 style="color: white">Billing Information</h2>
-    </div>
-</div> *@
+
+
+<input type="hidden" id="reservationId" value="@Model.Reservation.Id" />
 
 <div class="card mb-2" id="headbox">
     <div class="card-body d-flex justify-content-center align-items-center mb-2">
@@ -182,8 +180,8 @@
                     <tr>
                         <td class="fw-bold">Bill Item</td>
                         <td>
-                            <input id="foodItemSearch" class="form-control" placeholder="Search for a food item" required />
-                            <input type="hidden" id="selectedFoodId" asp-for="NewTransaction.BillingItem" />
+                            <input id="foodItemSearch" class="form-control"  asp-for="NewTransaction.BillingItem" placeholder="Search for a food item" required />
+                            <input type="hidden" id="selectedFoodId" />
                         </td>
                     </tr>
                     <tr>
@@ -234,15 +232,30 @@
     </div>
         <div class="container">
             <div class="row">
-                <!-- First Container -->
-                <div class="col-md-6">
+
+                <div class="col-md-4">
                     <div class="bordered-container p-3 d-flex align-items-center justify-content-between">
-                        <p class="mb-0">Print Finalized PDF</p>
-                        <button class="btn btn-primary" onclick="printPDF()">Print PDF</button>
+                        <p class="mb-0">Additional charges</p>
+
+
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
+                            Add
+                        </button>
+
+
+                    </div>
+                </div>
+
+
+                <!-- First Container -->
+                <div class="col-md-4">
+                    <div class="bordered-container p-3 d-flex align-items-center justify-content-between">
+                        <p class="mb-0">Print Invoice</p>
+                        <button class="btn btn-primary" onclick="printPDF()">Print </button>
                     </div>
                 </div>
                 <!-- Second Container -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="bordered-container p-3 d-flex align-items-center justify-content-between">
                         <p class="mb-0">Finalize the Bill</p>
                         <button class="btn btn-warning" onclick="finalizeBill()">Finalize </button>
@@ -503,10 +516,49 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
 
-    
+    <div class="modal fade" id="additionalChargesModal" tabindex="-1" aria-labelledby="additionalChargesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="additionalChargesModalLabel">Additional Charges</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="additionalChargesForm">
+
+                        <input type="hidden" id="invoiceNo" value="@Model.Reservation.Id" />
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="item" class="form-label">Item</label>
+                            <input type="text" class="form-control" id="item" name="item" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="qty" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="qty" name="qty" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveAdditionalCharges">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 }
@@ -562,6 +614,7 @@ else
             select: function(event, ui) {
                 $('#selectedFoodId').val(ui.item.id);
                 $('#itemPrice').val(ui.item.price);
+                    $('#foodItemSearch').val(ui.item.foodName);
             }
         });
     });
@@ -737,22 +790,9 @@ else
             
             return confirm("Are you sure you want to update the check-out date?");
         }
-        // document.getElementById('checkInButton').addEventListener('click', function(event) {
-        //     event.preventDefault(); // Prevent the default form submission
-            
-        //     Swal.fire({
-        //         title: 'Are you sure?',
-        //         text: 'Do you want to check in?',
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonText: 'Yes, check in!',
-        //         cancelButtonText: 'No, cancel'
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-        //             document.getElementById('checkInForm').submit(); // Submit the form if confirmed
-        //         }
-        //     });
-        // });
+        
+
+
 
 
         $("#checkInForm").submit(function (event) {
@@ -791,6 +831,44 @@ else
                 }
             });
         });
+
+
+        $(document).ready(function () {
+            $('#saveAdditionalCharges').click(function () {
+                var formData = {
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(), // Antiforgery token
+                    invoiceNo: $('#invoiceNo').val(),
+                    category: $('#category').val(),
+                    item: $('#item').val(),
+                    amount: parseFloat($('#amount').val()), // Convert to decimal
+                    qty: parseInt($('#qty').val()),         // Convert to integer
+                    description: $('#description').val()
+                };
+
+                $.ajax({
+                    url: '/Billing/Index?handler=AddAdditionalCharges', // Adjust the URL for your Razor Page handler
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Additional charges added successfully!');
+                            $('#additionalChargesModal').modal('hide');
+
+                            // Redirect to the specified URL after success
+                            window.location.href = '/Billing?id=' + $('#invoiceNo').val(); // Redirect using invoiceNo
+                        } else {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error: ", xhr.responseText);
+                        alert('An error occurred while saving additional charges.');
+                    }
+                });
+            });
+        });
+
+
 
 
 

@@ -86,6 +86,42 @@ namespace RazorPagesMovie.Pages.Billing
             return RedirectToPage("./Index");
         }
 
+        public IActionResult OnPostAddAdditionalCharges(string invoiceNo, string category, string item, decimal amount, int qty, string description)
+        {
+            _logger.LogInformation("Received invoiceNo: {InvoiceNo}, Category: {Category}, Item: {Item}, Amount: {Amount}, Qty: {Qty}, Description: {Description}",
+                invoiceNo, category, item, amount, qty, description);
+
+            if (string.IsNullOrEmpty(category)  || string.IsNullOrEmpty(invoiceNo))
+            {
+                return new JsonResult(new { success = false, error = "All fields are required." });
+            }
+
+            // Try to parse the invoice number
+            if (!int.TryParse(invoiceNo, out int parsedInvoiceNo))
+            {
+                return new JsonResult(new { success = false, error = "Invalid invoice number." });
+            }
+
+            // Create a new billing transaction object
+            var newTransaction = new Bill
+            {
+                Category = category,  
+                BillingItem =item,
+                ItemPrice = amount,
+                ItemQty = qty,
+                Description = description,
+                InvoiceNo = parsedInvoiceNo, // Set the parsed invoice number
+                createdDate = DateTime.Now
+            };
+
+            // Add the transaction to the database
+            _context.BillingTransactions.Add(newTransaction);
+            _context.SaveChanges();
+
+            return new JsonResult(new { success = true });
+        }
+
+
 
         public async Task<IActionResult> OnPostDeletedddAsync(int id)
         {

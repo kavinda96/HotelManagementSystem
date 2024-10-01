@@ -5,106 +5,127 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Reservations</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Reservations.Id" />
-            <div class="form-group">
-                <label asp-for="Reservations.CustomerName" class="control-label"></label>
-                <input asp-for="Reservations.CustomerName" class="form-control" />
-                <span asp-validation-for="Reservations.CustomerName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.NIN" class="control-label"></label>
-                <input asp-for="Reservations.NIN" class="form-control" />
-                <span asp-validation-for="Reservations.NIN" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.Address" class="control-label"></label>
-                <input asp-for="Reservations.Address" class="form-control" />
-                <span asp-validation-for="Reservations.Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.Country" class="control-label"></label>
-                <input asp-for="Reservations.Country" class="form-control" />
-                <span asp-validation-for="Reservations.Country" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.Mobile" class="control-label"></label>
-                <input asp-for="Reservations.Mobile" class="form-control" />
-                <span asp-validation-for="Reservations.Mobile" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.CheckInDate" class="control-label"></label>
-                <input asp-for="Reservations.CheckInDate" class="form-control" />
-                <span asp-validation-for="Reservations.CheckInDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.ExpectedCheckOutDate" class="control-label"></label>
-                <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" />
-                <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.GuestCount" class="control-label"></label>
-                <input asp-for="Reservations.GuestCount" class="form-control" />
-                <span asp-validation-for="Reservations.GuestCount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reservations.RealCheckOutDate" class="control-label"></label>
-                <input asp-for="Reservations.RealCheckOutDate" class="form-control" />
-                <span asp-validation-for="Reservations.RealCheckOutDate" class="text-danger"></span>
-            </div>
-
-
-            <div class="form-group">
-                <label>Select Rooms:</label>
-                <div>
-                    @if (Model.Rooms != null && Model.Rooms.Any())
-                    {
-                        @foreach (var room in Model.Rooms)
-                        {
-                            <div class="card mb-3" style="cursor: pointer; width: 18rem;" onclick="toggleCardDetails(@room.Id)">
-                                <div class="card-header">
-                                    Room @room.RoomNo (@room.RoomType)
-                                    <input type="checkbox" class="form-check-input float-right"
-                                           name="SelectedRoomIds"
-                                           value="@room.Id"
-                                           style="border: 2px solid #000;" />
-                                </div>
-                                <div class="card-body collapse" id="roomDetails-@room.Id">
-                                    <p>Details about Room @room.RoomNo</p>
-                                    <p>Room Type: @room.RoomType</p>
-                                    <p>Price: $100</p>
-                                    <!-- Additional room details can go here -->
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="alert alert-warning">No vacant rooms available.</div>
-                    }
-                </div>
-            </div>
-
-
-
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="card mb-2" id="headbox">
+    <div class="card-body d-flex justify-content-center align-items-center mb-2">
+        <h2 class="m-0">Update Reservation</h2>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
+
+<hr />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8" style="margin-bottom:30px">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5>Update form</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="Reservations.Id" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <table class="table table-borderless">
+                            <tbody>
+                                <!-- Reservation Details Form Fields -->
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.CustomerName" class="control-label"></label>
+                                            <input asp-for="Reservations.CustomerName" class="form-control" />
+                                            <span asp-validation-for="Reservations.CustomerName" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.NIN" class="control-label"></label>
+                                            <input asp-for="Reservations.NIN" class="form-control" />
+                                            <span asp-validation-for="Reservations.NIN" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.Address" class="control-label"></label>
+                                            <input asp-for="Reservations.Address" class="form-control" />
+                                            <span asp-validation-for="Reservations.Address" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.Country" class="control-label"></label>
+                                            <input asp-for="Reservations.Country" class="form-control" />
+                                            <span asp-validation-for="Reservations.Country" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.Mobile" class="control-label"></label>
+                                            <input asp-for="Reservations.Mobile" class="form-control" />
+                                            <span asp-validation-for="Reservations.Mobile" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.GuestCount" class="control-label"></label>
+                                            <input asp-for="Reservations.GuestCount" class="form-control" />
+                                            <span asp-validation-for="Reservations.GuestCount" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                              
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.CheckInDate" class="control-label"></label>
+
+                                            <input asp-for="Reservations.CheckInDate" class="form-control" id="checkInDate" name="checkInDate" />
+
+                                            <span asp-validation-for="Reservations.CheckInDate" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.ExpectedCheckOutDate" class="control-label"></label>
+                                            @* <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" /> *@
+                                           <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" />
+
+                                            <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Check Availability Form -->
+                        <div class="form-group">
+                            <button type="button" onclick="checkAvailability()" class="btn btn-warning">Check Availability</button>
+                        </div>
+
+                        <h4 style="margin-top :20px">Available Rooms</h4>
+                        <div id="availableRooms">
+                            <p>Select check-in and check-out dates to see available rooms.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-success btn-block" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+           
+        </div>
+    </div>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -118,6 +139,37 @@
             } else {
                 details.classList.add('collapse');
                 details.classList.remove('show');
+            }
+        }
+
+
+        function checkAvailability() {
+            var checkInDate = document.getElementById('checkInDate').value;
+            var checkOutDate = document.getElementById('checkOutDate').value;
+
+            // Get the previously selected room IDs
+            var selectedRoomIds = $('input[name="SelectedRoomIds"]:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            if (checkInDate && checkOutDate) {
+                $.ajax({
+                    url: '/Reserve/Edit?handler=AvailableRooms',
+                    type: 'GET',
+                    data: {
+                        checkInDate: new Date(checkInDate).toISOString(),
+                        checkOutDate: new Date(checkOutDate).toISOString(),
+                        selectedRoomIds: selectedRoomIds // Include selected room IDs
+                    },
+                    success: function (result) {
+                        $('#availableRooms').html(result);
+                    },
+                    error: function () {
+                        alert("Error fetching available rooms.");
+                    }
+                });
+            } else {
+                alert("Please select both check-in and check-out dates.");
             }
         }
     </script>
