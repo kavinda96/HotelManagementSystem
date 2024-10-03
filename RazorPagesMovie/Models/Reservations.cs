@@ -59,5 +59,7 @@ namespace RazorPagesMovie.Models
 
         [DataType(DataType.Date)]
         public DateTime? ExpectedCheckInDate { get; set; }
+
+        public decimal DiscountRate { get; set; } = 0;
     }
 }

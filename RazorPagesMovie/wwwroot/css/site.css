@@ -60,6 +60,12 @@ html {
    
 }
 
+#mainnavbar {
+
+    padding-bottom: 15px;
+
+}
+
 #headbox {
     background-color: #324960;
 }
@@ -138,7 +144,9 @@ html {
 body {
     font-family: 'Open Sans', sans-serif;
 }
-
+/*body {
+    font-family: 'Poppins', sans-serif;
+}*/
 
 
 

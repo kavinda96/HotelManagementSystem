@@ -163,7 +163,7 @@ namespace RazorPagesMovie.Pages.Billing
                 InvoiceNo = sid,
                 createdDate = DateTime.Now,
                 Category = "3",
-                Description = "Check out Initialized: Room Charges for " + datediff + " days stay at Room No " + selectedRooms,
+                Description = "Check out :Charges for " + datediff + " days stay at Room No " + selectedRooms,
                 ItemPrice = TotalRoomCharge,
                 ItemQty = 1
             };
@@ -200,7 +200,7 @@ namespace RazorPagesMovie.Pages.Billing
                 InvoiceNo = sid,
                 createdDate = DateTime.Now,
                 Category = "3",
-                Description = "Check In Initialized for rooms: " + selectedRooms + " On Date: " + Reservation.CheckInDate.ToString("yyyy-MM-dd")
+                Description = "Check In - rooms: " + selectedRooms + " On Date: " + Reservation.CheckInDate.ToString("yyyy-MM-dd")
             };
 
             _context.BillingTransactions.Add(newTransaction);
@@ -210,6 +210,51 @@ namespace RazorPagesMovie.Pages.Billing
 
             return RedirectToPage("./Index", new { id = sid });
         }
+
+        public async Task<IActionResult> OnPostEditCheckoutDateAsync(int sid)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return Page();
+            //}
+
+            var reservationToUpdate = _reservationService.GetReservationById(sid);
+
+            if (reservationToUpdate == null)
+            {
+                return NotFound();
+            }
+            reservationToUpdate.ExpectedCheckOutDate = Reservation.ExpectedCheckOutDate;
+            _reservationService.UpdateCheckoutDateForReservation(reservationToUpdate.Id, Reservation.ExpectedCheckOutDate);
+
+
+           
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("./Index", new { id = sid });
+        }
+
+
+        public async Task<IActionResult> OnPostDiscountAsync(int sid)
+        {
+            var reservationToUpdate = _reservationService.GetReservationById(sid);
+
+            if (reservationToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            // Update the check-in date
+            reservationToUpdate.DiscountRate = Reservation.DiscountRate;                    
+            
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("./Index", new { id = sid });
+        }
+
+
+
 
         public async Task<JsonResult> OnGetFoodItems(string term)
         {
@@ -229,28 +274,25 @@ namespace RazorPagesMovie.Pages.Billing
             }
         }
 
-        public async Task<IActionResult> OnPostEditCheckoutDateAsync()
+        public async Task<JsonResult> OnGetBeverageItems(string term)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return Page();
+                var beverageItems = await _context.Beverage
+                                              .Where(f => f.BeverageName.Contains(term))
+                                              .Select(f => new { id = f.Id, beverageName = f.BeverageName, price = f.Price })
+                                              .ToListAsync();
+
+                return new JsonResult(beverageItems);
             }
-
-            var reservationToUpdate = await _context.Reservations.FindAsync(Reservation.Id);
-
-            if (reservationToUpdate == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                // Return a valid JSON error response
+                return new JsonResult(new { success = false, message = ex.Message });
             }
-            _reservationService.UpdateCheckoutDateForReservation(Reservation.Id, Reservation.ExpectedCheckOutDate);
-            
-
-            reservationToUpdate.ExpectedCheckOutDate = Reservation.ExpectedCheckOutDate;
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index", new { id = Reservation.Id }); // Adjust the redirection as needed
         }
+
+     
 
         public async Task<IActionResult> OnPostBillFinalizedAsync(int ReservationId)
         {

@@ -83,27 +83,29 @@
                         <tr>
                             <td>Check-In Initialize:</td>
                             <td>
-                                <form id="checkInForm" method="post" asp-page-handler="CheckIn" class="d-flex align-items-center">
+                                <form id="checkInForm" method="post" asp-page-handler="CheckIn">
+                                    <div class="d-flex">
                                     <input type="hidden" name="sid" value="@Model.Reservation.Id" />
 
                                     <!-- Date Field -->
-                                    <input asp-for="Reservation.CheckInDate" class="form-control mb-2 mr-2" style="max-width: 200px;" />
+                                        <input asp-for="Reservation.CheckInDate" class="form-control me-2" />
 
                                     <!-- Submit Button -->
-                                    <button type="submit" class="btn btn-success mb-2 btn-sm" id="checkinBtn">
-                                        Check In
+                                    <button type="submit" class="btn btn-success btn-sm" id="checkinBtn">
+                                        CheckIn
                                     </button>
+                                    </div>
                                 </form>
                             </td>
                         </tr>
-                    <tr class="keep-row">
+                   @*  <tr class="keep-row">
                         <td>Check-In Date:</td>
                         <td>@Model.Reservation.CheckInDate.ToShortDateString()</td>
-                    </tr>
+                    </tr> *@
 
 
 
-                    <tr class="print-exclude">
+                    @* <tr class="print-exclude">
                         <td>Check-Out Date:</td>
                 
                         <td>
@@ -111,9 +113,26 @@
                             @await Html.PartialAsync("_partialEditCheckoutDate", @Model.Reservation)
                           
                         </td>
-                    </tr>
+                    </tr> *@
 
-                  
+                        <tr>
+                            <td>Check-Out Date:</td>
+                            <td>
+                                <form id="checkOutDateForm" method="post" asp-page-handler="EditCheckoutDate">
+                                    <div class="d-flex">
+                                        <input type="hidden" name="sid" value="@Model.Reservation.Id" />
+
+                                        <!-- Date Field -->
+                                        <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" />
+
+                                        <!-- Submit Button -->
+                                        <button type="submit" class="btn btn-primary btn-sm" id="checkOutDateBtn">
+                                            Update
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
 
                  
                    
@@ -123,10 +142,8 @@
                         <td>Initialize Check-Out</td>
                         <td>
 
+                                <form method="post"  asp-page-handler="CheckOut" id="checkOutForm" class="text-right" style="margin-right: 70px;">
 
-@*                             <form method="post" asp-page-handler="CheckOut" id="checkOutForm">
- *@
-                                <form method="post" asp-page-handler="CheckOut" id="checkOutForm" class="text-right" style="margin-right: 70px;">
                                     <input type="hidden" name="sid" value="@Model.Reservation.Id" />
                                     <button type="submit" class="btn btn-danger btn-sm" id="checkOutBtn">
                                    Check Out
@@ -134,6 +151,30 @@
                             </form>
                         </td>
                     </tr>
+
+                        <tr class="print-exclude">
+                            <td>Discount Rate:</td>
+                            <td>
+                               
+                                    
+                                   
+                                    <form method="post" asp-page-handler="Discount" id="discountForm">
+                                    <div class="d-flex">
+
+                                     
+                                        <input type="hidden" name="sid" value="@Model.Reservation.Id" />
+                                        <input   asp-for="Reservation.DiscountRate" class="form-control me-2" value="@Model.Reservation.DiscountRate" type="number" min="0" max="100" step="0.01" />
+                                        <button type="submit" class="btn btn-primary btn-sm" id="updateDiscountBtn">Update</button>
+                                    </div>
+                                    </form>
+                                
+                                
+                                
+                                
+                               
+                            </td>
+                        </tr>
+
 
 
                    
@@ -156,32 +197,36 @@
     
     <div class="col-md-6">
         <div class="print-exclude">
-        <table class="table-borderless" style="min-width:100%">
-
-           @*  <table class="table"> *@
+            <table class="table-borderless" style="min-width:100%">
                 <thead>
                     <tr>
-                        <th colspan="2" class="text-center">Add Billing Transactions</th>
+                        <th colspan="2" class="text-center">Food & Beverage Billing</th>
                     </tr>
                 </thead>
                 <tbody>
                     <form method="post" id="billingForm">
                     <tr>
-                        <td class="fw-bold">Billing Category</td>
+                        <td class="fw-bold">Food Category</td>
                         <td>
-                            <select asp-for="NewTransaction.Category" class="form-control">
+                            <select asp-for="NewTransaction.Category" class="form-control" id="billingCategory">
                                 <option value="1">Food</option>
-                                <option value="2">VAS</option>
-                                <option value="3">ETC</option>
+                                <option value="2">Beverages</option>
+                               @*  <option value="3">VAS</option>
+                                <option value="4">ETC</option> *@
                             </select>
                             <span asp-validation-for="NewTransaction.Category" class="text-danger"></span>
                         </td>
                     </tr>
                     <tr>
-                        <td class="fw-bold">Bill Item</td>
+                        <td class="fw-bold">Food Item</td>
                         <td>
-                            <input id="foodItemSearch" class="form-control"  asp-for="NewTransaction.BillingItem" placeholder="Search for a food item" required />
-                            <input type="hidden" id="selectedFoodId" />
+                            <div class="d-flex">
+                                <input id="foodItemSearch" class="form-control me-2" asp-for="NewTransaction.BillingItem" placeholder="Search for a food item" disabled />
+                                <input type="hidden" id="selectedFoodId" />
+
+                                <input id="beverageItemSearch" class="form-control ms-2" asp-for="NewTransaction.BillingItem" placeholder="Search for a beverage" disabled />
+                                <input type="hidden" id="selectedBeverageId" />
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -198,7 +243,6 @@
                             <span asp-validation-for="NewTransaction.ItemQty" class="text-danger"></span>
                         </td>
                     </tr>
-
                     <tr>
                         <td class="fw-bold">Description</td>
                         <td>
@@ -221,13 +265,12 @@
                             <input type="hidden" asp-for="Reservation.NIN" />
 
                             <button type="submit" id="submitBtn" class="btn btn-success rounded-pill mt-2 mb-4" disabled>Add Transaction</button>
-
                         </td>
                     </tr>
-                   
                     </form>
                 </tbody>
-       </table>
+            </table>
+
 
     </div>
         <div class="row g-3">
@@ -274,28 +317,26 @@
 
 @* this is to printing pdf purpose *@
 <div class="col-md-12" id="invoice_header">
-<table class="header-table" style="display:none">
-    <tr>
-      <th>
-            <h1 class="name">Hotel Ritas</h1>
-        
-        </th>
-       
-    </tr>
+    <table class="header-table" style="display:none">
+        <tr>
+            <th>
+                <h1 class="name">Hotel Ritas</h1>
+            </th>
+        </tr>
         <tbody>
-    <tr>
-         
-            <td>
-               
-                Narigama, Hikkaduwa
-               
-            </td>
-
-    </tr>
-
+            <tr>
+                <td style="font-size: 12px;">
+                    Narigama, Hikkaduwa<br>
+                    <span style="font-size: 10px;">
+                        Phone: +94 71 123 4567<br>
+                        Email: info@hotelritas.com
+                    </span>
+                </td>
+            </tr>
         </tbody>
-</table>
+    </table>
 </div>
+
 
 <div class="col-md-6" id="invoice_display">
 <table class="table table-bordered invoice-info"  style="display:none" >
@@ -390,19 +431,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Display Billing Transactions -->
 <h4 class="border border-2 border" style="background-color: #8294C4; color:azure;">Billing Transactions</h4>
 @if (Model.BillingTransactions != null && Model.BillingTransactions.Any())
@@ -443,12 +471,30 @@
                         }
                         else if (@transaction.Category == "2")
                         {
-                            <div>VAS</div>
+                            <div>Beverages</div>
                         }
                         else if (@transaction.Category == "3")
                         {
-                            <div>ETC</div>
+                            <div>Additional</div>
                         }
+                        else if (@transaction.Category == "4")
+                                {
+                                    <div>VAS</div>
+                                }
+                        else if (@transaction.Category == "5")
+                                {
+                                    <div>OTHER</div>
+                                }
+
+
+
+
+                              
+
+
+
+
+
                     </td>
                     <td>@transaction.BillingItem</td>
                     <td>@transaction.Description</td>
@@ -483,7 +529,23 @@
         </tbody>
     </table>
     </div>
-      </div>
+  </div>
+
+    <div id="pdf_footer" style="display:none;">
+        <table class="footer-table" style="width: 100%; margin-top: 20px;">
+            <tr>
+                <td style="font-size: 10px;">
+                    <strong>Terms and Conditions:</strong><br>
+                    1. All payments are non-refundable.<br>
+                    2. Check-in time is at 2:00 PM and check-out time is at 11:00 AM.<br>
+                    3. Guests are responsible for any damages to the property.<br>
+                    4. Please present your ID upon check-in.<br>
+                    5. Management reserves the right to refuse service.
+                </td>
+            </tr>
+        </table>
+    </div>
+
 
 
 
@@ -528,8 +590,16 @@
                         <input type="hidden" id="invoiceNo" value="@Model.Reservation.Id" />
                         <div class="mb-3">
                             <label for="category" class="form-label">Category</label>
-                            <input type="text" class="form-control" id="category" name="category" required>
-                        </div>
+                            <select asp-for="NewTransaction.Category" class="form-control" id="category" name="category" required>
+                               @*  <option value="1">Food</option>
+                                <option value="2">Beverages</option> *@
+                                  <option value="3">Additional Charges</option>
+                                  <option value="4">VAS</option>
+                                  <option value="5">OTHER</option>
+                            </select>
+                            <span asp-validation-for="NewTransaction.Category" class="text-danger"></span>
+@*                             <input type="text" class="form-control" id="category" name="category" required>
+ *@                        </div>
                         <div class="mb-3">
                             <label for="item" class="form-label">Item</label>
                             <input type="text" class="form-control" id="item" name="item" required>
@@ -571,10 +641,10 @@ else
             background-color: #f9f9f9; /* Light background color */
         }
 
-        #checkinBtn {
+       /*  #checkinBtn {
             margin-right: 70px;
         }
-
+ */
       
     </style>
 
@@ -588,6 +658,9 @@ else
 
     <script>
 
+
+
+        //below is the food search auto complete in billing page
     $(document).ready(function() {
         $("#foodItemSearch").autocomplete({
             source: function(request, response) {
@@ -614,7 +687,65 @@ else
             }
         });
     });
+    
+    //below is the beverage search auto complete in billing page
+        $(document).ready(function () {
+            $("#beverageItemSearch").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Billing?handler=BeverageItems",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.beverageName,
+                                    value: item.beverageName,
+                                    id: item.id,
+                                    price: item.price
+                                };
+                            }));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $('#selectedBeverageId').val(ui.item.id);
+                    $('#itemPrice').val(ui.item.price);
+                    $('#beverageItemSearch').val(ui.item.beverageName);
+                }
+            });
+        });
 
+
+
+     document.addEventListener('DOMContentLoaded', function () {
+            const categoryDropdown = document.getElementById('billingCategory');
+            const foodInput = document.getElementById('foodItemSearch');
+            const beverageInput = document.getElementById('beverageItemSearch');
+
+            // Function to handle the enabling/disabling of inputs
+            function handleCategoryChange() {
+                const selectedValue = categoryDropdown.value;
+
+                // Enable/disable based on selected category
+                if (selectedValue === "1") { // Food selected
+                    foodInput.disabled = false;
+                    beverageInput.disabled = true;
+                } else if (selectedValue === "2") { // Beverages selected
+                    foodInput.disabled = true;
+                    beverageInput.disabled = false;
+                } else { // Other categories
+                    foodInput.disabled = true;
+                    beverageInput.disabled = true;
+                }
+            }
+
+            // Set initial state
+            handleCategoryChange();
+
+            // Add event listener to the dropdown
+            categoryDropdown.addEventListener('change', handleCategoryChange);
+        });
 
         function finalizeBill() {
             // SweetAlert2 confirmation dialog
@@ -664,6 +795,13 @@ else
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
 
+                // Set font for the entire document to PT Sans
+                doc.setFont("PTSans");
+
+                // Set the header color
+                doc.setTextColor(33, 47, 60); // Adjust this to match your header color
+
+                // Invoice Header
                 doc.autoTable({
                     html: '#invoice_header table',
                     startY: 20,
@@ -673,10 +811,20 @@ else
                         font: 'PTSans'
                     },
                     headStyles: {},
+                    didParseCell: function (data) {
+                        // Reduce font size for the contact details (phone, email)
+                        if (data.cell.raw && data.cell.raw.innerText.includes('Narigama, Hikkaduwa')) {
+                            data.cell.styles.fontSize = 12;  // Set smaller font for address
+                        }
+                        if (data.cell.raw && data.cell.raw.innerText.includes('Phone:')) {
+                            data.cell.styles.fontSize = 10;  // Set smaller font for phone and email
+                        }
+                    }
                 });
 
                 const afterFirstTableY1 = doc.lastAutoTable.finalY + 10;
 
+                // Invoice Display
                 doc.autoTable({
                     html: '#invoice_display table',
                     startY: afterFirstTableY1,
@@ -695,13 +843,44 @@ else
 
                 const afterFirstTableY = doc.lastAutoTable.finalY + 10;
 
+                // Billing Transactions
                 doc.autoTable({
                     html: '#billing_table table',
                     startY: afterFirstTableY,
                     headStyles: {
-                        fillColor: [33, 47, 60]
+                        fillColor: [33, 47, 60],
+                        halign: 'center'
                     },
+                    columnStyles: {
+                        0: { halign: 'left' },  // ID column aligned to left
+                        1: { halign: 'left' },    // Date column aligned to left
+                        2: { halign: 'left' },   // Category column aligned to left
+                        3: { halign: 'center' },  // Item column aligned to center
+                        4: { halign: 'left' },   // Description column aligned to left
+                        5: { halign: 'right' },   // Amount column aligned to right
+                        6: { halign: 'right' },   // Quantity column aligned to right
+                        7: { halign: 'right' }    // Total column aligned to right
+                    }
                 });
+
+                // Calculate the position for the footer
+                const footerY = doc.internal.pageSize.height - 40; // 40 units from the bottom of the page
+
+                // Draw a line above the footer
+                doc.setLineWidth(0.5);
+                doc.line(10, footerY, 200, footerY); // Draw a line from left to right
+
+                // Set footer text color to match header
+                doc.setTextColor(33, 47, 60); // Match this color to your header
+
+                // Add Footer Text
+                doc.setFontSize(10);
+                doc.text("Terms and Conditions:", 10, footerY + 10);
+                doc.text("1. All payments are non-refundable.", 10, footerY + 15);
+                doc.text("2. Check-in time is at 2:00 PM and check-out time is at 11:00 AM.", 10, footerY + 20);
+                doc.text("3. Guests are responsible for any damages to the property.", 10, footerY + 25);
+                doc.text("4. Please present your ID upon check-in.", 10, footerY + 30);
+                doc.text("5. Management reserves the right to refuse service.", 10, footerY + 35);
 
                 const pdfBlob = doc.output('blob');
                 const url = URL.createObjectURL(pdfBlob);
@@ -710,6 +889,9 @@ else
                 console.error('jsPDF is not loaded');
             }
         }
+
+
+
 
 
         $(document).ready(function () {
@@ -815,6 +997,44 @@ else
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Do you want to check in",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form manually
+                    $(this).unbind('submit').submit();
+                }
+            });
+        });
+
+        $("#checkOutDateForm").submit(function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to update check out date",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form manually
+                    $(this).unbind('submit').submit();
+                }
+            });
+        });
+
+        $("#discountForm").submit(function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to Add a Discount",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

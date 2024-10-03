@@ -4,10 +4,10 @@
     -moz-box-sizing: border-box;
 }
 
-body {
+/*body {
     font-family: Helvetica;
     -webkit-font-smoothing: antialiased;
-}
+}*/
 
 /* Table Styles */
 .table-wrapper {

@@ -21,6 +21,8 @@ namespace RazorPagesMovie.Data
 
         public DbSet<RazorPagesMovie.Models.Food> Food { get; set; } = default!;
 
+        public DbSet<RazorPagesMovie.Models.Beverage> Beverage { get; set; } = default!;
+
 
         public DbSet<Bill> BillingTransactions { get; set; } = default!;
 

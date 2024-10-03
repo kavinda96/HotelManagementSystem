@@ -1,0 +1,70 @@
+﻿@page
+@model RazorPagesMovie.Pages.BeverageData.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+<link rel="stylesheet" href="~/css/table.css" />
+
+<div class="card mb-2" id="headbox">
+    <div class="card-body d-flex justify-content-center align-items-center mb-2">
+        <h2 class="m-0">Beverages</h2>
+    </div>
+</div>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary btn-success">Add Beverage</a>
+</p>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Beverage[0].BeverageName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Beverage[0].BeverageDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Beverage[0].Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Beverage[0].IsAvailable)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Beverage) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BeverageName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BeverageDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+                    <td>
+                        @{
+                            string IsAvailableText = item.IsAvailable switch
+                            {
+                                0 => "No",
+                                1 => "Yes"
+                            };
+                        }
+                        @IsAvailableText
+                    </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>
