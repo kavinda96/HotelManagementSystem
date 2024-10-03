@@ -116,12 +116,13 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index">All Reservations</a>
-            </li>
+            </li>                   
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-handler="Upcoming">Upcoming Reservations</a>
+                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-showUpcoming="true" >Upcoming Reservations</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-handler="Finalized">Finalized Reservations</a>
+            <li class="nav-item">           
+                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-showFinalized="true">Finalized Reservations</a>
+
             </li>
             <li class="nav-item">
                 <a class="nav-link text-muted" asp-area="" asp-page="/Rooms/Index">Rooms</a>
