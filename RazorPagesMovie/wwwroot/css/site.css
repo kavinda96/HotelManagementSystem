@@ -147,6 +147,21 @@ body {
 /*body {
     font-family: 'Poppins', sans-serif;
 }*/
+.record-count-container {
+    border: 1px solid #007bff; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Inner spacing */
+    background-color: #f9f9f9; /* Light background color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+   
+    display: inline-block; /* Allow to fit content */
+}
+
+.record-count {
+    font-weight: bold; /* Make the text bold */
+    color: #007bff; /* Text color */
+    font-size:13px;
+}
 
 
 

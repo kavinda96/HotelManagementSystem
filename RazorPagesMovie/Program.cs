@@ -15,6 +15,7 @@ builder.Services.AddDbContext<RazorPagesMovieContext>(options =>
 builder.Services.AddSingleton<RazorPagesMovie.Services.InvoiceNoGenerator>();
 builder.Services.AddScoped<RazorPagesMovie.Services.ReservationService>();
 builder.Services.AddScoped<RazorPagesMovie.Services.BillingTransactionService>();
+builder.Services.AddSingleton<RazorPagesMovie.Services.PaginationService>();
 
 // Configure Identity with roles
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>

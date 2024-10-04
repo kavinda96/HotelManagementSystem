@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using RazorPagesMovie.Data;
 using RazorPagesMovie.Models;
 using RazorPagesMovie.Services;
@@ -15,12 +14,14 @@ namespace RazorPagesMovie.Pages.Reserve
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
+        private readonly RazorPagesMovieContext _context;
+        private readonly PaginationService _paginationService;
         private readonly ReservationService _reservationService;
 
-        public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context, ReservationService reservationService)
+        public IndexModel(RazorPagesMovieContext context, PaginationService paginationService, ReservationService reservationService)
         {
             _context = context;
+            _paginationService = paginationService;
             _reservationService = reservationService;
         }
 
@@ -29,6 +30,7 @@ namespace RazorPagesMovie.Pages.Reserve
         public int CurrentPage { get; set; } = 1; // Current page number
         public int TotalPages { get; set; } // Total number of pages
         public int TotalRecords { get; set; } // Total number of records
+        public string PageTitle { get; set; } = "All Reservations";
 
         [BindProperty(SupportsGet = true)]
         public DateTime? StartDate { get; set; }
@@ -36,48 +38,26 @@ namespace RazorPagesMovie.Pages.Reserve
         [BindProperty(SupportsGet = true)]
         public DateTime? EndDate { get; set; }
 
-        public string PageTitle { get; set; } = "All Reservations";
-
         public async Task OnGetAsync(DateTime? startDate, DateTime? endDate, int pageIndex = 1, bool showUpcoming = false, bool showFinalized = false)
         {
             CurrentPage = pageIndex;
             StartDate = startDate;
             EndDate = endDate;
 
-            // Determine the total number of records based on filters (Upcoming or Finalized)
-            var totalQuery = _context.Reservations.AsQueryable();
+            var query = _context.Reservations.AsQueryable();
 
+            // Apply filters for upcoming or finalized reservations
             if (showUpcoming)
             {
-                totalQuery = totalQuery.Where(r => r.CheckInDate >= DateTime.Now);
+                query = query.Where(r => r.CheckInDate >= DateTime.Now); // Upcoming: CheckInDate is in the future
+                PageTitle = "Upcoming Reservations";
             }
+
             if (showFinalized)
             {
-                totalQuery = totalQuery.Where(r => r.status == 3);
+                query = query.Where(r => r.status == 3); // Finalized: status equals 3
+                PageTitle = "Finalized Reservations";
             }
-
-            // Apply date range filter
-            if (startDate.HasValue)
-            {
-                totalQuery = totalQuery.Where(r => r.CheckInDate >= startDate.Value);
-            }
-
-            if (endDate.HasValue)
-            {
-                totalQuery = totalQuery.Where(r => r.CheckInDate <= endDate.Value);
-            }
-
-            TotalRecords = totalQuery.Count(); // Get the total number of filtered records
-            TotalPages = (int)Math.Ceiling(TotalRecords / (double)PageSize);
-
-            // Fetch paginated reservations based on the filter (Upcoming or Finalized)
-            Reservations = GetReservations(startDate, endDate, pageIndex, showUpcoming, showFinalized);
-        }
-
-
-        private List<Reservations> GetReservations(DateTime? startDate, DateTime? endDate, int pageIndex, bool showUpcoming, bool showFinalized)
-        {
-            var query = _context.Reservations.AsQueryable();
 
             // Apply date range filter
             if (startDate.HasValue)
@@ -90,24 +70,16 @@ namespace RazorPagesMovie.Pages.Reserve
                 query = query.Where(r => r.CheckInDate <= endDate.Value);
             }
 
-            // Apply specific filters for upcoming or finalized reservations
-            if (showUpcoming)
-            {
-                query = query.Where(r => r.CheckInDate >= DateTime.Now); // Upcoming: CheckInDate is in the future
-            }
+            // Fetch total records count (before pagination)
+            //TotalRecords = query.Count();
 
-            if (showFinalized)
-            {
-                query = query.Where(r => r.status == 3); // Finalized: status equals 3
-            }
+            // Fetch paginated reservations using the pagination service
+            var paginatedResult = await _paginationService.GetPaginatedListAsync(query, pageIndex, PageSize);
 
-            // Apply pagination
-            return query
-                .Skip((pageIndex - 1) * PageSize) // Skip records for previous pages
-                .Take(PageSize) // Take records for the current page
-                .ToList();
+            Reservations = paginatedResult.Items;
+            TotalPages = paginatedResult.TotalPages;
+            TotalRecords = paginatedResult.TotalRecords;
+
         }
-
-
     }
 }
