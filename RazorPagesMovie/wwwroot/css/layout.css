@@ -1,0 +1,62 @@
+﻿body {
+    padding-top: 65px;
+}
+
+/* Sidebar Styles */
+.sidebar-left, .sidebar-right {
+    height: calc(100% - 65px);
+    overflow-y: auto; /* Allows scrolling on small screens */
+}
+
+.sidebar-left {
+    position: fixed;
+    top: 65px;
+    left: 0;
+    width: 250px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar-right {
+    position: fixed;
+    top: 65px;
+    right: 0;
+    width: 250px;
+    background-color: #f8f9fa;
+    border-left: 1px solid #dee2e6;
+    padding: 20px;
+}
+
+.content {
+    margin-left: 260px; /* Adjust for left sidebar */
+    margin-right: 260px; /* Adjust for right sidebar */
+    padding: 20px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-top: 1px solid #dee2e6;
+}
+
+@media (max-width: 768px) {
+    .sidebar-left, .sidebar-right {
+        position: relative; /* Change to relative for mobile */
+        height: auto; /* Set to auto */
+        width: 100%; /* Full width */
+        border: none; /* Remove borders */
+        padding: 10px; /* Add some padding */
+    }
+
+    .sidebar-right {
+        padding: 10px; /* Adjust padding */
+    }
+
+    .content {
+        margin: 0; /* Remove side margins */
+        padding: 10px; /* Reduce padding */
+    }
+}

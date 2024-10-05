@@ -165,7 +165,36 @@ body {
 
 
 
+@media (min-width: 768px) {
+    html {
+        font-size: 16px; /* Increased font size for larger screens */
+    }
+}
 
+/* Additional styles for responsive sidebars */
+.sidebar-left, .sidebar-right {
+    height: calc(100% - 65px); /* Adjust for the navbar */
+    overflow-y: auto; /* Allow scrolling */
+}
+
+@media (max-width: 768px) {
+    .sidebar-left, .sidebar-right {
+        position: relative; /* Change to relative for mobile */
+        height: auto; /* Set height to auto */
+        width: 100%; /* Full width */
+        border: none; /* Remove borders */
+        padding: 10px; /* Adjust padding */
+    }
+
+    .sidebar-right {
+        padding: 10px; /* Adjust padding */
+    }
+
+    .content {
+        margin: 0; /* Remove side margins */
+        padding: 10px; /* Reduce padding */
+    }
+}
 
 
 

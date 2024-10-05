@@ -105,19 +105,20 @@ namespace RazorPagesMovie.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("/Homepage");
+            // Set default returnUrl to homepage if not provided
+            returnUrl = Url.Content("~/Homepage");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                // Attempt login
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    return LocalRedirect(returnUrl); // Redirect to homepage
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -135,8 +136,9 @@ namespace RazorPagesMovie.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
+            // Redisplay form if something failed
             return Page();
         }
+
     }
 }

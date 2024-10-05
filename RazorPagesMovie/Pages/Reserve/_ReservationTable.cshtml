@@ -1,80 +1,63 @@
 ﻿@model IEnumerable<RazorPagesMovie.Models.Reservations>
 
-
 <div class="table-wrapper">
-    
-
-  <table class="fl-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Status</th>
-@*             <th>NIN</th>
-            <th>Mobile</th> *@
-            <th>Checkin Date</th>
-            <th>Checkout Date</th>
-            <th>Guest Count</th>
-            <th>Rooms</th>
-            <th colspan="4"></th>
-        </tr>
-    </thead>
-    <tbody id="reservationGrid">
-        @foreach (var item in Model)
-        {
+    <table class="fl-table">
+        <thead>
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.Id)</td>
-                <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
-                <td>
-                    @{
-                        string statusText = item.status switch
-                        {
-                            0 => "Pending",
-                            1 => "Checked In",
-                            2 => "Checked Out",
-                            3 => "Finalized",
-                            _ => "Unknown"
-                        };
-                    }
-                    @statusText
-                </td>@*                 <td>@Html.DisplayFor(modelItem => item.NIN)</td>
-            <td>@Html.DisplayFor(modelItem => item.Mobile)</td>  *@
-                <td>@Html.DisplayFor(modelItem => item.CheckInDate)</td>
-                <td>@Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)</td>
-                <td>@Html.DisplayFor(modelItem => item.GuestCount)</td>
-                <td>@Html.DisplayFor(modelItem => item.SelectedRoomsNos)</td>
-                <td>
-                    <button type="button" class="btn btn-warning btn-sm"
-                            onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile')">
-                        Info
-                    </button>
-                </td>
-               @*  <td>
-                    <a asp-page="./Edit" asp-route-id="@item.Id" class="edit-button">
-                        <i class="fas fa-edit"></i>
-                    </a> |
-                    <a asp-page="./Delete" asp-route-id="@item.Id" class="delete-button">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </td> *@
-
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.Id" class="edit-button">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                </td>
-
-                <td>
-                    <a asp-page="./Delete" asp-route-id="@item.Id" class="delete-button">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </td>
-
-                <td>
-                    <a asp-page="/Billing/Index" asp-route-id="@item.Id" class="btn btn-info btn-sm">Billing</a>
-                </td>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Checkin Date</th>
+                <th>Checkout Date</th>
+                <th>Guest Count</th>
+                <th>Rooms</th>
+                <th colspan="4"></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody id="reservationGrid">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
+                    <td>
+                        @{
+                            string statusText = item.status switch
+                            {
+                                0 => "Pending",
+                                1 => "Checked In",
+                                2 => "Checked Out",
+                                3 => "Finalized",
+                                _ => "Unknown"
+                            };
+                        }
+                        @statusText
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.CheckInDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.GuestCount)</td>
+                    <td>@Html.DisplayFor(modelItem => item.SelectedRoomsNos)</td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm"
+                                onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile')">
+                            Info
+                        </button>
+                    </td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.Id" class="edit-button">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-page="./Delete" asp-route-id="@item.Id" class="delete-button">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-page="/Billing/Index" asp-route-id="@item.Id" class="btn btn-info btn-sm">Billing</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

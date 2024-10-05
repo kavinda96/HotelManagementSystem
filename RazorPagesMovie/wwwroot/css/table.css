@@ -4,29 +4,25 @@
     -moz-box-sizing: border-box;
 }
 
-/*body {
-    font-family: Helvetica;
-    -webkit-font-smoothing: antialiased;
-}*/
-
 /* Table Styles */
 .table-wrapper {
     margin: 10px 0; /* Remove side margins to make it full width */
     width: 100%; /* Ensure the wrapper takes full width */
     box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
+    overflow-x: auto; /* Allow horizontal scrolling */
 }
 
 .fl-table {
     border-radius: 5px;
     font-size: 14px; /* Increased font size */
-    font-weight: normal;
     border: none;
     border-collapse: collapse;
     width: 100%; /* Full width */
     background-color: white;
 }
 
-    .fl-table td, .fl-table th {
+    .fl-table td,
+    .fl-table th {
         text-align: center;
         padding: 10px; /* Adjusted padding for better spacing */
     }
@@ -38,24 +34,28 @@
 
     .fl-table thead th {
         color: #ffffff;
-        background: #324960;
+        background: #324960; /* Header background color */
         font-size: 15px; /* Slightly larger font size for headers */
     }
 
         .fl-table thead th:nth-child(odd) {
-            color: #ffffff;
-            background: #324960;
+            background: #324960; /* Maintain header background for odd columns */
         }
 
     .fl-table tr:nth-child(even) {
-        background: #F8F8F8;
+        background: #F8F8F8; /* Zebra striping for even rows */
     }
 
 /* Responsive Table */
 @media (max-width: 767px) {
+    .table-wrapper {
+        padding: 0 10px; /* Add some padding */
+    }
+
     .fl-table {
         display: block;
         width: 100%;
+        overflow-x: auto; /* Enable horizontal scrolling */
     }
 
     .table-wrapper:before {
@@ -63,11 +63,12 @@
         display: block;
         text-align: right;
         font-size: 11px;
-        color: white;
+        color: #324960; /* Change to match the header */
         padding: 0 0 10px;
     }
 
-    .fl-table thead, .fl-table tbody, .fl-table thead th {
+    .fl-table thead,
+    .fl-table tbody {
         display: block;
     }
 
@@ -75,56 +76,37 @@
             border-bottom: none;
         }
 
-    .fl-table thead {
-        float: left;
-    }
-
     .fl-table tbody {
         width: auto;
         position: relative;
         overflow-x: auto;
     }
 
-    .fl-table td, .fl-table th {
-        padding: 20px .625em .625em .625em;
-        height: 60px;
+    .fl-table td,
+    .fl-table th {
+        padding: 20px .625em; /* Adjusted padding */
+        height: 60px; /* Set fixed height for cells */
         vertical-align: middle;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: auto;
-        width: 120px;
-        font-size: 14px; /* Increased font size */
         text-overflow: ellipsis;
+        overflow: hidden; /* Hide overflowing text */
+        white-space: nowrap; /* Prevent text wrapping */
     }
 
     .fl-table thead th {
-        text-align: left;
-        border-bottom: 1px solid #f7f7f9;
+        text-align: left; /* Left align header text */
+        border-bottom: 1px solid #f7f7f9; /* Header bottom border */
     }
 
     .fl-table tbody tr {
-        display: table-cell;
+        display: table-cell; /* Keep rows as table cells */
     }
 
         .fl-table tbody tr:nth-child(odd) {
-            background: none;
+            background: none; /* Remove odd row background */
         }
 
-    .fl-table tr:nth-child(even) {
-        background: transparent;
-    }
-
-    .fl-table tr td:nth-child(odd) {
-        background: #F8F8F8;
-        border-right: 1px solid #E6E4E4;
-    }
-
-    .fl-table tr td:nth-child(even) {
-        border-right: 1px solid #E6E4E4;
-    }
-
     .fl-table tbody td {
-        display: block;
-        text-align: center;
+        display: block; /* Make each cell a block element */
+        text-align: center; /* Center align text */
     }
 }

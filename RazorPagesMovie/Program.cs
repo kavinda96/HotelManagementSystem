@@ -60,6 +60,17 @@ app.UseAuthorization(); // Enable authorization
 
 app.MapRazorPages();
 
+app.UseEndpoints(endpoints =>
+{
+    // This ensures that the application loads the login page by default
+    endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("/Homepage");
+        return Task.CompletedTask;
+    });
+    endpoints.MapRazorPages();
+});
+
 // Seed the admin user
 //await SeedAdminUser(app.Services);
 
