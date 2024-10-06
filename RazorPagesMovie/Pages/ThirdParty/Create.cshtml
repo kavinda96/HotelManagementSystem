@@ -1,0 +1,49 @@
+﻿@page
+@model RazorPagesMovie.Pages.ThirdParty.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ThirdPartyHandlers</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ThirdPartyHandlers.CompanyName" class="control-label"></label>
+                <input asp-for="ThirdPartyHandlers.CompanyName" class="form-control" />
+                <span asp-validation-for="ThirdPartyHandlers.CompanyName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ThirdPartyHandlers.Address" class="control-label"></label>
+                <input asp-for="ThirdPartyHandlers.Address" class="form-control" />
+                <span asp-validation-for="ThirdPartyHandlers.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ThirdPartyHandlers.ContactNo" class="control-label"></label>
+                <input asp-for="ThirdPartyHandlers.ContactNo" class="form-control" />
+                <span asp-validation-for="ThirdPartyHandlers.ContactNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ThirdPartyHandlers.Email" class="control-label"></label>
+                <input asp-for="ThirdPartyHandlers.Email" class="form-control" />
+                <span asp-validation-for="ThirdPartyHandlers.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

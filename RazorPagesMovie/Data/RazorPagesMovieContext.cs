@@ -22,7 +22,7 @@ namespace RazorPagesMovie.Data
         public DbSet<RazorPagesMovie.Models.Food> Food { get; set; } = default!;
 
         public DbSet<RazorPagesMovie.Models.Beverage> Beverage { get; set; } = default!;
-
+        public DbSet<RazorPagesMovie.Models.ThirdPartyHandlers> ThirdPartyHandlers { get; set; } = default!;
 
         public DbSet<Bill> BillingTransactions { get; set; } = default!;
 
@@ -42,10 +42,13 @@ namespace RazorPagesMovie.Data
         {
             // Write the raw SQL query to calculate the total room charges
             var query = @"
-            select SUM(room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate) ) as TotalRoomCharge from Room room, Reservations res, RoomReservationcs a
-            where res.Id = a.ResevationId
-            and a.RoomId = room.Id
-            and res.Id = @reservationId";
+                        select SUM(room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)) as TotalRoomCharge 
+                        from Room room, Reservations res, RoomReservationcs a
+                        where res.Id = a.ResevationId
+                        and a.RoomId = room.Id
+                        and res.Id = @reservationId
+                        and a.Status = 1";  // Add status condition here
+
 
             // Execute the raw SQL query and get the result
 

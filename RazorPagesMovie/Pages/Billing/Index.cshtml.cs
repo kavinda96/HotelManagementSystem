@@ -42,6 +42,8 @@ namespace RazorPagesMovie.Pages.Billing
         public decimal? TotalAmount { get; set; }
         public string? SelectedBillingCategory { get; set; }
         public decimal TotalRoomCharge { get;  set; }
+
+        public string? billrecDesc { get; set; }
         public IActionResult OnGet(int? id)
         {
             if (id.HasValue)
@@ -154,8 +156,15 @@ namespace RazorPagesMovie.Pages.Billing
             int datediff = (int)difference.TotalDays;
             string selectedRooms = reservationToUpdate.SelectedRoomsNos;
 
-
-            TotalRoomCharge = await _context.CalculateRoomChargeAsync(sid);
+            if(!reservationToUpdate.IsThirdPartyBooking) {
+                TotalRoomCharge = await _context.CalculateRoomChargeAsync(sid);
+                billrecDesc = "Check out :Charges for " + datediff + " days stay at Room No " + selectedRooms;
+            }
+            else {
+                TotalRoomCharge = 0;
+                billrecDesc = "Check out : Third Party Party Booking";
+            }
+           
            
 
             var newTransaction = new Bill
@@ -163,7 +172,7 @@ namespace RazorPagesMovie.Pages.Billing
                 InvoiceNo = sid,
                 createdDate = DateTime.Now,
                 Category = "3",
-                Description = "Check out :Charges for " + datediff + " days stay at Room No " + selectedRooms,
+                Description = billrecDesc,
                 ItemPrice = TotalRoomCharge,
                 ItemQty = 1
             };

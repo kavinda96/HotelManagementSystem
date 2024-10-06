@@ -12,8 +12,8 @@ using RazorPagesMovie.Data;
 namespace RazorPagesMovie.Migrations
 {
     [DbContext(typeof(RazorPagesMovieContext))]
-    [Migration("20241002094713_beverage")]
-    partial class beverage
+    [Migration("20241006174718_newColres")]
+    partial class newColres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,6 +235,31 @@ namespace RazorPagesMovie.Migrations
                     b.ToTable("RoomChargeResults");
                 });
 
+            modelBuilder.Entity("RazorPagesMovie.Models.Beverage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BeverageDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeverageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("IsAvailable")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Beverage");
+                });
+
             modelBuilder.Entity("RazorPagesMovie.Models.Bill", b =>
                 {
                     b.Property<int>("Id")
@@ -329,14 +354,17 @@ namespace RazorPagesMovie.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("ExpectedCheckInDate")
-                        .HasColumnType("datetime2");
+                    b.Property<decimal>("DiscountRate")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ExpectedCheckOutDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("GuestCount")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsThirdPartyBooking")
+                        .HasColumnType("bit");
 
                     b.Property<long?>("MasterbillId")
                         .HasColumnType("bigint");
@@ -416,9 +444,43 @@ namespace RazorPagesMovie.Migrations
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("RoomReservationcs");
+                });
+
+            modelBuilder.Entity("RazorPagesMovie.Models.ThirdPartyHandlers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ContactNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ThirdPartyHandlers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -5,24 +5,24 @@
 namespace RazorPagesMovie.Migrations
 {
     /// <inheritdoc />
-    public partial class newcoldisco : Migration
+    public partial class newColres : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<decimal>(
-                name: "DiscountRate",
+            migrationBuilder.AddColumn<bool>(
+                name: "IsThirdPartyBooking",
                 table: "Reservations",
-                type: "decimal(18,2)",
+                type: "bit",
                 nullable: false,
-                defaultValue: 0m);
+                defaultValue: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "DiscountRate",
+                name: "IsThirdPartyBooking",
                 table: "Reservations");
         }
     }

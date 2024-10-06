@@ -60,5 +60,7 @@ namespace RazorPagesMovie.Models
        
 
         public decimal DiscountRate { get; set; } = 0;
+
+        public bool IsThirdPartyBooking { get; set; } =false;
     }
 }

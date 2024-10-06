@@ -46,7 +46,7 @@ namespace RazorPagesMovie.Services
         {
             // Retrieve room reservations associated with the reservation ID
             var roomReservations = _dbContext.RoomReservationcs
-                .Where(r => r.ResevationId == reservationId)
+                .Where(r => r.ResevationId == reservationId && r.Status == 1)
                 .ToList();
 
             // Update the checkout date for each room reservation
@@ -63,7 +63,7 @@ namespace RazorPagesMovie.Services
         {
             // Retrieve room reservations associated with the reservation ID
             var roomReservations = _dbContext.RoomReservationcs
-                .Where(r => r.ResevationId == reservationId)
+                .Where(r => r.ResevationId == reservationId && r.Status == 1)
                 .ToList();
 
             // Update the checkout date for each room reservation
@@ -155,12 +155,14 @@ namespace RazorPagesMovie.Services
         public async Task<List<Room>> GetAvailableRooms(DateTime checkInDate, DateTime checkOutDate)
         {
             var availableRooms = await _dbContext.Room
-                .Where(room => !_dbContext.RoomReservationcs
-                    .Any(reservation =>
-                        reservation.RoomId == room.Id &&
-                        reservation.CheckInDate <= checkOutDate &&
-                        reservation.CheckOutDate >= checkInDate))
-                .ToListAsync();
+       .Where(room => !_dbContext.RoomReservationcs
+           .Any(reservation =>
+               reservation.RoomId == room.Id &&
+               reservation.CheckInDate <= checkOutDate &&
+               reservation.CheckOutDate >= checkInDate &&
+               reservation.Status == 1)) // Add status condition here
+       .ToListAsync();
+
 
             return availableRooms;
         }

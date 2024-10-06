@@ -18,7 +18,7 @@
         <div class="col-md-8" style="margin-bottom:30px">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5>Update form</h5>
+                    <h5>Update Form</h5>
                 </div>
                 <div class="card-body">
                     <form method="post">
@@ -33,14 +33,14 @@
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.CustomerName" class="control-label"></label>
-                                            <input asp-for="Reservations.CustomerName" class="form-control" />
+                                            <input asp-for="Reservations.CustomerName" class="form-control" required />
                                             <span asp-validation-for="Reservations.CustomerName" class="text-danger"></span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.NIN" class="control-label"></label>
-                                            <input asp-for="Reservations.NIN" class="form-control" />
+                                            <input asp-for="Reservations.NIN" class="form-control" required />
                                             <span asp-validation-for="Reservations.NIN" class="text-danger"></span>
                                         </div>
                                     </td>
@@ -49,14 +49,14 @@
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.Address" class="control-label"></label>
-                                            <input asp-for="Reservations.Address" class="form-control" />
+                                            <input asp-for="Reservations.Address" class="form-control" required />
                                             <span asp-validation-for="Reservations.Address" class="text-danger"></span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.Country" class="control-label"></label>
-                                            <input asp-for="Reservations.Country" class="form-control" />
+                                            <input asp-for="Reservations.Country" class="form-control" required />
                                             <span asp-validation-for="Reservations.Country" class="text-danger"></span>
                                         </div>
                                     </td>
@@ -65,35 +65,30 @@
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.Mobile" class="control-label"></label>
-                                            <input asp-for="Reservations.Mobile" class="form-control" />
+                                            <input asp-for="Reservations.Mobile" class="form-control" required />
                                             <span asp-validation-for="Reservations.Mobile" class="text-danger"></span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.GuestCount" class="control-label"></label>
-                                            <input asp-for="Reservations.GuestCount" class="form-control" />
+                                            <input asp-for="Reservations.GuestCount" class="form-control" type="number" min="1" required />
                                             <span asp-validation-for="Reservations.GuestCount" class="text-danger"></span>
                                         </div>
                                     </td>
                                 </tr>
-                              
                                 <tr>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.CheckInDate" class="control-label"></label>
-
-                                            <input asp-for="Reservations.CheckInDate" class="form-control" id="checkInDate" name="checkInDate" />
-
+                                            <input asp-for="Reservations.CheckInDate" class="form-control" type="date" required id="checkInDate" name="checkInDate" />
                                             <span asp-validation-for="Reservations.CheckInDate" class="text-danger"></span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.ExpectedCheckOutDate" class="control-label"></label>
-                                            @* <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" /> *@
-                                           <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" />
-
+                                            <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" type="date" required id="checkOutDate" name="checkOutDate" />
                                             <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
                                         </div>
                                     </td>
@@ -106,7 +101,7 @@
                             <button type="button" onclick="checkAvailability()" class="btn btn-warning">Check Availability</button>
                         </div>
 
-                        <h4 style="margin-top :20px">Available Rooms</h4>
+                        <h4 style="margin-top:20px">Available Rooms</h4>
                         <div id="availableRooms">
                             <p>Select check-in and check-out dates to see available rooms.</p>
                         </div>
@@ -121,7 +116,6 @@
             <div class="mt-3">
                 <a asp-page="Index" class="btn btn-secondary">Back to List</a>
             </div>
-           
         </div>
     </div>
 </div>
@@ -143,7 +137,15 @@
         }
 
 
+        function getReservationIdFromUrl() {
+            // Get the query string from the URL
+            var urlParams = new URLSearchParams(window.location.search);
+            // Extract the 'id' parameter (reservationId)
+            return urlParams.get('id');
+        }
+
         function checkAvailability() {
+            var reservationId = getReservationIdFromUrl(); // Fetch from URL
             var checkInDate = document.getElementById('checkInDate').value;
             var checkOutDate = document.getElementById('checkOutDate').value;
 
@@ -159,7 +161,8 @@
                     data: {
                         checkInDate: new Date(checkInDate).toISOString(),
                         checkOutDate: new Date(checkOutDate).toISOString(),
-                        selectedRoomIds: selectedRoomIds // Include selected room IDs
+                        selectedRoomIds: selectedRoomIds.join(','),
+                        reservationId: reservationId // Pass reservationId here
                     },
                     success: function (result) {
                         $('#availableRooms').html(result);
@@ -172,5 +175,6 @@
                 alert("Please select both check-in and check-out dates.");
             }
         }
+
     </script>
 }

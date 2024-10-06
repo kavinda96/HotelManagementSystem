@@ -10,7 +10,10 @@
                     <span>Room @room.RoomNo (@room.RoomType)</span>
                     <input type="checkbox" class="form-check-input"
                            name="SelectedRoomIds"
-                           value="@room.Id" />
+                           id="SelectedRoomIds"
+                           value="@room.Id"
+                    @(room.IsSelected ? "checked='checked'" : "") /> <!-- Ensure proper syntax for the checked attribute -->
+                    <!-- Preserve the IsSelected state -->
                 </div>
                 <div class="card-body collapse" id="roomDetails-@room.Id">
                     <p>Details about Room @room.RoomNo</p>
@@ -26,6 +29,18 @@ else
 {
     <div class="alert alert-warning">No rooms available for the selected dates.</div>
 }
+
+<script>
+    // JavaScript to toggle the visibility of room details
+    function toggleCardDetails(roomId) {
+        var roomDetails = document.getElementById('roomDetails-' + roomId);
+        if (roomDetails.classList.contains('show')) {
+            roomDetails.classList.remove('show');
+        } else {
+            roomDetails.classList.add('show');
+        }
+    }
+</script>
 
 @* 
 <div>

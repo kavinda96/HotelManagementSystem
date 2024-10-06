@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RazorPagesMovie.Data;
+//using RazorPagesMovie.Migrations;
 using RazorPagesMovie.Models;
 using RazorPagesMovie.Services;
 
@@ -68,7 +69,6 @@ namespace RazorPagesMovie.Pages.Reserve
             }
 
             var selectedRoomIds = Request.Form["SelectedRoomIds"];
-            var selectedRoomNumbers = Request.Form["SelectedRoomIds"];
 
             if (selectedRoomIds.Count == 0)
             {
@@ -77,20 +77,48 @@ namespace RazorPagesMovie.Pages.Reserve
                 return Page();
             }
 
-            Reservations.SelectedRooms = string.Join(",", selectedRoomIds);
+            // Update reservation with the selected rooms
 
 
-            foreach (var roomId in selectedRoomIds)
-            {
-                var room = await _context.Room.FindAsync(int.Parse(roomId));
-                if (room != null)
-                {
-                    room.IsAvailable = 0;
-                    _context.Room.Update(room);
-                }
-            }
-          
+            var selectedRoomIdss = selectedRoomIds.ToString().Split(',').Select(int.Parse).ToList();
+            var selectedRooms = await _context.Room
+              .Where(r => selectedRoomIdss.Contains(r.Id))
+              .ToListAsync();
+
+            Reservations.SelectedRooms = string.Join(",", selectedRoomIdss);
+
+            var selectedRoomNumbersString = string.Join(",", selectedRooms.Select(r => r.RoomNo));
+
+            Reservations.SelectedRoomsNos = selectedRoomNumbersString;
+            Reservations.CheckInDate = DateTime.Parse(Request.Form["checkInDate"]);
+            Reservations.ExpectedCheckOutDate = DateTime.Parse(Request.Form["checkOutDate"]);
+
+
             _context.Attach(Reservations).State = EntityState.Modified;
+
+            // Update existing room reservations status to 2
+            var existingRoomReservations = await _context.RoomReservationcs
+                .Where(rr => rr.ResevationId == Reservations.Id)
+                .ToListAsync();
+
+            foreach (var roomReservation in existingRoomReservations)
+            {
+                roomReservation.Status = 2; // invalidated old ones
+            }
+
+            // Create new room reservations with status = 1
+            foreach (var roomId in selectedRoomIdss)
+            {
+                var roomReservation = new RoomReservationcs
+                {
+                    ResevationId = Reservations.Id,
+                    RoomId = roomId,
+                    CheckInDate = Reservations.CheckInDate,
+                    CheckOutDate = Reservations.ExpectedCheckOutDate,
+                    Status = 1 // active
+                };
+                _context.RoomReservationcs.Add(roomReservation);
+            }
 
             try
             {
@@ -111,25 +139,49 @@ namespace RazorPagesMovie.Pages.Reserve
             return RedirectToPage("./Index");
         }
 
-        public async Task<IActionResult> OnGetAvailableRoomsAsync(string checkInDate, string checkOutDate, string[] selectedRoomIds)
+        public async Task<IActionResult> OnGetAvailableRoomsAsync(string checkInDate, string checkOutDate, string[] selectedRoomIds, int reservationId)
         {
             if (DateTime.TryParse(checkInDate, out DateTime parsedCheckInDate) &&
                 DateTime.TryParse(checkOutDate, out DateTime parsedCheckOutDate))
             {
-                // Get all available rooms
-                var availableRooms = await _reservationService.GetAvailableRooms(parsedCheckInDate, parsedCheckOutDate);
+                // Initialize the availableRooms list
+                var availableRooms = await _reservationService.GetAvailableRooms(parsedCheckInDate, parsedCheckOutDate) ?? new List<Room>();
 
-                // Get previously selected rooms
-                var selectedRooms = await _context.Room
-                    .Where(r => selectedRoomIds.Contains(r.Id.ToString()))
-                    .ToListAsync();
+                // Get rooms that are currently selected (from the reservation)
+                var selectedRoomIdsFromDb = await _context.RoomReservationcs
+                 .Where(r => r.ResevationId == reservationId && r.Status == 1) // Add status active =1
+                 .Select(r => r.RoomId)
+                 .ToListAsync() ?? new List<int>();
 
-                // Add selected rooms to available rooms list
-                if (selectedRooms != null && selectedRooms.Any())
+
+                // Fetch the actual Room objects based on the Room IDs
+                var selectedRoomsFromDb = await _context.Room
+                    .Where(room => selectedRoomIdsFromDb.Contains(room.Id))
+                    .ToListAsync() ?? new List<Room>();
+
+                //// Mark the rooms as selected if they are already selected in the reservation or passed from client
+                //foreach (var room in availableRooms)
+                //{
+                //    if (selectedRoomsFromDb.Any(r => r.Id == room.Id) || (selectedRoomIds != null && selectedRoomIds.Contains(room.Id.ToString())))
+                //    {
+                //        room.IsSelected = true;  // Mark room as selected
+                //    }
+                //}
+
+
+                foreach (var room in selectedRoomsFromDb)
                 {
-                    availableRooms = availableRooms.Union(selectedRooms).ToList(); // Combine both lists
+                   
+                        room.IsSelected = true;  // Mark room as selected
+                    
                 }
 
+
+
+                // Append selected rooms from the DB that might not be in available rooms
+                availableRooms = availableRooms.Union(selectedRoomsFromDb).ToList();
+
+                // Check if any rooms are available to return
                 if (availableRooms == null || !availableRooms.Any())
                 {
                     return Content("<div class='alert alert-warning'>No rooms available for the selected dates.</div>", "text/html");
@@ -142,6 +194,9 @@ namespace RazorPagesMovie.Pages.Reserve
                 return Content("<div class='alert alert-danger'>Invalid date format.</div>", "text/html");
             }
         }
+
+
+
 
 
         private bool ReservationsExists(int id)

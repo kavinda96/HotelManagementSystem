@@ -71,43 +71,37 @@
                                         </div>
                                     </td>
                                 </tr>
-                               @*  <tr>
-                                    <td>
-                                        <div class="form-group">
-                                            <label asp-for="Reservations.CheckInDate" class="control-label"></label>
-                                            <input asp-for="Reservations.CheckInDate" class="form-control" />
-                                            <span asp-validation-for="Reservations.CheckInDate" class="text-danger"></span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <label asp-for="Reservations.ExpectedCheckOutDate" class="control-label"></label>
-                                            <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" />
-                                            <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
-                                        </div>
-                                    </td>
-                                </tr> *@
                                 <tr>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.CheckInDate" class="control-label"></label>
-                                            @* <input asp-for="Reservations.CheckInDate" class="form-control" id="checkInDate" name="checkInDate" /> *@
-
                                             <input asp-for="Reservations.CheckInDate" class="form-control" id="checkInDate" name="checkInDate" />
-
                                             <span asp-validation-for="Reservations.CheckInDate" class="text-danger"></span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.ExpectedCheckOutDate" class="control-label"></label>
-                                            @* <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" /> *@
-                                           <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" />
-
+                                            <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" id="checkOutDate" name="checkOutDate" />
                                             <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
                                         </div>
                                     </td>
                                 </tr>
+
+                                <!-- Third Party Booking Option (Toggle Button) -->
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="form-group">
+                                            <label class="control-label">Third-Party Booking</label>
+                                            <div class="form-check form-switch">
+                                                <input asp-for="Reservations.IsThirdPartyBooking" class="form-check-input" type="checkbox" id="thirdPartyBooking" />
+                                                <label class="form-check-label" for="thirdPartyBooking">Yes (No is default)</label>
+                                            </div>
+                                            <span asp-validation-for="Reservations.IsThirdPartyBooking" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+
                             </tbody>
                         </table>
 
@@ -133,6 +127,7 @@
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     @{

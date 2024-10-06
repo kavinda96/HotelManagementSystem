@@ -90,7 +90,9 @@ namespace RazorPagesMovie.Pages.Reserve
                     ResevationId = Reservations.Id,
                     RoomId = roomId,
                     CheckInDate = Reservations.CheckInDate,
-                    CheckOutDate = Reservations.ExpectedCheckOutDate
+                    CheckOutDate = Reservations.ExpectedCheckOutDate,
+                    Status = 1 //active
+
                 };
                 _context.RoomReservationcs.Add(roomReservations);
             }

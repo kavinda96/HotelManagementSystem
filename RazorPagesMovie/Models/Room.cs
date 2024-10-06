@@ -25,6 +25,9 @@ public class Room
     [RegularExpression(@"^\d+$", ErrorMessage = "Please enter numbers only.")]
     public int? BedsCount { get; set; }
 
-    public int? IsAvailable { get; set; } 
+    public int? IsAvailable { get; set; }
+
+    [NotMapped]
+    public bool IsSelected { get; set; }
 }
 

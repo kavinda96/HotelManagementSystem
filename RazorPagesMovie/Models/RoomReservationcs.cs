@@ -10,6 +10,8 @@ namespace RazorPagesMovie.Models
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }
 
+        public int Status { get; set; }
+
     }
 }
 //test 
