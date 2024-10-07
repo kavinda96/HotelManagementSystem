@@ -16,10 +16,12 @@ namespace RazorPagesMovie.Pages.Rooms
     public class IndexModel : PageModel
     {
         private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
+        public List<SelectListItem> RoomTypeNames { get; set; }
 
         public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context)
         {
             _context = context;
+           
         }
 
         public IList<Room> Room { get;set; } = default!;
@@ -33,8 +35,17 @@ namespace RazorPagesMovie.Pages.Rooms
         [BindProperty(SupportsGet = true)]
         public string? RoomType { get; set; }
 
+      
+
         public async Task OnGetAsync()
         {
+            RoomTypeNames = new List<SelectListItem>
+            {
+            new SelectListItem { Value = "1", Text = "Deluxe Double" },
+            new SelectListItem { Value = "2", Text = "Deluxe Triple" },
+            new SelectListItem { Value = "3", Text = "Superior Double" },
+            new SelectListItem { Value = "4", Text = "Superior Triple" }
+             };
 
             IQueryable<string> roomTypeQry = from m in _context.Room
                                             orderby m.RoomType
@@ -53,6 +64,8 @@ namespace RazorPagesMovie.Pages.Rooms
             {
                 rooms = rooms.Where(x => x.RoomType == this.RoomType);
             }
+
+
 
             VacantRooms = await _context.Room
             .Where(r => r.IsAvailable ==1)

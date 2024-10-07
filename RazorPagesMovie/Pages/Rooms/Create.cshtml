@@ -20,7 +20,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Room.RoomType" class="control-label"></label>
-                <input asp-for="Room.RoomType" class="form-control" />
+                <select asp-for="Room.RoomType" class="form-control">
+                    <option value="1">Deluxe Double</option>
+                    <option value="2">Deluxe Triple</option>
+                    <option value="3">Superior Double</option>
+                    <option value="4">Superior Triple</option>
+                </select>
                 <span asp-validation-for="Room.RoomType" class="text-danger"></span>
             </div>
             <div class="form-group">

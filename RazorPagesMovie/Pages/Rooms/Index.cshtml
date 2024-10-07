@@ -13,11 +13,11 @@
         <h2 style="color: white">Rooms</h2>
     </div>
 </div>
-
+@* 
 <div class="container">
     @if (Model.VacantRooms != null && Model.VacantRooms.Any())
     {
-       @*  <h2>Vacant Rooms</h2> *@
+      
         <div class="row">
             @foreach (var room in Model.VacantRooms)
             {
@@ -39,13 +39,13 @@
     {
         <div class="alert alert-warning">No vacant rooms available.</div>
     }
-</div>
+</div> *@
 <p>
     <a asp-page="Create" class="btn btn-success">Create New</a>
 </p>
 <form>
     <p>
-        <select asp-for="RoomType" asp-items="Model.RoomTypes">
+        <select asp-for="RoomType" asp-items="Model.RoomTypeNames">
             <option value="">All</option>
         </select>
         Room No : <input type="text" asp-for="SearchString" />
@@ -83,7 +83,23 @@
                         @Html.DisplayFor(modelItem => item.RoomNo)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.RoomType)
+                      
+
+
+                        @{
+                            string statusText = item.RoomType switch
+                            {
+                                "1" => "Deluxe Double",
+                                "2" => "Deluxe Triple",
+                                "3" => "Superior Double",
+                                "4" => "Superior Triple"
+
+                             
+                                };
+                        }
+                        @statusText
+
+
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Price)

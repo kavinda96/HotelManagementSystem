@@ -6,10 +6,12 @@
 
 /* Table Styles */
 .table-wrapper {
-    margin: 10px 0; /* Remove side margins to make it full width */
+    margin: 15px 0; /* Remove side margins to make it full width */
     width: 100%; /* Ensure the wrapper takes full width */
     box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
     overflow-x: auto; /* Allow horizontal scrolling */
+
+  
 }
 
 .fl-table {
