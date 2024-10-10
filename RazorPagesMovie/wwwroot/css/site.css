@@ -68,26 +68,52 @@ html {
 
 #headbox {
     background-color: #324960;
-}
-
-#headbox {
-    margin-bottom: 10px; /* This handles the 'mb-2' (margin-bottom) */
+    margin-bottom: 10px; /* Handles the 'mb-2' (margin-bottom) */
 }
 
     #headbox .card-body {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 50px;
-        overflow: hidden;
-        margin-bottom: 10px; /* Handles the 'mb-2' on card-body */
+        height: auto; /* Set to auto to allow for dynamic height based on content */
+        padding: 10px; /* Add padding for better spacing */
+        overflow: visible; /* Ensure the content isn't clipped */
     }
 
     #headbox h2 {
         color: white;
         margin: 0; /* Removes default margin (m-0) */
-        line-height: 50px; /* Vertically centers the text */
+        line-height: normal; /* Set line height to normal to avoid clipping */
+        word-wrap: break-word; /* Ensure long text wraps to the next line */
+        white-space: normal; /* Allow the text to break into multiple lines if necessary */
+        text-align: center; /* Center-align the text for better presentation */
+        padding: 0 1rem; /* Adjust horizontal padding for better spacing */
     }
+
+@media (max-width: 576px) {
+    #headbox h2 {
+        font-size: 1.5rem; /* Smaller font size for mobile */
+    }
+}
+
+@media (min-width: 576px) {
+    #headbox h2 {
+        font-size: 1.75rem; /* Medium font size */
+    }
+}
+
+/*@media (min-width: 768px) {
+    #headbox h2 {
+        font-size: 2rem;*/ /* Adjust font size for medium screens */
+    /*}
+}
+
+@media (min-width: 992px) {
+    #headbox h2 {
+        font-size: 2.5rem;*/ /* Adjust font size for larger screens */
+    /*}
+}*/
+
 
 
 .alert-primary #mandatory {

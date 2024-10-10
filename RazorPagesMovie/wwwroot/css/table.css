@@ -1,7 +1,5 @@
 ﻿* {
     box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
 }
 
 /* Table Styles */
@@ -10,8 +8,6 @@
     width: 100%; /* Ensure the wrapper takes full width */
     box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
     overflow-x: auto; /* Allow horizontal scrolling */
-
-  
 }
 
 .fl-table {
@@ -25,12 +21,13 @@
 
     .fl-table td,
     .fl-table th {
-        text-align: center;
+        text-align: center; /* Center text alignment for both headers and data */
         padding: 10px; /* Adjusted padding for better spacing */
+        white-space: nowrap; /* Prevent text wrapping */
     }
 
     .fl-table td {
-        border-right: 1px solid #f8f8f8;
+        border-right: 1px solid #f8f8f8; /* Right border for table data */
         font-size: 14px; /* Increased font size */
     }
 
@@ -40,28 +37,20 @@
         font-size: 15px; /* Slightly larger font size for headers */
     }
 
-        .fl-table thead th:nth-child(odd) {
-            background: #324960; /* Maintain header background for odd columns */
-        }
-
     .fl-table tr:nth-child(even) {
         background: #F8F8F8; /* Zebra striping for even rows */
     }
 
 /* Responsive Table */
 @media (max-width: 767px) {
-    .table-wrapper {
-        padding: 0 10px; /* Add some padding */
-    }
-
     .fl-table {
-        display: block;
-        width: 100%;
+        display: block; /* Keep display block for the wrapper */
+        width: 100%; /* Full width for table */
         overflow-x: auto; /* Enable horizontal scrolling */
     }
 
     .table-wrapper:before {
-        content: "Scroll horizontally >";
+        content: "Scroll horizontally >"; /* Instruction for scrolling */
         display: block;
         text-align: right;
         font-size: 11px;
@@ -71,36 +60,29 @@
 
     .fl-table thead,
     .fl-table tbody {
-        display: block;
+        /* display: block; Change display to block */
+        width: 100%; /* Ensure full width */
     }
 
-        .fl-table thead th:last-child {
-            border-bottom: none;
+        .fl-table thead th,
+        .fl-table tbody td {
+            display: table-cell; /* Ensure cells are still displayed as table cells */
         }
 
     .fl-table tbody {
-        width: auto;
-        position: relative;
-        overflow-x: auto;
-    }
-
-    .fl-table td,
-    .fl-table th {
-        padding: 20px .625em; /* Adjusted padding */
-        height: 60px; /* Set fixed height for cells */
-        vertical-align: middle;
-        text-overflow: ellipsis;
-        overflow: hidden; /* Hide overflowing text */
-        white-space: nowrap; /* Prevent text wrapping */
+        max-height: 400px; /* Optional: Set a max height for the body */
+        overflow-y: auto; /* Enable vertical scrolling if needed */
     }
 
     .fl-table thead th {
-        text-align: left; /* Left align header text */
-        border-bottom: 1px solid #f7f7f9; /* Header bottom border */
+        position: sticky; /* Make header sticky */
+        top: 0; /* Align with top */
+        z-index: 1; /* Ensure it stays above other content */
     }
 
     .fl-table tbody tr {
-        display: table-cell; /* Keep rows as table cells */
+        display: table-row; /* Keep rows as table rows */
+        width: 100%; /* Ensure full width for rows */
     }
 
         .fl-table tbody tr:nth-child(odd) {
@@ -108,7 +90,7 @@
         }
 
     .fl-table tbody td {
-        display: block; /* Make each cell a block element */
+        display: table-cell; /* Keep each cell as a table cell */
         text-align: center; /* Center align text */
     }
 }

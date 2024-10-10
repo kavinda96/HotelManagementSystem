@@ -27,6 +27,20 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top" id="mainnavbar">
             <div class="container-fluid">
+
+
+
+
+
+                <!-- Hamburger Menu Button for Mobile -->
+                <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+
+
+
+
                 <a class="navbar-brand" asp-area="" asp-page="/Homepage/Index">RITAS GROUP</a>
 
                 <!-- Authentication Links -->
@@ -58,8 +72,75 @@
         </nav>
     </header>
 
+
+    
+        <!-- Left Sidebar (Offcanvas for Mobile and Fixed for Desktop) -->
+        <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Navigation</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body sidebar-left">
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/Homepage/Index">
+                        <i class="fas fa-home me-2"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/Reserve/Index">
+                        <i class="fas fa-list-alt me-2"></i> All Reservations
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/Reserve/Index" asp-route-showUpcoming="true">
+                        <i class="fas fa-calendar-alt me-2"></i> Upcoming Reservations
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/Reserve/Index" asp-route-showFinalized="true">
+                        <i class="fas fa-check-circle me-2"></i> Finalized Reservations
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/Rooms/Index">
+                        <i class="fas fa-bed me-2"></i> Rooms
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/Calender/CalenderView">
+                        <i class="fas fa-calendar me-2"></i> Calendar
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/FoodData/Index">
+                        <i class="fas fa-utensils me-2"></i> Foods
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/BeverageData/Index">
+                        <i class="fas fa-wine-glass-alt me-2"></i> Beverages
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  asp-area="" asp-page="/Availability/Index">
+                        <i class="fas fa-search me-2"></i> Availability
+                    </a>
+                </li>
+            </ul>
+            }
+        </div>
+    </div>
+    
+
+
     <!-- Left Sidebar (Navigation) -->
-    <div class="sidebar-left bg-light">
+    <div class="sidebar-left bg-light d-none d-md-block">
+        @if (User.Identity.IsAuthenticated)
+        {
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link text-muted" id="homeLink" asp-area="" asp-page="/Homepage/Index">
@@ -107,6 +188,7 @@
                 </a>
             </li>
         </ul>
+        }
     </div>
 
     <!-- Right Sidebar (Clickable Elements) -->
