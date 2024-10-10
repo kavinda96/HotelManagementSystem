@@ -5,6 +5,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Created Date</th>
                 <th>Name</th>
                 <th>Status</th>
                 <th>Checkin Date</th>
@@ -19,6 +20,7 @@
             {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
                     <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
                     <td>
                         @{

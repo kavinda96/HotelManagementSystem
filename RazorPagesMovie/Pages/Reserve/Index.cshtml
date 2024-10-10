@@ -24,8 +24,9 @@
     <label for="endDate">To:</label>
     <input type="date" id="endDate" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
 
-    <button type="submit">Filter</button>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
 </form>
+
 
 <div id="reservationTable">
     @await Html.PartialAsync("_ReservationTable", Model.Reservations)
@@ -72,13 +73,14 @@
     </div>
 </div>
 
+
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="customerInfoModalLabel">Customer Information</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

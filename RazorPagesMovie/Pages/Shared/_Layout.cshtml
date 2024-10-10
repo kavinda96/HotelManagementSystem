@@ -59,34 +59,52 @@
     </header>
 
     <!-- Left Sidebar (Navigation) -->
-    <div class="sidebar-left">
+    <div class="sidebar-left bg-light">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Homepage/Index">Home</a>
+                <a class="nav-link text-muted" id="homeLink" asp-area="" asp-page="/Homepage/Index">
+                    <i class="fas fa-home me-2"></i> Home
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index">All Reservations</a>
-            </li>                   
-            <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-showUpcoming="true">Upcoming Reservations</a>
-            </li>
-            <li class="nav-item">           
-                <a class="nav-link text-muted" asp-area="" asp-page="/Reserve/Index" asp-route-showFinalized="true">Finalized Reservations</a>
+                <a class="nav-link text-muted" id="allReservationsLink" asp-area="" asp-page="/Reserve/Index">
+                    <i class="fas fa-list-alt me-2"></i> All Reservations
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Rooms/Index">Rooms</a>
+                <a class="nav-link text-muted" id="upcomingReservationsLink" asp-area="" asp-page="/Reserve/Index" asp-route-showUpcoming="true">
+                    <i class="fas fa-calendar-alt me-2"></i> Upcoming Reservations
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Calender/CalenderView">Calender</a>
+                <a class="nav-link text-muted" id="finalizedReservationsLink" asp-area="" asp-page="/Reserve/Index" asp-route-showFinalized="true">
+                    <i class="fas fa-check-circle me-2"></i> Finalized Reservations
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/FoodData/Index">Foods</a>
+                <a class="nav-link text-muted" id="roomsLink" asp-area="" asp-page="/Rooms/Index">
+                    <i class="fas fa-bed me-2"></i> Rooms
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/BeverageData/Index">Beverages</a>
+                <a class="nav-link text-muted" id="calendarLink" asp-area="" asp-page="/Calender/CalenderView">
+                    <i class="fas fa-calendar me-2"></i> Calendar
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-muted" asp-area="" asp-page="/Availability/Index">Availability</a>
+                <a class="nav-link text-muted" id="foodsLink" asp-area="" asp-page="/FoodData/Index">
+                    <i class="fas fa-utensils me-2"></i> Foods
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-muted" id="beveragesLink" asp-area="" asp-page="/BeverageData/Index">
+                    <i class="fas fa-wine-glass-alt me-2"></i> Beverages
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-muted" id="availabilityLink" asp-area="" asp-page="/Availability/Index">
+                    <i class="fas fa-search me-2"></i> Availability
+                </a>
             </li>
         </ul>
     </div>
@@ -136,4 +154,70 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+<script>
+    $(document).ready(function () {
+        // Remove active class from all links and add to the clicked one
+        $('.nav-link').on('click', function () {
+            $('.nav-link').removeClass('active'); // Remove 'active' class from all
+            $(this).addClass('active');           // Add 'active' class to the clicked one
+        });
+
+        // Get the current URL path and query parameters
+        var currentPath = window.location.pathname.toLowerCase();
+        var currentQuery = window.location.search.toLowerCase();
+
+        // Highlight the link based on the current page URL
+        if (currentPath.includes("/homepage")) {
+            $('#homeLink').addClass('active');
+        } else if (currentPath.includes("/reserve") && currentQuery.includes("showupcoming=true")) {
+            $('#upcomingReservationsLink').addClass('active');
+        } else if (currentPath.includes("/reserve") && currentQuery.includes("showfinalized=true")) {
+            $('#finalizedReservationsLink').addClass('active');
+        } else if (currentPath.includes("/reserve")) {
+            $('#allReservationsLink').addClass('active');
+        } else if (currentPath.includes("/rooms")) {
+            $('#roomsLink').addClass('active');
+        } else if (currentPath.includes("/calender/calenderview")) {
+            $('#calendarLink').addClass('active');
+        } else if (currentPath.includes("/fooddata")) {
+            $('#foodsLink').addClass('active');
+        } else if (currentPath.includes("/beveragedata")) {
+            $('#beveragesLink').addClass('active');
+        } else if (currentPath.includes("/availability")) {
+            $('#availabilityLink').addClass('active');
+        }
+    });
+</script>
+
+<style>
+    .sidebar-left .nav-link {
+        font-size: 1rem;
+        padding: 10px;
+        margin-bottom: 0.5rem;
+        transition: background-color 0.3s, color 0.3s;
+        border-radius: 0.25rem;
+    }
+
+        .sidebar-left .nav-link:hover {
+            background-color: #e0a800;
+            color: white !important;
+        }
+
+        .sidebar-left .nav-link.active {
+            background-color: #ffc107;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .sidebar-left .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .sidebar-left .nav-link.text-muted {
+            color: #6c757d !important;
+        }
+
+    
+</style>
 </html>
