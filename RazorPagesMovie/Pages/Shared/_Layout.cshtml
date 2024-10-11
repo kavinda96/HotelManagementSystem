@@ -220,7 +220,11 @@
         </main>
     </div>
 
-    <!-- Footer -->
+    <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(255, 255, 255, 0.8); z-index:1000; text-align:center;">
+        <img src="~/loading.gif" alt="Loading..." style="margin-top:20%; width:100px; height:auto;" />
+    </div>
+
+    <!-- Footer -->s
     <footer class="border-top footer text-muted">
         <div class="container">
             Design & Developed Kavinda Gunathilake | 2024 
@@ -269,6 +273,22 @@
             $('#availabilityLink').addClass('active');
         }
     });
+
+    function showLoader() {
+        $("#loadingOverlay").show(); // Show the loader
+    }
+
+    function hideLoader() {
+        $("#loadingOverlay").hide(); // Hide the loader
+    }
+
+    $(document).ready(function () {
+        // Show loader on form submission
+        $("form").on("submit", function () {
+            showLoader(); // Show loader when any form is submitted
+        });
+    });
+
 </script>
 
 <style>

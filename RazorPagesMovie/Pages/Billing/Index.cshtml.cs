@@ -184,7 +184,7 @@ namespace RazorPagesMovie.Pages.Billing
 
          
             _context.BillingTransactions.Add(newTransaction);
-            _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 1);
+          //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 1);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index", new { id = sid });
         }
@@ -218,7 +218,7 @@ namespace RazorPagesMovie.Pages.Billing
             };
 
             _context.BillingTransactions.Add(newTransaction);
-            _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 2);
+          //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 2);
             _reservationService.UpdateCheckInDateForReservation(reservationToUpdate.Id, Reservation.CheckInDate);
             await _context.SaveChangesAsync();
 
@@ -227,11 +227,7 @@ namespace RazorPagesMovie.Pages.Billing
 
         public async Task<IActionResult> OnPostEditCheckoutDateAsync(int sid)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return Page();
-            //}
-
+          
             var reservationToUpdate = _reservationService.GetReservationById(sid);
 
             if (reservationToUpdate == null)
@@ -337,7 +333,7 @@ namespace RazorPagesMovie.Pages.Billing
                     InvoiceNo = ReservationId,
                     createdDate = DateTime.Now,
                     Category = "3",
-                    Description = "Discounted Price " + reservationToUpdate.DiscountRate + "%",
+                    Description = $"Discounted Price {reservationToUpdate.DiscountRate}%".Trim(),
                     ItemPrice = DiscountedPrice,
                     ItemQty = 1
                 };

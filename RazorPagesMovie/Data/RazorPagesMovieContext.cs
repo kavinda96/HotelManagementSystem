@@ -182,7 +182,7 @@ namespace RazorPagesMovie.Data
         public async Task<DashboardViewModel> GetDashboardValuesAsync()
         {
             var query = @"
-        WITH TotalReservations AS (
+WITH TotalReservations AS (
     SELECT COUNT(*) AS total_reservation
     FROM Reservations
 ),
@@ -195,15 +195,74 @@ ActiveReservations AS (
     SELECT COUNT(*) AS active_reservation
     FROM Reservations
     WHERE status  = 0
+),
+
+TotalRooms AS (
+    SELECT COUNT(*) AS totRooms
+    FROM Room
+    WHERE IsAvailable  = 1
+),
+
+AvailableRoomCountToday as (SELECT count(r.id) as available_today
+FROM Room r
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM RoomReservationcs rr
+    WHERE rr.RoomId = r.Id
+      AND rr.Status = 1
+      AND rr.CheckInDate <= GETDATE()
+      AND rr.CheckOutDate >= GETDATE()
+)
+),
+IntendedCheckinsToday as (
+SELECT COUNT(DISTINCT res.Id) AS IntendedCheckInCount
+FROM RoomReservationcs rr
+JOIN Reservations res ON rr.ResevationId = res.Id
+WHERE rr.CheckInDate = CAST(GETDATE() AS DATE) 
+  AND res.Status = 0),
+IntendedCheckoutsToday as (
+SELECT COUNT(DISTINCT res.Id) AS IntendedCheckOutCount
+FROM RoomReservationcs rr
+JOIN Reservations res ON rr.ResevationId = res.Id
+WHERE rr.CheckOutDate = CAST(GETDATE() AS DATE) 
+AND res.Status =1
+
+),
+IntendedCheckinTomorrow as (
+SELECT COUNT(DISTINCT res.Id) AS IntendedCheckInCountTomorrow
+FROM RoomReservationcs rr
+JOIN Reservations res ON rr.ResevationId = res.Id
+WHERE rr.CheckInDate = CAST(DATEADD(DAY, 1, GETDATE()) AS DATE)
+AND res.Status = 0
+),
+
+IntendedCheckOutTomorrow as (
+SELECT COUNT(DISTINCT res.Id) AS IntendedCheckOutCountTomorrow
+FROM RoomReservationcs rr
+JOIN Reservations res ON rr.ResevationId = res.Id
+WHERE rr.CheckOutDate = CAST(DATEADD(DAY, 1, GETDATE()) AS DATE)
+AND res.Status = 1
 )
 SELECT 
     t.total_reservation,
     u.upcoming_reservation,
-	a.active_reservation
+	a.active_reservation,
+	r.totRooms,
+	av.available_today,
+	x.IntendedCheckInCount,
+	y.IntendedCheckOutCount,
+	z.IntendedCheckInCountTomorrow,
+	b.IntendedCheckOutCountTomorrow
 FROM 
     TotalReservations t,
     UpcomingReservations u,
-	ActiveReservations a;";
+	ActiveReservations a,
+	TotalRooms r,
+	AvailableRoomCountToday av,
+	IntendedCheckinsToday x,
+	IntendedCheckoutsToday y,
+	IntendedCheckinTomorrow z,
+	IntendedCheckOutTomorrow b;";
 
             using (var command = this.Database.GetDbConnection().CreateCommand())
             {
@@ -219,7 +278,13 @@ FROM
                         {
                             TotalReservation = result.IsDBNull(0) ? 0 : result.GetInt32(0),
                             UpcomingReservation = result.IsDBNull(1) ? 0 : result.GetInt32(1),
-                            ActiveReservation = result.IsDBNull(2) ? 0 : result.GetInt32(2)
+                            ActiveReservation = result.IsDBNull(2) ? 0 : result.GetInt32(2),
+                            TotalRooms = result.IsDBNull(3) ? 0 : result.GetInt32(3),
+                            AvailableRoomCountToday = result.IsDBNull(4) ? 0 : result.GetInt32(4),
+                            IntendedCheckinCountToday = result.IsDBNull(5) ? 0 : result.GetInt32(5),
+                            IntendedCheckOutCountToday = result.IsDBNull(6) ? 0 : result.GetInt32(6),
+                            IntendedCheckinCountTomorrow = result.IsDBNull(7) ? 0 : result.GetInt32(7),
+                            IntendedCheckOutCountTomorrow = result.IsDBNull(8) ? 0 : result.GetInt32(8)
 
                         };
                         return model;

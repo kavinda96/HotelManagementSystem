@@ -1,7 +1,7 @@
 ﻿@page
 @model RazorPagesMovie.Pages.Homepage.IndexModel
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Dashbord";
 }
 <!-- Header box with original color -->
 <div class="card mb-4 shadow-lg" id="headbox">
@@ -70,7 +70,7 @@
             <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
                 <div class="card-body py-4">
                     <h5 class="card-title text-muted">Total Rooms</h5>
-                    <p class="card-text display-4">@Model.TotalReservations</p>
+                    <p class="card-text display-4">@Model.DashboardData.TotalRooms</p>
                 </div>
             </div>
         </div>
@@ -78,20 +78,55 @@
             <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
                 <div class="card-body py-4">
                     <h5 class="card-title text-muted">Vacant Rooms for Today</h5>
-                    <p class="card-text display-4">@Model.TotalReservations</p>
+                    <p class="card-text display-4">@Model.DashboardData.AvailableRoomCountToday</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
                 <div class="card-body py-4">
-                    <h5 class="card-title text-muted">Vacant Rooms for Today</h5>
-                    <p class="card-text display-4">@Model.TotalReservations</p>
+                    <h5 class="card-title text-muted">Intended Checkins Today </h5>
+                    <p class="card-text display-4">@Model.DashboardData.IntendedCheckinCountToday</p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Intended Checkins Tomorrow </h5>
+                    <p class="card-text display-4">@Model.DashboardData.IntendedCheckinCountTomorrow</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted"> Intended Checkout Today </h5>
+                    <p class="card-text display-4">@Model.DashboardData.IntendedCheckOutCountToday </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Intended Checkout Tomorrow </h5>
+                    <p class="card-text display-4">@Model.DashboardData.IntendedCheckOutCountTomorrow</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+@*  public int TotalRooms { get; set;}
+        public int AvailableRoomCountToday { get; set; }
+        public int IntendedCheckinCountToday { get; set; }
+        public int IntendedCheckinCountTomorrow { get; set; }
+        public int IntendedCheckOutCountToday { get; set; }
+        public int IntendedCheckOutCountTomorrow { get; set; } *@
 
 <!-- Custom Styles -->
 <style>

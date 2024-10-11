@@ -81,12 +81,12 @@ namespace RazorPagesMovie.Pages.Reserve
 
             foreach (var roomId in selectedRoomIdsList)
             {
-                var room = await _context.Room.FindAsync(roomId);
-                if (room != null)
-                {
-                    room.IsAvailable = 0;
-                    _context.Room.Update(room);
-                }
+                //var room = await _context.Room.FindAsync(roomId);
+                //if (room != null)
+                //{
+                //    room.IsAvailable = 0;
+                //    _context.Room.Update(room);
+                //}
 
                 var roomReservations = new RoomReservationcs
                 {
