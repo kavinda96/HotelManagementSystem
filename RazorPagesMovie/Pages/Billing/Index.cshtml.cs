@@ -42,6 +42,12 @@ namespace RazorPagesMovie.Pages.Billing
         public decimal? TotalAmount { get; set; }
         public string? SelectedBillingCategory { get; set; }
         public decimal TotalRoomCharge { get;  set; }
+        public decimal DiscountedTotal { get; set; } = 0;
+        public decimal DiscountedPrice { get; set; } = 0;
+
+        public decimal TotalWithoutDiscount { get; set; } = 0;
+
+
 
         public string? billrecDesc { get; set; }
         public IActionResult OnGet(int? id)
@@ -165,7 +171,6 @@ namespace RazorPagesMovie.Pages.Billing
                 billrecDesc = "Check out : Third Party Party Booking";
             }
            
-           
 
             var newTransaction = new Bill
             {
@@ -235,9 +240,7 @@ namespace RazorPagesMovie.Pages.Billing
             }
             reservationToUpdate.ExpectedCheckOutDate = Reservation.ExpectedCheckOutDate;
             _reservationService.UpdateCheckoutDateForReservation(reservationToUpdate.Id, Reservation.ExpectedCheckOutDate);
-
-
-           
+        
 
             await _context.SaveChangesAsync();
 
@@ -305,11 +308,7 @@ namespace RazorPagesMovie.Pages.Billing
 
         public async Task<IActionResult> OnPostBillFinalizedAsync(int ReservationId)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return new JsonResult(new { success = false, message = "Invalid data." });
-            //}
-
+          
             // Find the reservation in the database
             var reservationToUpdate = await _context.Reservations.FindAsync(ReservationId);
 
@@ -320,6 +319,33 @@ namespace RazorPagesMovie.Pages.Billing
 
             // Update the reservation status to 'finalized'
             reservationToUpdate.status = 3; // 3 = finalized
+
+            DiscountedTotal = await _context.CalculateDiscountedTotalAsync(reservationToUpdate.Id); // final total after discount
+            reservationToUpdate.TotalFinalAmount = DiscountedTotal;
+            
+
+            TotalWithoutDiscount = await _context.CalculateTotalWithoutDiscountAsync(reservationToUpdate.Id); //  total without discount
+            reservationToUpdate.TotalAmount = TotalWithoutDiscount;
+
+            if (reservationToUpdate.DiscountRate > 0)
+            {
+                DiscountedPrice = await _context.CalculateDiscountedPriceAsync(reservationToUpdate.Id); //discounted price from total
+                reservationToUpdate.DiscountedPrice = DiscountedPrice;
+
+                var newTransaction = new Bill
+                {
+                    InvoiceNo = ReservationId,
+                    createdDate = DateTime.Now,
+                    Category = "3",
+                    Description = "Discounted Price " + reservationToUpdate.DiscountRate + "%",
+                    ItemPrice = DiscountedPrice,
+                    ItemQty = 1
+                };
+
+
+                _context.BillingTransactions.Add(newTransaction);
+            }
+
 
             // Save changes to the database
             await _context.SaveChangesAsync();

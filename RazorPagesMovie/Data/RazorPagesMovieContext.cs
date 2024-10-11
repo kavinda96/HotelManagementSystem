@@ -73,8 +73,109 @@ namespace RazorPagesMovie.Data
             return 0;
         }
 
+        public async Task<decimal> CalculateDiscountedPriceAsync(int reservationId)
+        {
+            // Write the raw SQL query to calculate the total room charges
+            var query = @"
+                        SELECT (sum(bill.itemPrice * bill.itemQty) *  max(res.DiscountRate)/100) * -1 as Discounted_total
+                        FROM BillingTransactions bill, Reservations res
+                        where bill.InvoiceNo = res.Id 
+                        and bill.InvoiceNo = @reservationId
+                        and bill.tranStatus = 1;";  // Add status condition here
 
-       
+
+            // Execute the raw SQL query and get the result
+
+            var parameter = new SqlParameter("@reservationId", reservationId);
+
+            using (var command = this.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = query;
+                command.Parameters.Add(parameter);
+
+                await this.Database.OpenConnectionAsync();
+
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    if (await result.ReadAsync())
+                    {
+                        return result.IsDBNull(0) ? 0 : result.GetDecimal(0);
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        public async Task<decimal> CalculateDiscountedTotalAsync(int reservationId)
+        {
+            // Write the raw SQL query to calculate the total room charges
+            var query = @"
+                        SELECT sum(bill.itemPrice * bill.itemQty) -(sum(bill.itemPrice * bill.itemQty) *  max(res.DiscountRate)/100) as Discounted_total
+                        FROM BillingTransactions bill, Reservations res
+                        where bill.InvoiceNo = res.Id 
+                        and bill.InvoiceNo = @reservationId
+                        and bill.tranStatus = 1;";  // Add status condition here
+
+
+            // Execute the raw SQL query and get the result
+
+            var parameter = new SqlParameter("@reservationId", reservationId);
+
+            using (var command = this.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = query;
+                command.Parameters.Add(parameter);
+
+                await this.Database.OpenConnectionAsync();
+
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    if (await result.ReadAsync())
+                    {
+                        return result.IsDBNull(0) ? 0 : result.GetDecimal(0);
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        public async Task<decimal> CalculateTotalWithoutDiscountAsync(int reservationId)
+        {
+            // Write the raw SQL query to calculate the total room charges
+            var query = @"
+                        SELECT sum(bill.itemPrice * bill.itemQty) 
+                        FROM BillingTransactions bill, Reservations res
+                        where bill.InvoiceNo = res.Id 
+                        and bill.InvoiceNo = @reservationId
+                        and bill.tranStatus = 1;";  // Add status condition here
+
+
+            // Execute the raw SQL query and get the result
+
+            var parameter = new SqlParameter("@reservationId", reservationId);
+
+            using (var command = this.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = query;
+                command.Parameters.Add(parameter);
+
+                await this.Database.OpenConnectionAsync();
+
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    if (await result.ReadAsync())
+                    {
+                        return result.IsDBNull(0) ? 0 : result.GetDecimal(0);
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+
 
 
 

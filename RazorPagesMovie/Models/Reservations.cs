@@ -64,5 +64,11 @@ namespace RazorPagesMovie.Models
         public bool IsThirdPartyBooking { get; set; } =false;
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+//
+        public decimal DiscountedPrice {  get; set; } = 0;
+        
+        public decimal TotalAmount { get; set; }=0;
+
+        public decimal TotalFinalAmount { get; set; }=0;
     }
 }

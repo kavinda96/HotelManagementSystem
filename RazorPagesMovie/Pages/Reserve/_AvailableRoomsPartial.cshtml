@@ -2,70 +2,77 @@
 
 @if (Model != null && Model.Any())
 {
-    <ul class="list-group">
-        @foreach (var room in Model)
+    <div class="container">
+        @for (var i = 0; i < Model.Count(); i += 2) // Iterate in steps of 2 to group rooms in pairs
         {
-            <div class="card mb-3" style="cursor: pointer;" onclick="toggleCardDetails(@room.Id)">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Room @room.RoomNo (@room.RoomType)</span>
-                    <input type="checkbox" class="form-check-input"
-                           name="SelectedRoomIds"
-                           id="SelectedRoomIds"
-                           value="@room.Id"
-                    @(room.IsSelected ? "checked='checked'" : "") /> <!-- Ensure proper syntax for the checked attribute -->
-                    <!-- Preserve the IsSelected state -->
+            <div class="row">
+                @* First room in the row *@
+                <div class="col-sm-12 col-md-6">
+                    <div class="card mb-3" style="cursor: pointer;" onclick="toggleCardDetails(@Model.ElementAt(i).Id)">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Room @Model.ElementAt(i).RoomNo - @GetRoomTypeName(Model.ElementAt(i).RoomType)</span>
+                            <input type="checkbox" class="form-check-input"
+                                   name="SelectedRoomIds"
+                                   id="SelectedRoomIds"
+                                   value="@Model.ElementAt(i).Id"
+                            @(Model.ElementAt(i).IsSelected ? "checked='checked'" : "") />
+                        </div>
+                        <div class="card-body collapse" id="roomDetails-@Model.ElementAt(i).Id">
+                            <p>Details about Room @Model.ElementAt(i).RoomNo</p>
+                            <p>Room Type: @GetRoomTypeName(Model.ElementAt(i).RoomType)</p>
+                            <p>Price: @Model.ElementAt(i).Price</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body collapse" id="roomDetails-@room.Id">
-                    <p>Details about Room @room.RoomNo</p>
-                    <p>Room Type: @room.RoomType</p>
-                    <p>Price: $100</p>
-                    <!-- Additional room details can go here -->
-                </div>
+
+                @* Check if there's a second room to add in the same row *@
+                @if (i + 1 < Model.Count())
+                {
+                    <div class="col-sm-12 col-md-6">
+                        <div class="card mb-3" style="cursor: pointer;" onclick="toggleCardDetails(@Model.ElementAt(i + 1).Id)">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Room @Model.ElementAt(i + 1).RoomNo - @GetRoomTypeName(Model.ElementAt(i + 1).RoomType)</span>
+                                <input type="checkbox" class="form-check-input"
+                                       name="SelectedRoomIds"
+                                       id="SelectedRoomIds"
+                                       value="@Model.ElementAt(i + 1).Id"
+                                @(Model.ElementAt(i + 1).IsSelected ? "checked='checked'" : "") />
+                            </div>
+                            <div class="card-body collapse" id="roomDetails-@Model.ElementAt(i + 1).Id">
+                                <p>Details about Room @Model.ElementAt(i + 1).RoomNo</p>
+                                <p>Room Type: @GetRoomTypeName(Model.ElementAt(i + 1).RoomType)</p>
+                                <p>Price: @Model.ElementAt(i + 1).Price</p>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         }
-    </ul>
+    </div>
 }
 else
 {
     <div class="alert alert-warning">No rooms available for the selected dates.</div>
 }
 
+@functions {
+    // Method to convert room type number to room type name
+    private string GetRoomTypeName(string roomTypeId)
+    {
+        return roomTypeId switch
+        {
+            "1" => "Deluxe Double",
+            "2" => "Deluxe Triple",
+            "3" => "Superior Double",
+            "4" => "Superior Triple",
+            _ => "Unknown Room Type"
+        };
+    }
+}
+
 <script>
-    // JavaScript to toggle the visibility of room details
     function toggleCardDetails(roomId) {
         var roomDetails = document.getElementById('roomDetails-' + roomId);
-        if (roomDetails.classList.contains('show')) {
-            roomDetails.classList.remove('show');
-        } else {
-            roomDetails.classList.add('show');
-        }
+        roomDetails.classList.toggle('show');
     }
 </script>
-
-@* 
-<div>
-    @if (Model.Rooms != null && Model.Rooms.Any())
-    {
-        @foreach (var room in Model.Rooms)
-        {
-            <div class="card mb-3" style="cursor: pointer;" onclick="toggleCardDetails(@room.Id)">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Room @room.RoomNo (@room.RoomType)</span>
-                    <input type="checkbox" class="form-check-input"
-                           name="SelectedRoomIds"
-                           value="@room.Id" />
-                </div>
-                <div class="card-body collapse" id="roomDetails-@room.Id">
-                    <p>Details about Room @room.RoomNo</p>
-                    <p>Room Type: @room.RoomType</p>
-                    <p>Price: $100</p>
-                    <!-- Additional room details can go here -->
-                </div>
-            </div>
-        }
-    }
-    else
-    {
-        <div class="alert alert-warning">No vacant rooms available.</div>
-    }
-</div> *@

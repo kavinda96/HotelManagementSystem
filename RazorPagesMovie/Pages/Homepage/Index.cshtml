@@ -1,123 +1,187 @@
 ﻿@page
 @model RazorPagesMovie.Pages.Homepage.IndexModel
 @{
+    ViewData["Title"] = "Dashboard";
 }
-<div class="card mb-2" id="headbox">
-    <div class="card-body text-center">
+<!-- Header box with original color -->
+<div class="card mb-4 shadow-lg" id="headbox">
+    <div class="card-body text-center text-white py-4">
         <h2 class="m-0 display-6 display-md-5 display-lg-4">KEEPER: The Hotel Management Dashboard</h2>
     </div>
 </div>
 
-
 <div class="container mt-5">
-    
-   
     <div class="row text-center mb-4">
         <div class="col">
-         @*    <h1>Hotel Management Dashboard</h1> *@
-            <p class="lead">Welcome to the hotel management system. Here you can manage reservations, check-ins, and check-outs.</p>
+            <p class="lead text-muted">Welcome to the hotel management system. Manage reservations, check-ins, and check-outs effortlessly.</p>
         </div>
     </div>
+
+    <!-- Date, Time, and Greeting in bold colors -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6 text-center">
+            <h1 id="greetingMessage" class="display-6 text-primary fw-bold"></h1>
+            <p id="dateTime" class="h4 text-secondary fw-bold"></p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row text-center mb-5">
+        <div class="col-md-4 mb-4">
+            <a asp-page="/Reserve/Create" class="btn btn-lg btn-block btn-gradient-success shadow-sm rounded-pill">Make a Reservation</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a asp-page="/Availability/Index" class="btn btn-lg btn-block btn-gradient-warning shadow-sm rounded-pill">Check Availability</a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a asp-page="/Reserve/Index" class="btn btn-lg btn-block btn-gradient-danger shadow-sm rounded-pill">Reservations List</a>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
     <div class="row text-center">
         <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Total Reservations</h5>
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Total Reservations</h5>
                     <p class="card-text display-4">@Model.DashboardData.TotalReservation</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Upcoming Reservations</h5>
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Upcoming Reservations</h5>
                     <p class="card-text display-4">@Model.DashboardData.UpcomingReservation</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Active Reservations</h5>
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Active Reservations</h5>
                     <p class="card-text display-4">@Model.DashboardData.ActiveReservation</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Total Rooms</h5>
-                    <p class="card-text display-4">@Model.TotalReservations</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Vacant Rooms for Today</h5>
-                    <p class="card-text display-4">@Model.TotalReservations</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Vacant Rooms for Today</h5>
-                    <p class="card-text display-4">@Model.TotalReservations</p>
-                </div>
-            </div>
-        </div>
 
-
-    </div>
-    <div class="row text-center">
+        <!-- Example additional stat cards -->
         <div class="col-md-4 mb-4">
-            <a asp-page="/Reserve/Create" class="btn btn-success btn-lg btn-block">Make a Reservation</a>
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Total Rooms</h5>
+                    <p class="card-text display-4">@Model.TotalReservations</p>
+                </div>
+            </div>
         </div>
         <div class="col-md-4 mb-4">
-            <a asp-page="/Availability/Index" class="btn btn-warning btn-lg btn-block">Check Availability</a>
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Vacant Rooms for Today</h5>
+                    <p class="card-text display-4">@Model.TotalReservations</p>
+                </div>
+            </div>
         </div>
         <div class="col-md-4 mb-4">
-            <a asp-page="/Reserve/Index" class="btn btn-danger btn-lg btn-block">Reservations List</a>
+            <div class="card shadow-sm border-0 rounded-lg bg-gradient-light">
+                <div class="card-body py-4">
+                    <h5 class="card-title text-muted">Vacant Rooms for Today</h5>
+                    <p class="card-text display-4">@Model.TotalReservations</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
+<!-- Custom Styles -->
 <style>
+    body {
+        background-color: #f3f4f6;
+        font-family: 'Poppins', sans-serif;
+    }
 
-    /*  body {
-         font-family: Arial, sans-serif;
-         background-color: #f4f4f4;
-         margin: 0;
-     }
+  /*   #headbox {
+        background-color: #0052cc;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    } */
 
-     .container {
-         max-width: 960px;
-     }
+    .btn-gradient-success {
+        background: linear-gradient(135deg, #4caf50, #388e3c);
+        color: white;
+    }
 
-     .card {
-         border: none;
-         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-     }
+    .btn-gradient-warning {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+    }
 
-     .card-body {
-         padding: 30px;
-     }
+    .btn-gradient-danger {
+        background: linear-gradient(135deg, #f44336, #d32f2f);
+        color: white;
+    }
 
-     .card-title {
-         font-size: 1.25rem;
-         color: #333;
-     }
+    .card {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
 
-     .card-text {
-         font-size: 2.5rem;
-         color: #666;
-     }
+    .bg-gradient-light {
+        background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
+    }
 
-     .btn-block {
-         padding: 15px;
-         font-size: 1.25rem;
-     } */
+    .rounded-pill {
+        border-radius: 50px;
+    }
 
+    .shadow-sm {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    .text-secondary {
+        color: #6c757d !important;
+    }
+
+    .fw-bold {
+        font-weight: 700 !important;
+    }
+
+    .display-6 {
+        font-size: 1.75rem;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+    }
 </style>
+
+<!-- JavaScript for Dynamic Date and Time -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('dateTime').innerHTML = now.toLocaleDateString('en-US', options);
+        }
+
+        function updateGreeting() {
+            const hours = new Date().getHours();
+            let greeting = "Good Morning";
+            if (hours >= 12 && hours < 18) {
+                greeting = "Good Afternoon";
+            } else if (hours >= 18) {
+                greeting = "Good Evening";
+            }
+            document.getElementById('greetingMessage').innerHTML = greeting;
+        }
+
+        updateDateTime();
+        updateGreeting();
+        setInterval(updateDateTime, 60000); // Update every minute
+    });
+</script>

@@ -52,20 +52,23 @@ namespace RazorPagesMovie.Pages.Reserve
             //}
 
             var selectedRoomIds = Request.Form["SelectedRoomIds"];
+            if (selectedRoomIds.Count == 0)
+            {
+                ModelState.AddModelError(string.Empty, "No rooms selected.");
+                // Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
+                return Page();
+            }
             var selectedRoomIdsList = selectedRoomIds.ToString().Split(',').Select(int.Parse).ToList();
 
             var selectedRooms = await _context.Room
                 .Where(r => selectedRoomIdsList.Contains(r.Id))
                 .ToListAsync();
+           
 
             var selectedRoomNumbersString = string.Join(",", selectedRooms.Select(r => r.RoomNo));
 
-            if (!selectedRoomIdsList.Any())
-            {
-                ModelState.AddModelError(string.Empty, "No rooms selected.");
-               // Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
-                return Page();
-            }
+           
+
 
             Reservations.CheckInDate = DateTime.Parse(Request.Form["checkInDate"]);
             Reservations.ExpectedCheckOutDate = DateTime.Parse(Request.Form["checkOutDate"]);

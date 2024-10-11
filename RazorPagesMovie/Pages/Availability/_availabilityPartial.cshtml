@@ -19,13 +19,15 @@
         {
             <div class="col-md-3 mb-4">
                 <div class="card room-tile">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         Room @room.RoomNo
+                        <!-- Larger checkbox next to room number -->
+                        <input type="checkbox" name="SelectedRoomIds" value="@room.Id"
+                               style="transform: scale(1.5); margin-left: 10px;" /> <!-- Increase size with scale -->
                     </div>
                     <div class="card-body">
-                        <p>Price: @room.Price</p> <!-- Replace with actual price if needed -->
-                       @*  <p>Beds Count: @room.BedsCount</p> *@
-                        <input type="checkbox" name="SelectedRoomIds" value="@room.Id" />
+                        <p>Price: @room.Price</p>
+                        <p>Beds Count: @room.BedsCount</p> <!-- Display beds count under price -->
                     </div>
                 </div>
             </div>
