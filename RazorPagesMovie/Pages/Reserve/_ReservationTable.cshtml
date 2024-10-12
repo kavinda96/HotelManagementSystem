@@ -12,7 +12,9 @@
                 <th>Checkin Date</th>
                 <th>Checkout Date</th>
                 <th>Guest Count</th>
+               
                 <th>Rooms</th>
+                <th>Third party Booking</th>
                 <th colspan="4"></th>
             </tr>
         </thead>
@@ -40,6 +42,15 @@
                     <td>@Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)</td>
                     <td>@Html.DisplayFor(modelItem => item.GuestCount)</td>
                     <td>@Html.DisplayFor(modelItem => item.SelectedRoomsNos)</td>
+                    <td>
+
+                        @{
+                            // Use the boolean property directly
+                            string IsThirdPartyBookingText = item.IsThirdPartyBooking ? "Yes" : "No";
+                        }
+                        @IsThirdPartyBookingText
+                    
+                    </td>
                     <td>
                         <button type="button" class="btn btn-warning btn-sm"
                                 onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile')">

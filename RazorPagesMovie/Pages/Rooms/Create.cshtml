@@ -21,10 +21,15 @@
             <div class="form-group">
                 <label asp-for="Room.RoomType" class="control-label"></label>
                 <select asp-for="Room.RoomType" class="form-control">
-                    <option value="1">Deluxe Double</option>
-                    <option value="2">Deluxe Triple</option>
-                    <option value="3">Superior Double</option>
-                    <option value="4">Superior Triple</option>
+                    <option value="1">Standard Double</option>
+                    <option value="2">Standard Triple</option>
+                    <option value="3">Deluxe A/C Double</option>
+                    <option value="4">Deluxe A/C Triple</option>
+                    <option value="5">Deluxe A/C Double Sea View Common Balcony</option>
+                    <option value="6">Deluxe A/C Triple Sea View Common Balcony</option>
+                    <option value="7">Deluxe A/C Double Sea View Private Balcony</option>
+                    <option value="8">Deluxe A/C Triple Sea View Private Balcony</option>
+
                 </select>
                 <span asp-validation-for="Room.RoomType" class="text-danger"></span>
             </div>
@@ -38,6 +43,20 @@
                 <input asp-for="Room.BedsCount" class="form-control" />
                 <span asp-validation-for="Room.BedsCount" class="text-danger"></span>
             </div>
+
+
+
+            <div class="form-group">
+                <label asp-for="Room.IsAvailable" class="control-label">Is Available? </label>
+                <select asp-for="Room.IsAvailable" class="form-control">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+
+                </select>
+                <span asp-validation-for="Room.IsAvailable" class="text-danger"></span>
+            </div>
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary " />
             </div>

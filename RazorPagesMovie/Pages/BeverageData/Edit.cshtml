@@ -30,8 +30,12 @@
                 <span asp-validation-for="Beverage.Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Beverage.IsAvailable" class="control-label"></label>
-                <input asp-for="Beverage.IsAvailable" class="form-control" />
+                <label asp-for="Beverage.IsAvailable" class="control-label">Is Available? </label>
+                <select asp-for="Beverage.IsAvailable" class="form-control">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+
+                </select>
                 <span asp-validation-for="Beverage.IsAvailable" class="text-danger"></span>
             </div>
             <div class="form-group">

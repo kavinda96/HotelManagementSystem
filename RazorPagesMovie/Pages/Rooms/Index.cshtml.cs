@@ -41,10 +41,15 @@ namespace RazorPagesMovie.Pages.Rooms
         {
             RoomTypeNames = new List<SelectListItem>
             {
-            new SelectListItem { Value = "1", Text = "Deluxe Double" },
-            new SelectListItem { Value = "2", Text = "Deluxe Triple" },
-            new SelectListItem { Value = "3", Text = "Superior Double" },
-            new SelectListItem { Value = "4", Text = "Superior Triple" }
+            new SelectListItem { Value = "1", Text = "Standard Double"},
+            new SelectListItem { Value = "2", Text = "Standard Triple" },
+            new SelectListItem { Value = "3", Text = "Deluxe A/C Double" },
+            new SelectListItem { Value = "4", Text = "Deluxe A/C Triple" },
+            new SelectListItem { Value = "5", Text = "Deluxe A/C Double Sea View Common Balcony" },
+            new SelectListItem { Value = "6", Text = "Deluxe A/C Triple Sea View Common Balcony" },
+            new SelectListItem { Value = "7", Text = "Deluxe A/C Double Sea View Private Balcony" },
+            new SelectListItem { Value = "8", Text = "Deluxe A/C Triple Sea View Private Balcony" }
+
              };
 
             IQueryable<string> roomTypeQry = from m in _context.Room
