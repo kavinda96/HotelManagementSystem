@@ -4,13 +4,19 @@
 @{
     ViewData["Title"] = "Index";
 }
+<link rel="stylesheet" href="~/css/table.css" />
+<div class="card mb-2" id="headbox">
+    <div class="card-body text-center">
+        <h2 class="m-0 display-6 display-md-5 display-lg-4">Third Party Handlers / Companies</h2>
+    </div>
+</div>
 
-<h1>Index</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create" class="btn btn-success">Create New</a>
 </p>
-<table class="table">
+<div class="table-wrapper">
+    <table class="fl-table">
     <thead>
         <tr>
             <th>
@@ -52,3 +58,4 @@
 }
     </tbody>
 </table>
+</div>
