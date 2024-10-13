@@ -15,6 +15,7 @@ public class Room
     [Display(Name = "Room Type")]
     public string? RoomType { get; set; }
 
+    [Display(Name = "Price in LKR")]
     [Column(TypeName = "decimal(18, 2)")]
     [Required]
     [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "Please enter a valid number.")]
@@ -29,5 +30,11 @@ public class Room
 
     [NotMapped]
     public bool IsSelected { get; set; }
+
+    [Display(Name = "Price in USD")]
+    [Column(TypeName = "decimal(18, 2)")]
+    [Required]
+    [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "Please enter a valid number.")]
+    public decimal PriceUSD { get; set; }
 }
 

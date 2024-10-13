@@ -33,6 +33,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Beverage[0].Price)
             </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Beverage[0].PriceUSD)
+                </th>
             <th>
                 @Html.DisplayNameFor(model => model.Beverage[0].IsAvailable)
             </th>
@@ -54,6 +57,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PriceUSD)
+                    </td>
                     <td>
                         @{
                             string IsAvailableText = item.IsAvailable switch

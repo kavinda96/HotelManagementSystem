@@ -73,6 +73,9 @@
                     @Html.DisplayNameFor(model => model.Room[0].Price)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.Room[0].PriceUSD)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Room[0].BedsCount)
                 </th>
                 <th>
@@ -114,6 +117,9 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PriceUSD)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.BedsCount)

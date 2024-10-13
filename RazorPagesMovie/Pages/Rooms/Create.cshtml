@@ -39,6 +39,11 @@
                 <span asp-validation-for="Room.Price" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Room.PriceUSD" class="control-label"></label>
+                <input asp-for="Room.PriceUSD" class="form-control" />
+                <span asp-validation-for="Room.PriceUSD" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Room.BedsCount" class="control-label"></label>
                 <input asp-for="Room.BedsCount" class="form-control" />
                 <span asp-validation-for="Room.BedsCount" class="text-danger"></span>

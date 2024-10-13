@@ -35,6 +35,11 @@
                 <span asp-validation-for="Beverage.Price" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Beverage.PriceUSD" class="control-label"></label>
+                <input asp-for="Beverage.PriceUSD" class="form-control" />
+                <span asp-validation-for="Beverage.PriceUSD" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Beverage.IsAvailable" class="control-label">Is Available? </label>
                 <select asp-for="Beverage.IsAvailable" class="form-control">
                     <option value="1">Yes</option>
