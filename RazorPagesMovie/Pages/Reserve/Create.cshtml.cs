@@ -28,20 +28,15 @@ namespace RazorPagesMovie.Pages.Reserve
         [BindProperty]
         public Reservations Reservations { get; set; } = new Reservations();
 
+        public IList<ThirdPartyHandlers> ThirdPartyHandlers { get; set; } = new List<ThirdPartyHandlers>();
+
         public IList<Room> Rooms { get; set; } = new List<Room>();
 
-        //public async Task<IActionResult> OnGetAsync()
-        //{
-        //    try
-        //    {
-        //        Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError(string.Empty, "Unable to load rooms.");
-        //    }
-        //    return Page();
-        //}
+        public async Task<IActionResult> OnGetAsync()
+        {
+            ThirdPartyHandlers = await _context.ThirdPartyHandlers.ToListAsync();
+            return Page();
+        }
 
         public async Task<IActionResult> OnPostAsync()
         {

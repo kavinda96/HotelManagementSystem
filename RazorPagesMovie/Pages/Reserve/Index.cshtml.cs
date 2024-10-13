@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using RazorPagesMovie.Data;
 using RazorPagesMovie.Models;
 using RazorPagesMovie.Services;
@@ -81,5 +82,22 @@ namespace RazorPagesMovie.Pages.Reserve
             TotalRecords = paginatedResult.TotalRecords;
 
         }
+
+        public async Task<IActionResult> OnGetThirdPartyHandlerNameAsync(int handlerId)
+        {
+            var handlerName = await _context.ThirdPartyHandlers
+                                            .Where(h => h.Id == handlerId)
+                                            .Select(h => h.CompanyName)
+                                            .FirstOrDefaultAsync();
+            if (handlerName == null)
+            {
+                return NotFound();
+            }
+            return new JsonResult(handlerName);
+        }
+
+
+
+
     }
 }

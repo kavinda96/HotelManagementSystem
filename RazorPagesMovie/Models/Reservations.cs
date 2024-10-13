@@ -70,5 +70,8 @@ namespace RazorPagesMovie.Models
         public decimal TotalAmount { get; set; }=0;
 
         public decimal TotalFinalAmount { get; set; }=0;
+
+        public int? ThirdPartyHandlerId { get; set; }
+        public string? BookingReference { get; set; }
     }
 }

@@ -23,6 +23,48 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <!-- Reservation Details Form Fields -->
+                                <!-- Third Party Booking Option (Toggle Button) -->
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="form-group">
+                                            <label class="control-label">Third-Party Booking</label>
+                                            <div class="form-check form-switch">
+                                                <!-- Add the onchange event here -->
+                                                <input asp-for="Reservations.IsThirdPartyBooking"
+                                                       class="form-check-input"
+                                                       type="checkbox"
+                                                       id="thirdPartyBooking"
+                                                       onchange="toggleThirdPartyFields()" />
+                                                <label class="form-check-label" for="thirdPartyBooking">Yes (No is default)</label>
+                                            </div>
+                                            <span asp-validation-for="Reservations.IsThirdPartyBooking" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Third Party Handler Selection and Booking Reference -->
+                                <tr id="thirdPartyFields" style="display: none;">
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.ThirdPartyHandlerId" class="control-label">Third Party Handler</label>
+                                            <select asp-for="Reservations.ThirdPartyHandlerId" class="form-control">
+                                                <option value="">Select Third Party</option>
+                                                @foreach (var handler in Model.ThirdPartyHandlers)
+                                                {
+                                                    <option value="@handler.Id">@handler.CompanyName</option>
+                                                }
+                                            </select>
+                                            <span asp-validation-for="Reservations.ThirdPartyHandlerId" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.BookingReference" class="control-label">Booking Reference</label>
+                                            <input asp-for="Reservations.BookingReference" class="form-control" />
+                                            <span asp-validation-for="Reservations.BookingReference" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>
                                         <div class="form-group">
@@ -88,19 +130,8 @@
                                     </td>
                                 </tr>
 
-                                <!-- Third Party Booking Option (Toggle Button) -->
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="form-group">
-                                            <label class="control-label">Third-Party Booking</label>
-                                            <div class="form-check form-switch">
-                                                <input asp-for="Reservations.IsThirdPartyBooking" class="form-check-input" type="checkbox" id="thirdPartyBooking" />
-                                                <label class="form-check-label" for="thirdPartyBooking">Yes (No is default)</label>
-                                            </div>
-                                            <span asp-validation-for="Reservations.IsThirdPartyBooking" class="text-danger"></span>
-                                        </div>
-                                    </td>
-                                </tr>
+                              
+
 
                             </tbody>
                         </table>
@@ -187,5 +218,18 @@
                 showLoader(); // Show loader when any form is submitted
             });
         });
+
+
+        function toggleThirdPartyFields() {
+            var thirdPartyBooking = document.getElementById('thirdPartyBooking').checked;
+            var thirdPartyFields = document.getElementById('thirdPartyFields');
+            if (thirdPartyBooking) {
+                thirdPartyFields.style.display = "table-row";
+            } else {
+                thirdPartyFields.style.display = "none";
+            }
+        }
+
     </script>
+
 }

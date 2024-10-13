@@ -32,6 +32,8 @@ namespace RazorPagesMovie.Pages.Reserve
 
         public IList<Room> Rooms { get; set; } = new List<Room>();
 
+        public IList<ThirdPartyHandlers> ThirdPartyHandlers { get; set; } = new List<ThirdPartyHandlers>();
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -47,6 +49,9 @@ namespace RazorPagesMovie.Pages.Reserve
                 // Log the exception and handle as necessary
                 ModelState.AddModelError(string.Empty, "Unable to load rooms.");
             }
+
+            ThirdPartyHandlers = await _context.ThirdPartyHandlers.ToListAsync();
+
             var reservations =  await _context.Reservations.FirstOrDefaultAsync(m => m.Id == id);
             if (reservations == null)
             {
