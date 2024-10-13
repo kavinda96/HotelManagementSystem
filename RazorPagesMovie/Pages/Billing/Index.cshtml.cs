@@ -264,32 +264,49 @@ namespace RazorPagesMovie.Pages.Billing
 
 
 
+       
         public async Task<JsonResult> OnGetFoodItems(string term)
         {
             try
             {
+                var isNumeric = int.TryParse(term, out int foodCode);
+
                 var foodItems = await _context.Food
-                                              .Where(f => f.FoodName.Contains(term))
-                                              .Select(f => new { id = f.Id, foodName = f.FoodName, price = f.Price })
-                                              .ToListAsync();
+                    .Where(f => isNumeric ? f.FoodCode == foodCode : f.FoodName.Contains(term))
+                    .Select(f => new
+                    {
+                        id = f.Id,
+                        foodName = f.FoodName,
+                        price = f.Price,
+                        foodCode = f.FoodCode
+                    })
+                    .ToListAsync();
 
                 return new JsonResult(foodItems);
-            } 
+            }
             catch (Exception ex)
             {
-                // Return a valid JSON error response
                 return new JsonResult(new { success = false, message = ex.Message });
             }
         }
+
 
         public async Task<JsonResult> OnGetBeverageItems(string term)
         {
             try
             {
+                var isNumeric = int.TryParse(term, out int beveragecode);
+
                 var beverageItems = await _context.Beverage
-                                              .Where(f => f.BeverageName.Contains(term))
-                                              .Select(f => new { id = f.Id, beverageName = f.BeverageName, price = f.Price })
-                                              .ToListAsync();
+                   .Where(f => isNumeric ? f.BeverageCode == beveragecode : f.BeverageName.Contains(term))
+                   .Select(f => new
+                   {
+                       id = f.Id,
+                       beverageName = f.BeverageName,
+                       price = f.Price,
+                       beverageCode = f.BeverageCode
+                   })
+                   .ToListAsync();
 
                 return new JsonResult(beverageItems);
             }

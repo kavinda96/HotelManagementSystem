@@ -24,6 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Beverage[0].BeverageName)
             </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Beverage[0].BeverageCode)
+                </th>
             <th>
                 @Html.DisplayNameFor(model => model.Beverage[0].BeverageDescription)
             </th>
@@ -42,6 +45,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.BeverageName)
             </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BeverageCode)
+                    </td>
             <td>
                 @Html.DisplayFor(modelItem => item.BeverageDescription)
             </td>

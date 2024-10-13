@@ -48,10 +48,15 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">
+                            <a class="nav-link text-dark" asp-area="Identity">
                                 Hello, @User.Identity.Name!
                             </a>
                         </li>
+                     @*    <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                Hello, @User.Identity.Name!
+                            </a>
+                        </li> *@
                         <li class="nav-item">
                             <form method="post" asp-area="Identity" asp-page="/Account/Logout">
                                 <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
@@ -130,6 +135,12 @@
                         <i class="fas fa-search me-2"></i> Availability
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-page="/ThirdParty/Index">
+                     <i class="fas fa-building me-2"></i> Third Party Handlers
+                    </a>
+                </li>
+                    
             </ul>
             }
         </div>
@@ -189,7 +200,7 @@
             </li>
                 <li class="nav-item">
                     <a class="nav-link text-muted" id="thirdpartyhandlerlink" asp-area="" asp-page="/ThirdParty/Index">
-                        <i class="fas fa-building"></i>
+                        <i class="fas fa-building me-2"></i>
                         Third Party Handlers                    
                     </a>
                 </li>

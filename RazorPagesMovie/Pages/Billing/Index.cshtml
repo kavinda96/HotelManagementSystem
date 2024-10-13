@@ -713,32 +713,36 @@ else
 
 
         //below is the food search auto complete in billing page
-    $(document).ready(function() {
-        $("#foodItemSearch").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "/Billing?handler=FoodItems",
-                    dataType: "json",
-                    data: { term: request.term },
-                    success: function(data) {
-                        response($.map(data, function(item) {
-                            return {
-                                label: item.foodName,
-                                value: item.foodName,
-                                id: item.id,
-                                price: item.price
-                            };
-                        }));
-                    }
-                });
-            },
-            select: function(event, ui) {
-                $('#selectedFoodId').val(ui.item.id);
-                $('#itemPrice').val(ui.item.price);
-                    $('#foodItemSearch').val(ui.item.foodName);
-            }
+   
+
+        $(document).ready(function () {
+            $("#foodItemSearch").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Billing?handler=FoodItems",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.foodCode + " - " + item.foodName, // Show FoodCode with FoodName
+                                    value: item.foodName, // Set the input to FoodName on select
+                                    id: item.id,
+                                    price: item.price,
+                                    foodCode: item.foodCode
+                                };
+                            }));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $('#selectedFoodId').val(ui.item.id);
+                    $('#itemPrice').val(ui.item.price);
+                    $('#foodItemSearch').val(ui.item.foodName); // Set the food name in the search box
+                }
+            });
         });
-    });
+
     
     //below is the beverage search auto complete in billing page
         $(document).ready(function () {
@@ -750,8 +754,8 @@ else
                         data: { term: request.term },
                         success: function (data) {
                             response($.map(data, function (item) {
-                                return {
-                                    label: item.beverageName,
+                                return {                              
+                                    label: item.beverageCode + " - " + item.beverageName,
                                     value: item.beverageName,
                                     id: item.id,
                                     price: item.price

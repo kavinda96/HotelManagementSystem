@@ -21,5 +21,8 @@ public class Beverage
     public decimal Price { get; set; }
 
     public int? IsAvailable { get; set; }
+    [Display(Name = "Beverage Code")]
+    public int? BeverageCode { get; set; }
+
 }
 

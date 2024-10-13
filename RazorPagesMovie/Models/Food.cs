@@ -20,5 +20,8 @@ using System.ComponentModel.DataAnnotations.Schema;
         public decimal Price { get; set; }
 
         public int? IsAvailable { get; set; }
+   
+    [Display(Name = "Food Code")]
+    public int? FoodCode { get; set; }
     }
 
