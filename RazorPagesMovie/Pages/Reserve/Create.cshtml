@@ -105,6 +105,27 @@
                                             <span asp-validation-for="Reservations.Mobile" class="text-danger"></span>
                                         </div>
                                     </td>
+                                  
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.Email" class="control-label"></label>
+                                            <input asp-for="Reservations.Email" class="form-control" />
+                                            <span asp-validation-for="Reservations.Email" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label asp-for="Reservations.SelectedCurrency" class="control-label">Currency </label>
+                                            <select asp-for="Reservations.SelectedCurrency" class="form-control">
+                                                <option value="LKR">LKR</option>
+                                                <option value="USD">USD</option>
+                                        
+                                            </select>
+                                            <span asp-validation-for="Reservations.SelectedCurrency" class="text-danger"></span>
+                                        </div>
+                                    </td>
                                     <td>
                                         <div class="form-group">
                                             <label asp-for="Reservations.GuestCount" class="control-label"></label>
@@ -112,7 +133,9 @@
                                             <span asp-validation-for="Reservations.GuestCount" class="text-danger"></span>
                                         </div>
                                     </td>
+
                                 </tr>
+
                                 <tr>
                                     <td>
                                         <div class="form-group">

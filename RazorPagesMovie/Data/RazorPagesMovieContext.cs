@@ -73,15 +73,26 @@ namespace RazorPagesMovie.Data
             return 0;
         }
 
+
+        //var query = @"
+        //                SELECT (sum(bill.itemPrice * bill.itemQty) *  max(res.DiscountRate)/100) * -1 as Discounted_total
+        //                FROM BillingTransactions bill, Reservations res
+        //                where bill.InvoiceNo = res.Id 
+        //                and bill.InvoiceNo = @reservationId
+        //                and bill.tranStatus = 1;";  // Add status condition here
+
+
+
         public async Task<decimal> CalculateDiscountedPriceAsync(int reservationId)
         {
             // Write the raw SQL query to calculate the total room charges
             var query = @"
-                        SELECT (sum(bill.itemPrice * bill.itemQty) *  max(res.DiscountRate)/100) * -1 as Discounted_total
-                        FROM BillingTransactions bill, Reservations res
-                        where bill.InvoiceNo = res.Id 
-                        and bill.InvoiceNo = @reservationId
-                        and bill.tranStatus = 1;";  // Add status condition here
+                         select (SUM(room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate))) * max(res.DiscountRate)/100
+                         from Room room, Reservations res, RoomReservationcs a
+                         where res.Id = a.ResevationId
+                         and a.RoomId = room.Id
+                         and res.Id = @reservationId
+                         and a.Status = 1;";  // Add status condition here
 
 
             // Execute the raw SQL query and get the result

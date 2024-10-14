@@ -76,7 +76,7 @@
 
 
 <!-- Bootstrap Modal -->
-<div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
+@* <div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -87,10 +87,12 @@
             </div>
             <div class="modal-body">
                 <p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+                <p><strong>Guest Count:</strong> <span id="modalGuestCount"></span></p>
                 <p><strong>NIN:</strong> <span id="modalNIN"></span></p>
                 <p><strong>Address:</strong> <span id="modalAddress"></span></p>
                 <p><strong>Country:</strong> <span id="modalCountry"></span></p>
                 <p><strong>Mobile:</strong> <span id="modalMobile"></span></p>
+                <p><strong>Email:</strong> <span id="modalEmail"></span></p>
                 <p><strong>Third Party Handler Name:</strong> <span id="modalcompanyId"></span></p>
                 <p><strong>Third Party Booking Ref:</strong> <span id="modalTPbookingRef"></span></p>
 
@@ -100,17 +102,78 @@
             </div>
         </div>
     </div>
+</div> *@
+
+<div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerInfoModalLabel">More Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th>Customer Name</th>
+                            <td id="modalCustomerName"></td>
+                        </tr>
+                        <tr>
+                            <th>Guest Count</th>
+                            <td id="modalGuestCount"></td>
+                        </tr>
+                        <tr>
+                            <th>NIN</th>
+                            <td id="modalNIN"></td>
+                        </tr>
+                        <tr>
+                            <th>Address</th>
+                            <td id="modalAddress"></td>
+                        </tr>
+                        <tr>
+                            <th>Country</th>
+                            <td id="modalCountry"></td>
+                        </tr>
+                        <tr>
+                            <th>Mobile</th>
+                            <td id="modalMobile"></td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td id="modalEmail"></td>
+                        </tr>
+                        <tr>
+                            <th>Third Party Handler Name</th>
+                            <td id="modalcompanyId"></td>
+                        </tr>
+                        <tr>
+                            <th>Third Party Booking Ref</th>
+                            <td id="modalTPbookingRef"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 @section Scripts {
     <script>
-        function showCustomerInfo(customerName, nin, address, country, mobile, handlerId, bookingref) {
+        function showCustomerInfo(customerName, nin, address, country, mobile, handlerId, bookingref, email, guestCount) {
             document.getElementById('modalCustomerName').textContent = customerName;
             document.getElementById('modalNIN').textContent = nin;
             document.getElementById('modalAddress').textContent = address;
             document.getElementById('modalCountry').textContent = country;
             document.getElementById('modalMobile').textContent = mobile;
             document.getElementById('modalTPbookingRef').textContent = bookingref;
+            document.getElementById('modalGuestCount').textContent = guestCount;
+            document.getElementById('modalEmail').textContent = email;
 
             // AJAX call to fetch third-party handler name
             $.ajax({

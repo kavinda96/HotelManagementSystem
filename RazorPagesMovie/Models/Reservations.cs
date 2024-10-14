@@ -57,21 +57,28 @@ namespace RazorPagesMovie.Models
 
         public int status { get; set; }
 
-       
+
 
         public decimal DiscountRate { get; set; } = 0;
 
-        public bool IsThirdPartyBooking { get; set; } =false;
+        public bool IsThirdPartyBooking { get; set; } = false;
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-//
-        public decimal DiscountedPrice {  get; set; } = 0;
-        
-        public decimal TotalAmount { get; set; }=0;
+        //
+        public decimal DiscountedPrice { get; set; } = 0;
 
-        public decimal TotalFinalAmount { get; set; }=0;
+        public decimal TotalAmount { get; set; } = 0;
+
+        public decimal TotalFinalAmount { get; set; } = 0;
 
         public int? ThirdPartyHandlerId { get; set; }
         public string? BookingReference { get; set; }
+
+        public string SelectedCurrency { get; set; } = "LKR";
+
+        
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email {  get; set; }
     }
 }
