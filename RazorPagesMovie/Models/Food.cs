@@ -30,5 +30,8 @@ using System.ComponentModel.DataAnnotations.Schema;
         [Required]
         [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "Please enter a valid number.")]
         public decimal PriceUSD { get; set; }
+
+    [Display(Name = "Type")]
+    public int? FoodType { get; set; }  // 1= food, 2= beverage
 }
 

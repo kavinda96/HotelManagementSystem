@@ -274,7 +274,7 @@ namespace RazorPagesMovie.Pages.Billing
                 var isNumeric = int.TryParse(term, out int foodCode);
 
                 var foodItems = await _context.Food
-                    .Where(f => isNumeric ? f.FoodCode == foodCode && f.IsAvailable == 1 : f.FoodName.Contains(term) && f.IsAvailable == 1)
+                    .Where(f => isNumeric ? f.FoodCode == foodCode && f.IsAvailable == 1  && f.FoodType ==1: f.FoodName.Contains(term) && f.IsAvailable == 1 && f.FoodType == 1)
                     .Select(f => new
                     {
                         id = f.Id,
@@ -299,14 +299,14 @@ namespace RazorPagesMovie.Pages.Billing
             {
                 var isNumeric = int.TryParse(term, out int beveragecode);
 
-                var beverageItems = await _context.Beverage
-                   .Where(f => (isNumeric ? f.BeverageCode == beveragecode && f.IsAvailable == 1 : f.BeverageName.Contains(term)) && f.IsAvailable == 1)
+                var beverageItems = await _context.Food
+                   .Where(f => (isNumeric ? f.FoodCode == beveragecode && f.IsAvailable == 1 && f.FoodType == 2 : f.FoodName.Contains(term)) && f.IsAvailable == 1 && f.FoodType == 2)
                    .Select(f => new
                    {
                        id = f.Id,
-                       beverageName = f.BeverageName,
+                       beverageName = f.FoodName,
                        price = f.Price,
-                       beverageCode = f.BeverageCode
+                       beverageCode = f.FoodCode
                    })
                    .ToListAsync();
 

@@ -34,6 +34,9 @@
                     @Html.DisplayNameFor(model => model.Food[0].FoodCode)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.Food[0].FoodType)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Food[0].FoodDescription)
                 </th>
                 <th>
@@ -56,6 +59,16 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FoodCode)
+                </td>
+                <td>
+                        @{
+                            string FoodTypeText = item.FoodType switch
+                            {
+                               1 => "Food",
+                               2 => "Beverage"
+                            };
+                        }
+                        @FoodTypeText
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FoodDescription)
