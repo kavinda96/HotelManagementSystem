@@ -70,6 +70,7 @@ namespace RazorPagesMovie.Pages.Reserve
             Reservations.SelectedRooms = string.Join(",", selectedRoomIdsList);
             Reservations.SelectedRoomsNos = selectedRoomNumbersString;
             Reservations.MasterbillId = Reservations.Id;
+            Reservations.status = 0;
 
             _context.Reservations.Add(Reservations);
             await _context.SaveChangesAsync();

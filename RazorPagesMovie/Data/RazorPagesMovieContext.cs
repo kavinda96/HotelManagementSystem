@@ -92,7 +92,8 @@ namespace RazorPagesMovie.Data
                          where res.Id = a.ResevationId
                          and a.RoomId = room.Id
                          and res.Id = @reservationId
-                         and a.Status = 1;";  // Add status condition here
+                         and a.Status = 1
+                        and res.IsThirdPartyBooking != 1;;";  // Add status condition here
 
 
             // Execute the raw SQL query and get the result
@@ -126,7 +127,8 @@ namespace RazorPagesMovie.Data
                         FROM BillingTransactions bill, Reservations res
                         where bill.InvoiceNo = res.Id 
                         and bill.InvoiceNo = @reservationId
-                        and bill.tranStatus = 1;";  // Add status condition here
+                        and bill.tranStatus = 1
+                        ;";  // Add status condition here
 
 
             // Execute the raw SQL query and get the result

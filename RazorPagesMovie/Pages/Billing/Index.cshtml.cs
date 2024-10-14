@@ -27,7 +27,7 @@ namespace RazorPagesMovie.Pages.Billing
         }
 
 
-       [BindProperty]
+        [BindProperty]
         public Reservations Reservation { get; set; }
         public RoomReservationcs RoomReservation { get; set; }
         public List<Bill> BillingTransactions { get; set; }
@@ -41,7 +41,7 @@ namespace RazorPagesMovie.Pages.Billing
 
         public decimal? TotalAmount { get; set; }
         public string? SelectedBillingCategory { get; set; }
-        public decimal TotalRoomCharge { get;  set; }
+        public decimal TotalRoomCharge { get; set; }
         public decimal DiscountedTotal { get; set; } = 0;
         public decimal DiscountedPrice { get; set; } = 0;
 
@@ -99,7 +99,7 @@ namespace RazorPagesMovie.Pages.Billing
             _logger.LogInformation("Received invoiceNo: {InvoiceNo}, Category: {Category}, Item: {Item}, Amount: {Amount}, Qty: {Qty}, Description: {Description}",
                 invoiceNo, category, item, amount, qty, description);
 
-            if (string.IsNullOrEmpty(category)  || string.IsNullOrEmpty(invoiceNo))
+            if (string.IsNullOrEmpty(category) || string.IsNullOrEmpty(invoiceNo))
             {
                 return new JsonResult(new { success = false, error = "All fields are required." });
             }
@@ -113,8 +113,8 @@ namespace RazorPagesMovie.Pages.Billing
             // Create a new billing transaction object
             var newTransaction = new Bill
             {
-                Category = category,  
-                BillingItem =item,
+                Category = category,
+                BillingItem = item,
                 ItemPrice = amount,
                 ItemQty = qty,
                 Description = description,
@@ -136,7 +136,7 @@ namespace RazorPagesMovie.Pages.Billing
             // Find the transaction by ID
             var transaction = await _context.BillingTransactions.FindAsync(id);
 
-            if (transaction != null )//&& transaction.tranStatus == 1)
+            if (transaction != null)//&& transaction.tranStatus == 1)
             {
                 // Update its status to 2 (Deleted)
                 transaction.tranStatus = 2;
@@ -157,20 +157,22 @@ namespace RazorPagesMovie.Pages.Billing
             }
             reservationToUpdate.status = 2;
 
-           // Reservation = _reservationService.GetReservationById(sid);
+            // Reservation = _reservationService.GetReservationById(sid);
             TimeSpan difference = reservationToUpdate.ExpectedCheckOutDate.Date - reservationToUpdate.CheckInDate.Date;
             int datediff = (int)difference.TotalDays;
             string selectedRooms = reservationToUpdate.SelectedRoomsNos;
 
-            if(!reservationToUpdate.IsThirdPartyBooking) {
+            if (!reservationToUpdate.IsThirdPartyBooking)
+            {
                 TotalRoomCharge = await _context.CalculateRoomChargeAsync(sid);
                 billrecDesc = "Check out :Charges for " + datediff + " days stay at Room No " + selectedRooms;
             }
-            else {
+            else
+            {
                 TotalRoomCharge = 0;
                 billrecDesc = "Check out : Third Party Party Booking";
             }
-           
+
 
             var newTransaction = new Bill
             {
@@ -182,9 +184,9 @@ namespace RazorPagesMovie.Pages.Billing
                 ItemQty = 1
             };
 
-         
+
             _context.BillingTransactions.Add(newTransaction);
-          //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 1);
+            //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 1);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index", new { id = sid });
         }
@@ -218,7 +220,7 @@ namespace RazorPagesMovie.Pages.Billing
             };
 
             _context.BillingTransactions.Add(newTransaction);
-          //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 2);
+            //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 2);
             _reservationService.UpdateCheckInDateForReservation(reservationToUpdate.Id, Reservation.CheckInDate);
             await _context.SaveChangesAsync();
 
@@ -227,7 +229,7 @@ namespace RazorPagesMovie.Pages.Billing
 
         public async Task<IActionResult> OnPostEditCheckoutDateAsync(int sid)
         {
-          
+
             var reservationToUpdate = _reservationService.GetReservationById(sid);
 
             if (reservationToUpdate == null)
@@ -236,7 +238,7 @@ namespace RazorPagesMovie.Pages.Billing
             }
             reservationToUpdate.ExpectedCheckOutDate = Reservation.ExpectedCheckOutDate;
             _reservationService.UpdateCheckoutDateForReservation(reservationToUpdate.Id, Reservation.ExpectedCheckOutDate);
-        
+
 
             await _context.SaveChangesAsync();
 
@@ -254,8 +256,8 @@ namespace RazorPagesMovie.Pages.Billing
             }
 
             // Update the check-in date
-            reservationToUpdate.DiscountRate = Reservation.DiscountRate;                    
-            
+            reservationToUpdate.DiscountRate = Reservation.DiscountRate;
+
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index", new { id = sid });
@@ -264,7 +266,7 @@ namespace RazorPagesMovie.Pages.Billing
 
 
 
-       
+
         public async Task<JsonResult> OnGetFoodItems(string term)
         {
             try
@@ -298,7 +300,7 @@ namespace RazorPagesMovie.Pages.Billing
                 var isNumeric = int.TryParse(term, out int beveragecode);
 
                 var beverageItems = await _context.Beverage
-                   .Where(f => (isNumeric ? f.BeverageCode == beveragecode && f.IsAvailable == 1  : f.BeverageName.Contains(term)) && f.IsAvailable == 1)
+                   .Where(f => (isNumeric ? f.BeverageCode == beveragecode && f.IsAvailable == 1 : f.BeverageName.Contains(term)) && f.IsAvailable == 1)
                    .Select(f => new
                    {
                        id = f.Id,
@@ -307,7 +309,7 @@ namespace RazorPagesMovie.Pages.Billing
                        beverageCode = f.BeverageCode
                    })
                    .ToListAsync();
-                  
+
 
                 return new JsonResult(beverageItems);
             }
@@ -318,11 +320,11 @@ namespace RazorPagesMovie.Pages.Billing
             }
         }
 
-     
+
 
         public async Task<IActionResult> OnPostBillFinalizedAsync(int ReservationId)
         {
-          
+
             // Find the reservation in the database
             var reservationToUpdate = await _context.Reservations.FindAsync(ReservationId);
 
@@ -334,14 +336,23 @@ namespace RazorPagesMovie.Pages.Billing
             // Update the reservation status to 'finalized'
             reservationToUpdate.status = 3; // 3 = finalized
 
-            DiscountedTotal = await _context.CalculateDiscountedTotalAsync(reservationToUpdate.Id); // final total after discount
-            reservationToUpdate.TotalFinalAmount = DiscountedTotal;
-            
 
             TotalWithoutDiscount = await _context.CalculateTotalWithoutDiscountAsync(reservationToUpdate.Id); //  total without discount
             reservationToUpdate.TotalAmount = TotalWithoutDiscount;
 
-            if (reservationToUpdate.DiscountRate > 0)
+
+            if (!reservationToUpdate.IsThirdPartyBooking)
+            {
+                DiscountedTotal = await _context.CalculateDiscountedTotalAsync(reservationToUpdate.Id); // final total after discount
+                reservationToUpdate.TotalFinalAmount = DiscountedTotal;
+            }
+            else
+            {
+                reservationToUpdate.TotalFinalAmount = TotalWithoutDiscount;
+            }
+        
+
+            if (reservationToUpdate.DiscountRate > 0 && !reservationToUpdate.IsThirdPartyBooking)
             {
                 DiscountedPrice = await _context.CalculateDiscountedPriceAsync(reservationToUpdate.Id); //discounted price from total
                 reservationToUpdate.DiscountedPrice = DiscountedPrice;

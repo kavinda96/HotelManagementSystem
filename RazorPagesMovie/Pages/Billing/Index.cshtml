@@ -40,6 +40,9 @@
                     <input type="hidden" asp-for="Reservation.Country">
                     <input type="hidden" asp-for="Reservation.GuestCount">
                     <input type="hidden" asp-for="Reservation.NIN">
+                        <input type="hidden" asp-for="Reservation.Email" />
+                        <input type="hidden" asp-for="Reservation.SelectedCurrency" />
+                        <input type="hidden" asp-for="Reservation.DiscountRate" />
 
 
                     <tr class="keep-row">
@@ -278,6 +281,9 @@
                             <input type="hidden" asp-for="Reservation.Country" />
                             <input type="hidden" asp-for="Reservation.GuestCount" />
                             <input type="hidden" asp-for="Reservation.NIN" />
+                            <input type="hidden" asp-for="Reservation.Email" />
+                            <input type="hidden" asp-for="Reservation.SelectedCurrency" />
+                            <input type="hidden" asp-for="Reservation.DiscountRate" />
 
                             @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
                             {

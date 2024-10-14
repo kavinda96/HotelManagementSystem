@@ -74,11 +74,11 @@ namespace RazorPagesMovie.Models
         public int? ThirdPartyHandlerId { get; set; }
         public string? BookingReference { get; set; }
 
-        public string SelectedCurrency { get; set; } = "LKR";
+        public string? SelectedCurrency { get; set; } 
 
         
         [EmailAddress]
         [Display(Name = "Email")]
-        public string Email {  get; set; }
+        public string? Email {  get; set; }
     }
 }
