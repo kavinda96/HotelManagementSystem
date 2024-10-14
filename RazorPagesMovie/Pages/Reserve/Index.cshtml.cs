@@ -45,7 +45,7 @@ namespace RazorPagesMovie.Pages.Reserve
             StartDate = startDate;
             EndDate = endDate;
 
-            var query = _context.Reservations.AsQueryable();
+            var query = _context.Reservations.Where(r => r.validity == 1).AsQueryable();
 
             // Apply filters for upcoming or finalized reservations
             if (showUpcoming)

@@ -80,5 +80,8 @@ namespace RazorPagesMovie.Models
         [EmailAddress]
         [Display(Name = "Email")]
         public string? Email {  get; set; }
+
+
+        public int validity { get; set; } = 1; // 1= valid, 2 = invalid
     }
 }

@@ -1116,40 +1116,97 @@ else
         });
 
 
+        // $(document).ready(function () {
+        //     $('#saveAdditionalCharges').click(function () {
+        //         var formData = {
+        //             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(), // Antiforgery token
+        //             invoiceNo: $('#invoiceNo').val(),
+        //             category: $('#category').val(),
+        //             item: $('#item').val(),
+        //             amount: parseFloat($('#amount').val()), // Convert to decimal
+        //             qty: parseInt($('#qty').val()),         // Convert to integer
+        //             description: $('#description').val()
+        //         };
+
+        //         $.ajax({
+        //             url: '/Billing/Index?handler=AddAdditionalCharges', // Adjust the URL for your Razor Page handler
+        //             type: 'POST',
+        //             data: formData,
+        //             success: function (response) {
+        //                 if (response.success) {
+        //                     alert('Additional charges added successfully!');
+        //                     $('#additionalChargesModal').modal('hide');
+
+        //                     // Redirect to the specified URL after success
+        //                     window.location.href = '/Billing?id=' + $('#invoiceNo').val(); // Redirect using invoiceNo
+        //                 } else {
+        //                     alert('Error: ' + response.error);
+        //                 }
+        //             },
+        //             error: function (xhr, status, error) {
+        //                 console.error("Error: ", xhr.responseText);
+        //                 alert('An error occurred while saving additional charges.');
+        //             }
+        //         });
+        //     });
+        // });
+
         $(document).ready(function () {
-            $('#saveAdditionalCharges').click(function () {
-                var formData = {
-                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(), // Antiforgery token
-                    invoiceNo: $('#invoiceNo').val(),
-                    category: $('#category').val(),
-                    item: $('#item').val(),
-                    amount: parseFloat($('#amount').val()), // Convert to decimal
-                    qty: parseInt($('#qty').val()),         // Convert to integer
-                    description: $('#description').val()
-                };
+            $('#saveAdditionalCharges').click(function (event) {
+                event.preventDefault(); // Prevent the default click behavior
 
-                $.ajax({
-                    url: '/Billing/Index?handler=AddAdditionalCharges', // Adjust the URL for your Razor Page handler
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        if (response.success) {
-                            alert('Additional charges added successfully!');
-                            $('#additionalChargesModal').modal('hide');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to save additional charges?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Proceed with the AJAX request if confirmed
+                        var formData = {
+                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(), // Antiforgery token
+                            invoiceNo: $('#invoiceNo').val(),
+                            category: $('#category').val(),
+                            item: $('#item').val(),
+                            amount: parseFloat($('#amount').val()), // Convert to decimal
+                            qty: parseInt($('#qty').val()),         // Convert to integer
+                            description: $('#description').val()
+                        };
 
-                            // Redirect to the specified URL after success
-                            window.location.href = '/Billing?id=' + $('#invoiceNo').val(); // Redirect using invoiceNo
-                        } else {
-                            alert('Error: ' + response.error);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error: ", xhr.responseText);
-                        alert('An error occurred while saving additional charges.');
+                        $.ajax({
+                            url: '/Billing/Index?handler=AddAdditionalCharges', // Adjust the URL for your Razor Page handler
+                            type: 'POST',
+                            data: formData,
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: 'Additional charges added successfully!',
+                                        icon: 'success',
+                                        confirmButtonText: 'Ok'
+                                    }).then(() => {
+                                        $('#additionalChargesModal').modal('hide');
+
+                                        // Redirect to the specified URL after success
+                                        window.location.href = '/Billing?id=' + $('#invoiceNo').val(); // Redirect using invoiceNo
+                                    });
+                                } else {
+                                    Swal.fire('Error', response.error, 'error');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Error: ", xhr.responseText);
+                                Swal.fire('Error', 'An error occurred while saving additional charges.', 'error');
+                            }
+                        });
                     }
                 });
             });
         });
+
 
 
 

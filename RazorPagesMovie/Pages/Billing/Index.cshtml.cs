@@ -155,7 +155,7 @@ namespace RazorPagesMovie.Pages.Billing
             {
                 return NotFound();
             }
-            reservationToUpdate.status = 2;
+            reservationToUpdate.status = 2; // Status update to Check out status
 
             // Reservation = _reservationService.GetReservationById(sid);
             TimeSpan difference = reservationToUpdate.ExpectedCheckOutDate.Date - reservationToUpdate.CheckInDate.Date;
@@ -207,7 +207,7 @@ namespace RazorPagesMovie.Pages.Billing
 
             // Update the check-in date
             reservationToUpdate.CheckInDate = Reservation.CheckInDate;
-            reservationToUpdate.status = 1; // Active when check-in
+            reservationToUpdate.status = 1; // Status update to Checkin status
 
             string selectedRooms = reservationToUpdate.SelectedRoomsNos;
 

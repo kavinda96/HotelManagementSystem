@@ -54,12 +54,23 @@ namespace RazorPagesMovie.Pages.Reserve
             var reservations = await _context.Reservations.FindAsync(id);
             if (reservations != null)
             {
-                Reservations = reservations;
-                _context.Reservations.Remove(Reservations);
-                await _context.SaveChangesAsync();
+                
+
+                reservations.validity = 2; // invalid status
+               
             }
 
+            var existingRoomReservations = await _context.RoomReservationcs
+               .Where(rr => rr.ResevationId == id)
+               .ToListAsync();
+
+            foreach (var roomReservation in existingRoomReservations)
+            {
+                roomReservation.Status = 2; // invalidated old ones
+            }
+            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
+       
         }
     }
 }

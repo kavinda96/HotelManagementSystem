@@ -68,9 +68,32 @@
         </dd>
     </dl>
     
-    <form method="post">
+    <form method="post" id="DeleteReservation">
         <input type="hidden" asp-for="Reservations.Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-page="./Index">Back to List</a>
     </form>
 </div>
+
+
+        <script>
+
+    $("#DeleteReservation").submit(function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to Delete the Reservation",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the form manually
+                $(this).unbind('submit').submit();
+            }
+        });
+    });
+        </script>
