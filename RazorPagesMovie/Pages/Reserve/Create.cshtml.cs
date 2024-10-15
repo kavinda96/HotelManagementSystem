@@ -41,12 +41,7 @@ namespace RazorPagesMovie.Pages.Reserve
         }
 
         public async Task<IActionResult> OnPostAsync()
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
-            //    return Page();
-            //}
+        {          
 
             var selectedRoomIds = Request.Form["SelectedRoomIds"];
             if (selectedRoomIds.Count == 0)
@@ -63,9 +58,11 @@ namespace RazorPagesMovie.Pages.Reserve
 
 
             var selectedRoomNumbersString = string.Join(",", selectedRooms.Select(r => r.RoomNo));
+           
 
-            // Fetch the currently logged-in user's ID
-            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.GetUserAsync(User); // Get the currently logged-in user
+            var secondaryUserId = user.SecondaryUserId.ToString(); // Get the SecondaryUserId
+
 
             Reservations.CheckInDate = DateTime.Parse(Request.Form["checkInDate"]);
             Reservations.ExpectedCheckOutDate = DateTime.Parse(Request.Form["checkOutDate"]);
@@ -73,20 +70,14 @@ namespace RazorPagesMovie.Pages.Reserve
             Reservations.SelectedRoomsNos = selectedRoomNumbersString;
             Reservations.MasterbillId = Reservations.Id;
             Reservations.status = 0;
-            Reservations.UserId = userId; // Assign the user ID here
+            Reservations.UserId = secondaryUserId; // Assign the user ID here
 
             _context.Reservations.Add(Reservations);
             await _context.SaveChangesAsync();
 
             foreach (var roomId in selectedRoomIdsList)
             {
-                //var room = await _context.Room.FindAsync(roomId);
-                //if (room != null)
-                //{
-                //    room.IsAvailable = 0;
-                //    _context.Room.Update(room);
-                //}
-
+               
                 var roomReservations = new RoomReservationcs
                 {
                     ResevationId = Reservations.Id,

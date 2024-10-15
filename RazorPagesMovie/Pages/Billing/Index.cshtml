@@ -40,9 +40,9 @@
                     <input type="hidden" asp-for="Reservation.Country">
                     <input type="hidden" asp-for="Reservation.GuestCount">
                     <input type="hidden" asp-for="Reservation.NIN">
-                        <input type="hidden" asp-for="Reservation.Email" />
-                        <input type="hidden" asp-for="Reservation.SelectedCurrency" />
-                        <input type="hidden" asp-for="Reservation.DiscountRate" />
+                    <input type="hidden" asp-for="Reservation.Email" />
+                    <input type="hidden" asp-for="Reservation.SelectedCurrency" />
+                    <input type="hidden" asp-for="Reservation.DiscountRate" />
 
 
                     <tr class="keep-row">
@@ -98,7 +98,7 @@
                                         }
                                         else
                                         {
-                                            <input asp-for="Reservation.CheckInDate" class="form-control me-2"  />
+                                            <input asp-for="Reservation.CheckInDate" class="form-control me-2" disabled />
                                             <button type="submit" class="btn btn-success btn-sm" id="checkinBtn">
                                                 CheckIn
                                             </button>
@@ -111,7 +111,7 @@
                             </td>
                         </tr>
                   
-                        <tr>
+                        @* <tr>
                             <td>Check-Out Date:</td>
                             <td>
                                 <form id="checkOutDateForm" method="post" asp-page-handler="EditCheckoutDate">
@@ -124,10 +124,10 @@
 
                                         @if (@Model.Reservation.status == 1)
                                         {
-                                            <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" />
+                                            <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" disabled />
 
                                             <!-- Submit Button -->
-                                            <button type="submit" class="btn btn-primary btn-sm" id="checkOutDateBtn">
+                                            <button type="submit" class="btn btn-primary btn-sm disabled" id="checkOutDateBtn">
                                                 Update
                                             </button>
                                         }
@@ -141,11 +141,43 @@
                                     </div>
                                 </form>
                             </td>
+                        </tr> *@
+
+                        <tr>
+                            <td>Check Out:</td>
+                            <td>
+                                <form method="post" asp-page-handler="CheckOut" id="checkOutForm">
+                                    <div class="d-flex">
+                                        <input type="hidden" name="sid" value="@Model.Reservation.Id" />
+
+
+
+
+
+                                        @if (@Model.Reservation.status == 1)
+                                        {
+                                            <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" disabled />
+
+                                            <!-- Submit Button -->
+                                            <button type="submit" class="btn btn-danger btn-sm" id="checkOutBtn">
+                                                CheckOut
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" disabled />
+                                            <button type="submit" class="btn btn-danger btn-sm disabled" id="checkOutBtn">
+                                                CheckOut
+                                            </button>
+                                        }
+                                    </div>
+                                </form>
+                            </td>
                         </tr>
 
 
 
-                        <tr class="print-exclude">
+                      @*   <tr class="print-exclude">
 
 
                             <td>Initialize Check-Out</td>
@@ -168,13 +200,13 @@
                                     }
                             </form>
                         </td>
-                    </tr>
+                    </tr> *@
                         <tr class="keep-row">
                             <td>Currency:</td>
                             <td>@Model.Reservation.SelectedCurrency</td>
                         </tr>
                         <tr class="print-exclude">
-                            <td>Room Charges Discount Rate:</td>
+                            <td>Room Charges Discount % :</td>
                             <td>
                                
                                     
@@ -983,37 +1015,6 @@ else
 
 
 
-
-
-        // $(document).ready(function () {
-           
-        //     $("#btnSaveNewCheckout").click(function () {
-                
-        //         console.log("----------------ksg")
-        //             $.ajax({
-        //             type: "POST",
-        //             url: "/Billing/Index/UpdateCheckoutDate",                  
-        //             headers: {
-        //                 "RequestVerificationToken": $("input:hidden[name='__RequestVerificationToken']").val() 
-        //                 },
-        //             data: $("#NewCheckOutDt").serialize(),
-        //             success: function (response) {
-        //                     if (response.success) {
-        //                        console.log("It works!")
-        //                         alert("Checkout date added successfully!");
-        //                     } else {
-        //                         alert("Error adding checkout date: " + response.errorMessage);
-        //                     }
-        //                 },
-        //                 error: function (jqXHR, textStatus, errorThrown) {
-        //                     console.error("AJAX Error:", textStatus, errorThrown);
-        //                     // Handle errors appropriately (e.g., display error message to user)
-        //                 }
-        //             });
-                
-        //     });
-        // });
-
         
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -1099,7 +1100,7 @@ else
 
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "Do you want to check in",
+                    text: "Do you want to check Out",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',

@@ -17,12 +17,13 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RazorPagesMovie.Models;
 
 namespace RazorPagesMovie.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -119,6 +120,13 @@ namespace RazorPagesMovie.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                // Get the maximum SecondaryUserId from existing users
+                var maxSecondaryUserId = await _userManager.Users.MaxAsync(u => (int?)u.SecondaryUserId) ?? 0;
+
+                // Assign the new SecondaryUserId
+                user.SecondaryUserId = maxSecondaryUserId + 1;
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

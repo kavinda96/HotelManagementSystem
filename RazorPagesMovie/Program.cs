@@ -74,46 +74,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapRazorPages();
 });
 
-// Seed the admin user (commented out for now)
-// await SeedAdminUser(app.Services);
 
-// async Task SeedAdminUser(IServiceProvider serviceProvider)
-// {
-//     using (var scope = serviceProvider.CreateScope()) // Create a scope
-//     {
-//         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(); // Use ApplicationUser here
-
-//         // Create admin role if it doesn't exist
-//         if (await roleManager.FindByNameAsync("Admin") == null)
-//         {
-//             await roleManager.CreateAsync(new IdentityRole("Admin"));
-//         }
-
-//         // Create admin user if it doesn't exist
-//         var adminUser = await userManager.FindByNameAsync("admin@example.com");
-//         if (adminUser == null)
-//         {
-//             adminUser = new ApplicationUser // Change this to ApplicationUser
-//             {
-//                 UserName = "admin@example.com",
-//                 Email = "admin@example.com"
-//             };
-//             var createResult = await userManager.CreateAsync(adminUser, "Admin@123"); // Set password
-//             if (createResult.Succeeded)
-//             {
-//                 await userManager.AddToRoleAsync(adminUser, "Admin"); // Assign admin role
-//             }
-//             else
-//             {
-//                 // Log errors if user creation failed
-//                 foreach (var error in createResult.Errors)
-//                 {
-//                     Console.WriteLine(error.Description);
-//                 }
-//             }
-//         }
-//     }
-// }
 
 app.Run();

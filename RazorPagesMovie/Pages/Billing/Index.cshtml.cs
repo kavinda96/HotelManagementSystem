@@ -384,9 +384,6 @@ namespace RazorPagesMovie.Pages.Billing
             }
 
 
-           
-
-
             // Save changes to the database
             await _context.SaveChangesAsync();
 

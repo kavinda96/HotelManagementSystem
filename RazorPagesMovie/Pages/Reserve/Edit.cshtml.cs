@@ -36,19 +36,19 @@ namespace RazorPagesMovie.Pages.Reserve
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            try
-            {
-                Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                // Log the exception and handle as necessary
-                ModelState.AddModelError(string.Empty, "Unable to load rooms.");
-            }
+            //if (id == null)
+            //{
+            //    return NotFound();
+            //}
+            //try
+            //{
+            //    Rooms = await _context.Room.Where(r => r.IsAvailable == 1).ToListAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Log the exception and handle as necessary
+            //    ModelState.AddModelError(string.Empty, "Unable to load rooms.");
+            //}
 
             ThirdPartyHandlers = await _context.ThirdPartyHandlers.ToListAsync();
 
@@ -64,8 +64,7 @@ namespace RazorPagesMovie.Pages.Reserve
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
+        
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -97,6 +96,16 @@ namespace RazorPagesMovie.Pages.Reserve
             Reservations.SelectedRoomsNos = selectedRoomNumbersString;
             Reservations.CheckInDate = DateTime.Parse(Request.Form["checkInDate"]);
             Reservations.ExpectedCheckOutDate = DateTime.Parse(Request.Form["checkOutDate"]);
+            Reservations.status = Convert.ToInt32(Request.Form["resStatusId"]);
+
+
+            //var reservationFromDb = await _context.Reservations.AsNoTracking().FirstOrDefaultAsync(m => m.Id == Reservations.Id);
+            //if (reservationFromDb != null)
+            //{
+            //    Reservations.status = reservationFromDb.status;
+            //}
+
+
 
 
             _context.Attach(Reservations).State = EntityState.Modified;
@@ -150,7 +159,7 @@ namespace RazorPagesMovie.Pages.Reserve
                 DateTime.TryParse(checkOutDate, out DateTime parsedCheckOutDate))
             {
                 // Initialize the availableRooms list
-                var availableRooms = await _reservationService.GetAvailableRooms(parsedCheckInDate, parsedCheckOutDate) ?? new List<Room>();
+                var availableRooms = await _reservationService.GetAvailableRoomsEdit(parsedCheckInDate, parsedCheckOutDate, reservationId) ?? new List<Room>();
 
                 // Get rooms that are currently selected (from the reservation)
                 var selectedRoomIdsFromDb = await _context.RoomReservationcs
@@ -164,14 +173,7 @@ namespace RazorPagesMovie.Pages.Reserve
                     .Where(room => selectedRoomIdsFromDb.Contains(room.Id))
                     .ToListAsync() ?? new List<Room>();
 
-                //// Mark the rooms as selected if they are already selected in the reservation or passed from client
-                //foreach (var room in availableRooms)
-                //{
-                //    if (selectedRoomsFromDb.Any(r => r.Id == room.Id) || (selectedRoomIds != null && selectedRoomIds.Contains(room.Id.ToString())))
-                //    {
-                //        room.IsSelected = true;  // Mark room as selected
-                //    }
-                //}
+               
 
 
                 foreach (var room in selectedRoomsFromDb)
@@ -182,9 +184,6 @@ namespace RazorPagesMovie.Pages.Reserve
                 }
 
 
-
-                // Append selected rooms from the DB that might not be in available rooms
-                availableRooms = availableRooms.Union(selectedRoomsFromDb).ToList();
 
                 // Check if any rooms are available to return
                 if (availableRooms == null || !availableRooms.Any())

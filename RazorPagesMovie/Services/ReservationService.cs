@@ -166,5 +166,22 @@ namespace RazorPagesMovie.Services
 
             return availableRooms;
         }
+
+
+        public async Task<List<Room>> GetAvailableRoomsEdit(DateTime checkInDate, DateTime checkOutDate, int resId)
+        {
+            var availableRooms = await _dbContext.Room
+       .Where(room => !_dbContext.RoomReservationcs
+           .Any(reservation =>
+               reservation.RoomId == room.Id &&
+               reservation.CheckInDate <= checkOutDate &&
+               reservation.CheckOutDate >= checkInDate &&
+               reservation.Status == 1 &&
+               reservation.ResevationId != resId)) // Add status condition here
+       .ToListAsync();
+
+
+            return availableRooms;
+        }
     }
 }

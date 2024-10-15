@@ -23,6 +23,8 @@
                 <div class="card-body">
                     <form method="post">
                         <input type="hidden" asp-for="Reservations.Id" />
+                        <input type="hidden" asp-for="Reservations.status" id="resStatusId" name="resStatusId" />
+
 
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -152,6 +154,8 @@
                                             <label asp-for="Reservations.ExpectedCheckOutDate" class="control-label"></label>
                                             <input asp-for="Reservations.ExpectedCheckOutDate" class="form-control" type="date" required id="checkOutDate" name="checkOutDate" />
                                             <span asp-validation-for="Reservations.ExpectedCheckOutDate" class="text-danger"></span>
+
+                                           
                                         </div>
                                     </td>
                                 </tr>
@@ -263,7 +267,8 @@
 
         $(document).ready(function () {
             // Check if the Third-Party Booking checkbox is checked on page load
-            toggleThirdPartyFields(); // Call this function to handle the initial state
+            toggleThirdPartyFields();
+            checkAvailability(); // Call this function to handle the initial state
         });
 
         function toggleThirdPartyFields() {
