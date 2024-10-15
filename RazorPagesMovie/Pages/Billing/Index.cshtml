@@ -946,6 +946,11 @@ else
                         5: { halign: 'right' },   // Amount column aligned to right
                         6: { halign: 'right' },   // Quantity column aligned to right
                         7: { halign: 'right' }    // Total column aligned to right
+                    },
+                    styles: {
+                        lineHeight: 1,  // Set the line height to reduce row spacing
+                        fontSize: 10,     // Set font size
+                        cellPadding: 2    // Adjust padding if necessary
                     }
                 });
 
@@ -980,34 +985,34 @@ else
 
 
 
-        $(document).ready(function () {
+        // $(document).ready(function () {
            
-            $("#btnSaveNewCheckout").click(function () {
+        //     $("#btnSaveNewCheckout").click(function () {
                 
-                console.log("----------------ksg")
-                    $.ajax({
-                    type: "POST",
-                    url: "/Billing/Index/UpdateCheckoutDate",                  
-                    headers: {
-                        "RequestVerificationToken": $("input:hidden[name='__RequestVerificationToken']").val() 
-                        },
-                    data: $("#NewCheckOutDt").serialize(),
-                    success: function (response) {
-                            if (response.success) {
-                               console.log("It works!")
-                                alert("Checkout date added successfully!");
-                            } else {
-                                alert("Error adding checkout date: " + response.errorMessage);
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.error("AJAX Error:", textStatus, errorThrown);
-                            // Handle errors appropriately (e.g., display error message to user)
-                        }
-                    });
+        //         console.log("----------------ksg")
+        //             $.ajax({
+        //             type: "POST",
+        //             url: "/Billing/Index/UpdateCheckoutDate",                  
+        //             headers: {
+        //                 "RequestVerificationToken": $("input:hidden[name='__RequestVerificationToken']").val() 
+        //                 },
+        //             data: $("#NewCheckOutDt").serialize(),
+        //             success: function (response) {
+        //                     if (response.success) {
+        //                        console.log("It works!")
+        //                         alert("Checkout date added successfully!");
+        //                     } else {
+        //                         alert("Error adding checkout date: " + response.errorMessage);
+        //                     }
+        //                 },
+        //                 error: function (jqXHR, textStatus, errorThrown) {
+        //                     console.error("AJAX Error:", textStatus, errorThrown);
+        //                     // Handle errors appropriately (e.g., display error message to user)
+        //                 }
+        //             });
                 
-            });
-        });
+        //     });
+        // });
 
         
 
@@ -1072,29 +1077,49 @@ else
                 confirmButtonText: 'Yes, proceed!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    showLoader();
                     // Submit the form manually
                     $(this).unbind('submit').submit();
+                } else {
+                    // Hide the loader if user cancels
+                    hideLoader();
                 }
             });
         });
-        $("#checkOutForm").submit(function (event) {
-            event.preventDefault(); // Prevent default form submission
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to check in",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, proceed!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Submit the form manually
-                    $(this).unbind('submit').submit();
-                }
+        $(document).ready(function () {
+            // Show loader on form submission
+            $("form").on("submit", function () {
+                showLoader(); // Show loader when any form is submitted
+            });
+
+            // Custom confirmation for the Check-Out form
+            $("#checkOutForm").submit(function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to check in",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show the loader only if the user confirms
+                        showLoader();
+
+                        // Submit the form manually
+                        $(this).unbind('submit').submit();
+                    } else {
+                        // Hide the loader if user cancels
+                        hideLoader();
+                    }
+                });
             });
         });
+
 
         $("#checkOutDateForm").submit(function (event) {
             event.preventDefault(); // Prevent default form submission
@@ -1109,8 +1134,13 @@ else
                 confirmButtonText: 'Yes, proceed!'
             }).then((result) => {
                 if (result.isConfirmed) {
+
+                    showLoader();
                     // Submit the form manually
                     $(this).unbind('submit').submit();
+                } else {
+                    // Hide the loader if user cancels
+                    hideLoader();
                 }
             });
         });
@@ -1128,47 +1158,18 @@ else
                 confirmButtonText: 'Yes, proceed!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    showLoader();
                     // Submit the form manually
                     $(this).unbind('submit').submit();
+                } else {
+                    // Hide the loader if user cancels
+                    hideLoader();
                 }
             });
         });
 
 
-        // $(document).ready(function () {
-        //     $('#saveAdditionalCharges').click(function () {
-        //         var formData = {
-        //             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(), // Antiforgery token
-        //             invoiceNo: $('#invoiceNo').val(),
-        //             category: $('#category').val(),
-        //             item: $('#item').val(),
-        //             amount: parseFloat($('#amount').val()), // Convert to decimal
-        //             qty: parseInt($('#qty').val()),         // Convert to integer
-        //             description: $('#description').val()
-        //         };
-
-        //         $.ajax({
-        //             url: '/Billing/Index?handler=AddAdditionalCharges', // Adjust the URL for your Razor Page handler
-        //             type: 'POST',
-        //             data: formData,
-        //             success: function (response) {
-        //                 if (response.success) {
-        //                     alert('Additional charges added successfully!');
-        //                     $('#additionalChargesModal').modal('hide');
-
-        //                     // Redirect to the specified URL after success
-        //                     window.location.href = '/Billing?id=' + $('#invoiceNo').val(); // Redirect using invoiceNo
-        //                 } else {
-        //                     alert('Error: ' + response.error);
-        //                 }
-        //             },
-        //             error: function (xhr, status, error) {
-        //                 console.error("Error: ", xhr.responseText);
-        //                 alert('An error occurred while saving additional charges.');
-        //             }
-        //         });
-        //     });
-        // });
+       
 
         $(document).ready(function () {
             $('#saveAdditionalCharges').click(function (event) {

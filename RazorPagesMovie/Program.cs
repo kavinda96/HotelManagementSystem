@@ -4,7 +4,7 @@ using RazorPagesMovie.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using RazorPagesMovie.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,13 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<RazorPagesMovieContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RazorPagesMovieContext") ?? throw new InvalidOperationException("Connection string 'RazorPagesMovieContext' not found.")));
+
+// Add other services
 builder.Services.AddSingleton<RazorPagesMovie.Services.InvoiceNoGenerator>();
 builder.Services.AddScoped<RazorPagesMovie.Services.ReservationService>();
 builder.Services.AddScoped<RazorPagesMovie.Services.BillingTransactionService>();
 builder.Services.AddSingleton<RazorPagesMovie.Services.PaginationService>();
 
-// Configure Identity with roles
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+// Configure Identity with ApplicationUser
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false; // Disable email confirmation
     options.Password.RequireDigit = true;
@@ -37,6 +39,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Optional: custom access denied page
 });
 
+// Set up logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
@@ -62,7 +65,7 @@ app.MapRazorPages();
 
 app.UseEndpoints(endpoints =>
 {
-    // This ensures that the application loads the login page by default
+    // Redirect to homepage on default access
     endpoints.MapGet("/", context =>
     {
         context.Response.Redirect("/Homepage");
@@ -71,45 +74,46 @@ app.UseEndpoints(endpoints =>
     endpoints.MapRazorPages();
 });
 
-// Seed the admin user
-//await SeedAdminUser(app.Services);
+// Seed the admin user (commented out for now)
+// await SeedAdminUser(app.Services);
 
-//async Task SeedAdminUser(IServiceProvider serviceProvider)
-//{
-//    using (var scope = serviceProvider.CreateScope()) // Create a scope
-//    {
-//        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+// async Task SeedAdminUser(IServiceProvider serviceProvider)
+// {
+//     using (var scope = serviceProvider.CreateScope()) // Create a scope
+//     {
+//         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(); // Use ApplicationUser here
 
-//        // Create admin role if it doesn't exist
-//        if (await roleManager.FindByNameAsync("Admin") == null)
-//        {
-//            await roleManager.CreateAsync(new IdentityRole("Admin"));
-//        }
+//         // Create admin role if it doesn't exist
+//         if (await roleManager.FindByNameAsync("Admin") == null)
+//         {
+//             await roleManager.CreateAsync(new IdentityRole("Admin"));
+//         }
 
-//        // Create admin user if it doesn't exist
-//        var adminUser = await userManager.FindByNameAsync("admin@example.com");
-//        if (adminUser == null)
-//        {
-//            adminUser = new IdentityUser
-//            {
-//                UserName = "admin@example.com",
-//                Email = "admin@example.com"
-//            };
-//            var createResult = await userManager.CreateAsync(adminUser, "Admin@123"); // Set password
-//            if (createResult.Succeeded)
-//            {
-//                await userManager.AddToRoleAsync(adminUser, "Admin"); // Assign admin role
-//            }
-//            else
-//            {
-//                // Log errors if user creation failed
-//                foreach (var error in createResult.Errors)
-//                {
-//                    Console.WriteLine(error.Description);
-//                }
-//            }
-//        }
-//    }
-//}
+//         // Create admin user if it doesn't exist
+//         var adminUser = await userManager.FindByNameAsync("admin@example.com");
+//         if (adminUser == null)
+//         {
+//             adminUser = new ApplicationUser // Change this to ApplicationUser
+//             {
+//                 UserName = "admin@example.com",
+//                 Email = "admin@example.com"
+//             };
+//             var createResult = await userManager.CreateAsync(adminUser, "Admin@123"); // Set password
+//             if (createResult.Succeeded)
+//             {
+//                 await userManager.AddToRoleAsync(adminUser, "Admin"); // Assign admin role
+//             }
+//             else
+//             {
+//                 // Log errors if user creation failed
+//                 foreach (var error in createResult.Errors)
+//                 {
+//                     Console.WriteLine(error.Description);
+//                 }
+//             }
+//         }
+//     }
+// }
+
 app.Run();

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using RazorPagesMovie.Data;
 using RazorPagesMovie.Models;
 using RazorPagesMovie.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace RazorPagesMovie.Pages.Reserve
 {
@@ -17,11 +15,15 @@ namespace RazorPagesMovie.Pages.Reserve
     {
         private readonly RazorPagesMovieContext _context;
         private readonly ReservationService _reservationService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CreateModel(RazorPagesMovieContext context, ReservationService reservationService)
+        public CreateModel(RazorPagesMovieContext context,
+                           ReservationService reservationService,
+                           UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _reservationService = reservationService;
+            _userManager = userManager;
         }
 
         public int InvoiceNumber { get; set; }
@@ -58,12 +60,12 @@ namespace RazorPagesMovie.Pages.Reserve
             var selectedRooms = await _context.Room
                 .Where(r => selectedRoomIdsList.Contains(r.Id))
                 .ToListAsync();
-           
+
 
             var selectedRoomNumbersString = string.Join(",", selectedRooms.Select(r => r.RoomNo));
 
-           
-
+            // Fetch the currently logged-in user's ID
+            var userId = _userManager.GetUserId(User);
 
             Reservations.CheckInDate = DateTime.Parse(Request.Form["checkInDate"]);
             Reservations.ExpectedCheckOutDate = DateTime.Parse(Request.Form["checkOutDate"]);
@@ -71,6 +73,7 @@ namespace RazorPagesMovie.Pages.Reserve
             Reservations.SelectedRoomsNos = selectedRoomNumbersString;
             Reservations.MasterbillId = Reservations.Id;
             Reservations.status = 0;
+            Reservations.UserId = userId; // Assign the user ID here
 
             _context.Reservations.Add(Reservations);
             await _context.SaveChangesAsync();

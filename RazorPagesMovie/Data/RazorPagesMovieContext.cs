@@ -9,7 +9,7 @@ using RazorPagesMovie.Models;
 
 namespace RazorPagesMovie.Data
 {
-    public class RazorPagesMovieContext : IdentityDbContext
+    public class RazorPagesMovieContext : IdentityDbContext<ApplicationUser>
     {
         public RazorPagesMovieContext(DbContextOptions<RazorPagesMovieContext> options)
             : base(options)
@@ -27,6 +27,8 @@ namespace RazorPagesMovie.Data
         public DbSet<Bill> BillingTransactions { get; set; } = default!;
 
         public DbSet<RazorPagesMovie.Models.RoomReservationcs> RoomReservationcs { get; set; } = default!;
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public DbSet<RoomChargeResult> RoomChargeResults { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
