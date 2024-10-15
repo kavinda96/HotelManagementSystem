@@ -186,6 +186,31 @@ namespace RazorPagesMovie.Pages.Billing
 
 
             _context.BillingTransactions.Add(newTransaction);
+
+
+
+            if (reservationToUpdate.DiscountRate > 0 && !reservationToUpdate.IsThirdPartyBooking)
+            {
+                DiscountedPrice = await _context.CalculateDiscountedPriceAsync(reservationToUpdate.Id); //discounted price from total
+                reservationToUpdate.DiscountedPrice = DiscountedPrice;
+
+                var newTransaction2 = new Bill
+                {
+                    InvoiceNo = sid,
+                    createdDate = DateTime.Now,
+                    Category = "3",
+                    Description = $"Discounted Price {reservationToUpdate.DiscountRate}%".Trim(),
+                    ItemPrice = DiscountedPrice,
+                    ItemQty = 1
+                };
+
+
+                _context.BillingTransactions.Add(newTransaction2);
+            }
+            else
+            {
+                reservationToUpdate.DiscountedPrice = 0;
+            }
             //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 1);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index", new { id = sid });
@@ -267,19 +292,22 @@ namespace RazorPagesMovie.Pages.Billing
 
 
 
-        public async Task<JsonResult> OnGetFoodItems(string term)
+        public async Task<JsonResult> OnGetFoodItems(string term, string currency)
         {
             try
             {
                 var isNumeric = int.TryParse(term, out int foodCode);
 
+                // Fetch the food items based on term and currency
                 var foodItems = await _context.Food
-                    .Where(f => isNumeric ? f.FoodCode == foodCode && f.IsAvailable == 1  && f.FoodType ==1: f.FoodName.Contains(term) && f.IsAvailable == 1 && f.FoodType == 1)
+                    .Where(f => isNumeric
+                        ? f.FoodCode == foodCode && f.IsAvailable == 1 && f.FoodType == 1
+                        : f.FoodName.Contains(term) && f.IsAvailable == 1 && f.FoodType == 1)
                     .Select(f => new
                     {
                         id = f.Id,
                         foodName = f.FoodName,
-                        price = f.Price,
+                        price = currency == "USD" ? f.PriceUSD : f.Price,  // Choose PriceUSD if currency is USD
                         foodCode = f.FoodCode
                     })
                     .ToListAsync();
@@ -293,23 +321,26 @@ namespace RazorPagesMovie.Pages.Billing
         }
 
 
-        public async Task<JsonResult> OnGetBeverageItems(string term)
+
+        public async Task<JsonResult> OnGetBeverageItems(string term, string currency)
         {
             try
             {
                 var isNumeric = int.TryParse(term, out int beveragecode);
 
+                // Fetch the beverage items based on term and currency
                 var beverageItems = await _context.Food
-                   .Where(f => (isNumeric ? f.FoodCode == beveragecode && f.IsAvailable == 1 && f.FoodType == 2 : f.FoodName.Contains(term)) && f.IsAvailable == 1 && f.FoodType == 2)
+                    .Where(f => (isNumeric
+                        ? f.FoodCode == beveragecode && f.IsAvailable == 1 && f.FoodType == 2
+                        : f.FoodName.Contains(term) && f.IsAvailable == 1 && f.FoodType == 2))
                    .Select(f => new
                    {
                        id = f.Id,
                        beverageName = f.FoodName,
-                       price = f.Price,
+                       price = currency == "USD" ? f.PriceUSD : f.Price,  // Choose PriceUSD if currency is USD
                        beverageCode = f.FoodCode
                    })
                    .ToListAsync();
-
 
                 return new JsonResult(beverageItems);
             }
@@ -335,6 +366,7 @@ namespace RazorPagesMovie.Pages.Billing
 
             // Update the reservation status to 'finalized'
             reservationToUpdate.status = 3; // 3 = finalized
+          
 
 
             TotalWithoutDiscount = await _context.CalculateTotalWithoutDiscountAsync(reservationToUpdate.Id); //  total without discount
@@ -350,26 +382,9 @@ namespace RazorPagesMovie.Pages.Billing
             {
                 reservationToUpdate.TotalFinalAmount = TotalWithoutDiscount;
             }
-        
-
-            if (reservationToUpdate.DiscountRate > 0 && !reservationToUpdate.IsThirdPartyBooking)
-            {
-                DiscountedPrice = await _context.CalculateDiscountedPriceAsync(reservationToUpdate.Id); //discounted price from total
-                reservationToUpdate.DiscountedPrice = DiscountedPrice;
-
-                var newTransaction = new Bill
-                {
-                    InvoiceNo = ReservationId,
-                    createdDate = DateTime.Now,
-                    Category = "3",
-                    Description = $"Discounted Price {reservationToUpdate.DiscountRate}%".Trim(),
-                    ItemPrice = DiscountedPrice,
-                    ItemQty = 1
-                };
 
 
-                _context.BillingTransactions.Add(newTransaction);
-            }
+           
 
 
             // Save changes to the database

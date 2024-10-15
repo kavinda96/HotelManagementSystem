@@ -169,7 +169,10 @@
                             </form>
                         </td>
                     </tr>
-
+                        <tr class="keep-row">
+                            <td>Currency:</td>
+                            <td>@Model.Reservation.SelectedCurrency</td>
+                        </tr>
                         <tr class="print-exclude">
                             <td>Room Charges Discount Rate:</td>
                             <td>
@@ -282,7 +285,7 @@
                             <input type="hidden" asp-for="Reservation.GuestCount" />
                             <input type="hidden" asp-for="Reservation.NIN" />
                             <input type="hidden" asp-for="Reservation.Email" />
-                            <input type="hidden" asp-for="Reservation.SelectedCurrency" />
+                            <input type="hidden" asp-for="Reservation.SelectedCurrency" id="SelectedCurrency"/>
                             <input type="hidden" asp-for="Reservation.DiscountRate" />
 
                             @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
@@ -459,6 +462,16 @@
             <tr class="keep-row">
                 <td>Check-Out Date:</td>
                     <td>@Model.Reservation.ExpectedCheckOutDate.ToString("yyyy-MM-dd")</td>
+            </tr>
+
+            <tr class="keep-row">
+                <td>Currency:</td>
+                <td>@Model.Reservation.SelectedCurrency</td>
+            </tr>
+
+            <tr class="keep-row">
+                <td>Room Charge Discount %:</td>
+                <td>@Model.Reservation.DiscountRate</td>
             </tr>
 
         }
@@ -649,7 +662,7 @@
                             <input type="text" class="form-control" id="item" name="item" required>
                         </div>
                         <div class="mb-3">
-                            <label for="amount" class="form-label">Amount</label>
+                            <label for="amount" class="form-label">Amount <span id="currencyLabel" class="text-muted"></span></label>
                             <input type="number" class="form-control" id="amount" name="amount" required>
                         </div>
                         <div class="mb-3">
@@ -724,10 +737,13 @@ else
         $(document).ready(function () {
             $("#foodItemSearch").autocomplete({
                 source: function (request, response) {
+                    // Get the selected currency from the hidden input
+                    var currency = $('#SelectedCurrency').val();
+
                     $.ajax({
                         url: "/Billing?handler=FoodItems",
                         dataType: "json",
-                        data: { term: request.term },
+                        data: { term: request.term, currency: currency }, // Pass the currency along with the term
                         success: function (data) {
                             response($.map(data, function (item) {
                                 return {
@@ -754,10 +770,13 @@ else
         $(document).ready(function () {
             $("#beverageItemSearch").autocomplete({
                 source: function (request, response) {
+                   
+                    var currency = $('#SelectedCurrency').val();
+
                     $.ajax({
                         url: "/Billing?handler=BeverageItems",
                         dataType: "json",
-                        data: { term: request.term },
+                        data: { term: request.term, currency: currency },
                         success: function (data) {
                             response($.map(data, function (item) {
                                 return {                              
@@ -1204,6 +1223,28 @@ else
                         });
                     }
                 });
+            });
+        });
+
+        $(document).ready(function () {
+            // Assuming selectedCurrency is set globally or obtained from some logic
+            var selectedCurrency = $('#SelectedCurrency').val(); // Get the currency value from the hidden input
+
+            // Function to update the currency label
+            function updateCurrencyLabel() {
+                if (selectedCurrency === 'USD') {
+                    $('#currencyLabel').text('(Amount in USD)');
+                } else {
+                    $('#currencyLabel').text('(Amount in LKR)');
+                }
+            }
+
+            // Initial label setup
+            updateCurrencyLabel();
+
+            // Update currency label when the modal opens
+            $('#additionalChargesModal').on('show.bs.modal', function () {
+                updateCurrencyLabel();
             });
         });
 

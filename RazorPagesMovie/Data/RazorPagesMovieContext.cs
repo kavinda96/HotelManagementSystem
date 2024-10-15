@@ -42,12 +42,20 @@ namespace RazorPagesMovie.Data
         {
             // Write the raw SQL query to calculate the total room charges
             var query = @"
-                        select SUM(room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)) as TotalRoomCharge 
-                        from Room room, Reservations res, RoomReservationcs a
-                        where res.Id = a.ResevationId
-                        and a.RoomId = room.Id
-                        and res.Id = @reservationId
-                        and a.Status = 1";  // Add status condition here
+                       SELECT 
+                       SUM(
+                         CASE 
+                           WHEN res.SelectedCurrency = 'USD' THEN room.PriceUSD * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)
+                           ELSE room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)
+                         END
+                       ) AS TotalRoomCharge
+                     FROM 
+                       Room room, Reservations res, RoomReservationcs a
+                     WHERE 
+                       res.Id = a.ResevationId
+                       AND a.RoomId = room.Id
+                       AND res.Id = @reservationId
+                       AND a.Status = 1";  // Add status condition here
 
 
             // Execute the raw SQL query and get the result
@@ -74,26 +82,26 @@ namespace RazorPagesMovie.Data
         }
 
 
-        //var query = @"
-        //                SELECT (sum(bill.itemPrice * bill.itemQty) *  max(res.DiscountRate)/100) * -1 as Discounted_total
-        //                FROM BillingTransactions bill, Reservations res
-        //                where bill.InvoiceNo = res.Id 
-        //                and bill.InvoiceNo = @reservationId
-        //                and bill.tranStatus = 1;";  // Add status condition here
-
 
 
         public async Task<decimal> CalculateDiscountedPriceAsync(int reservationId)
         {
             // Write the raw SQL query to calculate the total room charges
             var query = @"
-                         select (SUM(room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate))) * max(res.DiscountRate)/100
-                         from Room room, Reservations res, RoomReservationcs a
-                         where res.Id = a.ResevationId
-                         and a.RoomId = room.Id
-                         and res.Id = @reservationId
-                         and a.Status = 1
-                        and res.IsThirdPartyBooking != 1;;";  // Add status condition here
+                        SELECT 
+                         SUM(
+                           CASE 
+                             WHEN res.SelectedCurrency = 'USD' THEN (room.PriceUSD * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)) * res.DiscountRate / 100
+                             ELSE (room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)) * res.DiscountRate / 100
+                           END
+                         ) * -1 AS DiscountAmount
+                       FROM 
+                         Room room, Reservations res, RoomReservationcs a
+                       WHERE 
+                         res.Id = a.ResevationId
+                         AND a.RoomId = room.Id
+                         AND res.Id = @reservationId
+                         AND a.Status = 1 ;";  // Add status condition here
 
 
             // Execute the raw SQL query and get the result
@@ -123,7 +131,7 @@ namespace RazorPagesMovie.Data
         {
             // Write the raw SQL query to calculate the total room charges
             var query = @"
-                        SELECT sum(bill.itemPrice * bill.itemQty) -(sum(bill.itemPrice * bill.itemQty) *  max(res.DiscountRate)/100) as Discounted_total
+                        SELECT sum(bill.itemPrice * bill.itemQty)
                         FROM BillingTransactions bill, Reservations res
                         where bill.InvoiceNo = res.Id 
                         and bill.InvoiceNo = @reservationId
@@ -158,8 +166,23 @@ namespace RazorPagesMovie.Data
         {
             // Write the raw SQL query to calculate the total room charges
             var query = @"
-                        SELECT sum(bill.itemPrice * bill.itemQty) 
-                        FROM BillingTransactions bill, Reservations res
+                        SELECT sum(bill.itemPrice * bill.itemQty)  + max(discount.DiscountAmount)
+                        FROM BillingTransactions bill, Reservations res,
+                         (SELECT 
+                         SUM(
+                           CASE 
+                             WHEN res.SelectedCurrency = 'USD' THEN (room.PriceUSD * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)) * res.DiscountRate / 100
+                             ELSE (room.Price * DATEDIFF(DAY, a.CheckInDate, a.CheckOutDate)) * res.DiscountRate / 100
+                           END
+                         )   AS DiscountAmount
+                       FROM 
+                         Room room, Reservations res, RoomReservationcs a
+                       WHERE 
+                         res.Id = a.ResevationId
+                         AND a.RoomId = room.Id
+                         AND res.Id = @reservationId
+                         AND a.Status = 1 
+                         ) discount
                         where bill.InvoiceNo = res.Id 
                         and bill.InvoiceNo = @reservationId
                         and bill.tranStatus = 1;";  // Add status condition here
