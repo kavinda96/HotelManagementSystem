@@ -165,7 +165,8 @@ namespace RazorPagesMovie.Pages.Billing
             if (!reservationToUpdate.IsThirdPartyBooking)
             {
                 TotalRoomCharge = await _context.CalculateRoomChargeAsync(sid);
-                billrecDesc = "Check out :Charges for " + datediff + " days stay at Room No " + selectedRooms;
+                //billrecDesc = "Check out :Charges for " + datediff + " days stay at Room No " + selectedRooms;
+                billrecDesc = "Checkout:Charges for " + datediff + " days stay" ;
             }
             else
             {
@@ -231,7 +232,7 @@ namespace RazorPagesMovie.Pages.Billing
             }
 
             // Update the check-in date
-            reservationToUpdate.CheckInDate = Reservation.CheckInDate;
+           // reservationToUpdate.CheckInDate = Reservation.CheckInDate;
             reservationToUpdate.status = 1; // Status update to Checkin status
 
             string selectedRooms = reservationToUpdate.SelectedRoomsNos;
@@ -241,12 +242,13 @@ namespace RazorPagesMovie.Pages.Billing
                 InvoiceNo = sid,
                 createdDate = DateTime.Now,
                 Category = "3",
-                Description = "Check In - rooms: " + selectedRooms + " On Date: " + Reservation.CheckInDate.ToString("yyyy-MM-dd")
+                //  Description = "Check In - rooms: " + selectedRooms + " On Date: " + Reservation.CheckInDate.ToString("yyyy-MM-dd")
+                Description = "Check In : Date: " + reservationToUpdate.CheckInDate.ToString("yyyy-MM-dd")
             };
 
             _context.BillingTransactions.Add(newTransaction);
             //  _reservationService.UpdateRoomStatusWhenCheckoutIn(sid, 2);
-            _reservationService.UpdateCheckInDateForReservation(reservationToUpdate.Id, Reservation.CheckInDate);
+            //_reservationService.UpdateCheckInDateForReservation(reservationToUpdate.Id, reservationToUpdate.CheckInDate);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index", new { id = sid });

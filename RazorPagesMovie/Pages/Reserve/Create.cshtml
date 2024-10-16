@@ -46,7 +46,7 @@
                                 <tr id="thirdPartyFields" style="display: none;">
                                     <td>
                                         <div class="form-group">
-                                            <label asp-for="Reservations.ThirdPartyHandlerId" class="control-label">Third Party Handler</label>
+                                            <label asp-for="Reservations.ThirdPartyHandlerId" class="control-label" >Third Party Handler</label>
                                             <select asp-for="Reservations.ThirdPartyHandlerId" class="form-control">
                                                 <option value="">Select Third Party</option>
                                                 @foreach (var handler in Model.ThirdPartyHandlers)
@@ -164,7 +164,7 @@
                             <button type="button" onclick="checkAvailability()" class="btn btn-warning">Check Availability</button>
                         </div>
 
-                        <h2>Available Rooms</h2>
+                        <h5 id="avialableroomheader">Available Rooms</h5>
                         <div id="availableRooms">
                             <p>Select check-in and check-out dates to see available rooms.</p>
                         </div>
@@ -254,5 +254,13 @@
         }
 
     </script>
+
+    <style>
+        #avialableroomheader{
+            margin-top:10px;
+        }
+
+        
+    </style>
 
 }
