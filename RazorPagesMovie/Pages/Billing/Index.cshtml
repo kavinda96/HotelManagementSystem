@@ -520,6 +520,66 @@
 
 
 
+<div class="col-md-6" id="thirdPartyHanderDetails">
+    <table class="table table-bordered invoice-info" style="display:none">
+        <thead>
+            <tr class="keep-row">
+                <th colspan="2">Invoice Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Reservation != null)
+            {
+                <input type="hidden" asp-for="Reservation.MasterbillId">
+                <input type="hidden" asp-for="Reservation.Id">
+                <input type="hidden" asp-for="Reservation.CustomerName">
+                <input type="hidden" asp-for="Reservation.SelectedRooms">
+                <input type="hidden" asp-for="Reservation.SelectedRoomsNos">
+                <input type="hidden" asp-for="Reservation.CheckInDate">
+                <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate">
+                <input type="hidden" asp-for="Reservation.Mobile">
+                <input type="hidden" asp-for="Reservation.Address">
+                <input type="hidden" asp-for="Reservation.Country">
+                <input type="hidden" asp-for="Reservation.GuestCount">
+                <input type="hidden" asp-for="Reservation.NIN">
+                <input type="hidden" asp-for="Reservation.BookingReference">
+                <input type="hidden" asp-for="Reservation.ThirdPartyHandlerId">
+               @*  <input type="hidden" asp-for="Reservation.Handler.CompanyName"> *@
+
+                <input type="hidden" asp-for="Reservation.IsThirdPartyBooking" id="isTpbooking">
+
+
+             
+                    <tr class="keep-row">
+                        <td>Name :</td>
+
+                      @*   <td>@Model.Reservation.ThirdPartyHandlerId</td> *@
+                    <td>@ViewData["ThirdPartyHandlerName"]</td>
+                </tr>
+
+              
+
+                <tr class="keep-row">
+                    <td>Booking Ref :</td>
+                    <td>@Model.Reservation.BookingReference</td>
+                </tr>
+
+               
+            
+            }
+            else
+            {
+
+                <tr>
+                    <td colspan="2">Reservation not found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
 
 
 
@@ -908,7 +968,6 @@ else
         }
 
         async function printPDF() {
-            // Ensure jsPDF is loaded
             if (window.jspdf) {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
@@ -949,22 +1008,54 @@ else
                     theme: 'plain',
                     tableWidth: 'wrap',
                     columnStyles: {
-                        0: { cellWidth: 40 },
-                        1: { cellWidth: 60 },
+                        0: { cellWidth: 45 },
+                        1: { cellWidth: 55 },
                     },
                     styles: {
                         overflow: 'linebreak',
-                        cellPadding: 2,
-                        fontSize: 10
+                        cellPadding: 1.5,
+                        fontSize: 11,
+                        font: 'PTSans'
                     },
                 });
 
-                const afterFirstTableY = doc.lastAutoTable.finalY + 10;
+                // Check if it's a third-party booking using the hidden input value
+                const isThirdPartyBooking = document.getElementById('isTpbooking').value;
+                const handlerDetailsX = 130; // Adjust this as needed for right alignment
+                const handlerDetailsY = afterFirstTableY1 + 10; // Start from the same Y as the invoice display
+
+                if (isThirdPartyBooking === 'True') {
+                    // Add "Third-party Handler Details" from the table
+                    const handlerTable = document.querySelector('#thirdPartyHanderDetails table');
+                    if (handlerTable) {
+                        const rows = handlerTable.querySelectorAll('tbody tr');
+                        doc.setFontSize(12);
+                        doc.text("Third-party Handler Details:", handlerDetailsX, handlerDetailsY);
+                        doc.setFontSize(10);
+
+                        let yOffset = handlerDetailsY + 10; // Adjust Y position for each line
+                        rows.forEach(row => {
+                            const cells = row.querySelectorAll('td');
+                            if (cells.length === 2) {
+                                const label = cells[0].innerText;
+                                const value = cells[1].innerText;
+                                
+                                doc.text(`${label} ${value}`, handlerDetailsX, yOffset);
+                                yOffset += 5; // Adjust for next line
+                            }
+                        });
+                    } else {
+                        console.error('Handler details table not found');
+                    }
+                }
+
+                // Calculate Y position for the billing transactions table
+                const afterHandlerDetailsY = isThirdPartyBooking ? Math.max(doc.lastAutoTable.finalY, handlerDetailsY + 30) + 10 : afterFirstTableY1 + 70; // Adjust position if handler details are shown
 
                 // Billing Transactions
                 doc.autoTable({
                     html: '#billing_table table',
-                    startY: afterFirstTableY,
+                    startY: afterHandlerDetailsY,
                     margin: { bottom: 35 },
                     headStyles: {
                         fillColor: [33, 47, 60],
@@ -983,8 +1074,7 @@ else
                     styles: {
                         lineHeight: 1,  // Set the line height to reduce row spacing
                         fontSize: 10,     // Set font size
-                        cellPadding: 2 
-                       // Adjust padding if necessary
+                        cellPadding: 2
                     }
                 });
 
@@ -1014,6 +1104,8 @@ else
                 console.error('jsPDF is not loaded');
             }
         }
+
+
 
 
 

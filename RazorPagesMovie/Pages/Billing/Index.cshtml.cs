@@ -54,6 +54,7 @@ namespace RazorPagesMovie.Pages.Billing
         {
             if (id.HasValue)
             {
+                // Retrieve the reservation
                 Reservation = _reservationService.GetReservationById(id.Value);
 
                 if (Reservation == null)
@@ -62,15 +63,33 @@ namespace RazorPagesMovie.Pages.Billing
                     return NotFound($"Reservation with ID {id} not found.");
                 }
 
+                // Get the invoice number
                 var invoice_no = Reservation.Id;
+
+                // Retrieve billing transactions for the reservation
                 BillingTransactions = _billingTransactionService.GetBillingTransactionsByReservationId(invoice_no);
                 NewTransaction = new Bill { Id = id.Value };
+
+                // Retrieve the ThirdPartyHandler name using the ThirdPartyHandlerId from the reservation
+                var handler = _context.ThirdPartyHandlers
+                    .FirstOrDefault(h => h.Id == Reservation.ThirdPartyHandlerId);
+
+                if (handler != null)
+                {
+                    ViewData["ThirdPartyHandlerName"] = handler.CompanyName;  // Passing the handler name to the view
+                }
+                else
+                {
+                    ViewData["ThirdPartyHandlerName"] = "No Handler Assigned"; // In case the handler is not found
+                }
             }
 
+            // Retrieve available food items
             FoodItems = _context.Food.Where(f => f.IsAvailable == 1).ToList();
 
             return Page();
         }
+
 
         public IActionResult OnPost()
         {
@@ -171,7 +190,7 @@ namespace RazorPagesMovie.Pages.Billing
             else
             {
                 TotalRoomCharge = 0;
-                billrecDesc = "Check out : Third Party Party Booking";
+                billrecDesc = "Check out : 3rd Party Booking";
             }
 
 
