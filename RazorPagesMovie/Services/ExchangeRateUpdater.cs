@@ -11,9 +11,10 @@ using Microsoft.Extensions.DependencyInjection; // To create service scope
 
 public class ExchangeRateUpdater : IHostedService, IDisposable
 {
-    private Timer _timer;
+    private Timer _timerUSDToLKR;
+    private Timer _timerLKRToUSD;
     private readonly ILogger<ExchangeRateUpdater> _logger;
-    private readonly IServiceScopeFactory _serviceScopeFactory; // To create a scope for DbContext
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
     public ExchangeRateUpdater(ILogger<ExchangeRateUpdater> logger, IServiceScopeFactory serviceScopeFactory)
     {
@@ -23,41 +24,54 @@ public class ExchangeRateUpdater : IHostedService, IDisposable
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        // Execute the update immediately on startup
+        // Execute both updates immediately on startup
         UpdateExchangeRate(null);
+        UpdateExchangeRateLKRUSD(null);
 
-        // Schedule the next run
-        ScheduleNextRun();
+        // Schedule the next runs for both methods
+        ScheduleNextRunForUSDToLKR();
+        ScheduleNextRunForLKRToUSD();
+
         return Task.CompletedTask;
     }
 
-    private void ScheduleNextRun()
+    // Schedule USD to LKR updates
+    private void ScheduleNextRunForUSDToLKR()
     {
         var nextRunTime = GetNextRunTime();
         var delay = nextRunTime - DateTime.UtcNow;
 
         if (delay < TimeSpan.Zero)
         {
-            // If the next run time is in the past, schedule for the next day
             nextRunTime = nextRunTime.AddDays(1);
             delay = nextRunTime - DateTime.UtcNow;
         }
 
-        // Set the timer to trigger the UpdateExchangeRate method at the calculated delay
-        _timer = new Timer(UpdateExchangeRate, null, delay, Timeout.InfiniteTimeSpan);
+        _timerUSDToLKR = new Timer(UpdateExchangeRate, null, delay, Timeout.InfiniteTimeSpan);
+    }
+
+    // Schedule LKR to USD updates
+    private void ScheduleNextRunForLKRToUSD()
+    {
+        var nextRunTime = GetNextRunTime();
+        var delay = nextRunTime - DateTime.UtcNow;
+
+        if (delay < TimeSpan.Zero)
+        {
+            nextRunTime = nextRunTime.AddDays(1);
+            delay = nextRunTime - DateTime.UtcNow;
+        }
+
+        _timerLKRToUSD = new Timer(UpdateExchangeRateLKRUSD, null, delay, Timeout.InfiniteTimeSpan);
     }
 
     private DateTime GetNextRunTime()
     {
-        // Get the current time in SLT (UTC+5:30)
         var sriLankaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Sri Lanka Standard Time");
         var now = DateTime.UtcNow;
         var slTime = TimeZoneInfo.ConvertTimeFromUtc(now, sriLankaTimeZone);
-
-        // Set the next run time to today at 9 AM SLT
         var nextRun = new DateTime(slTime.Year, slTime.Month, slTime.Day, 9, 0, 0, DateTimeKind.Unspecified);
 
-        // If it's already past 9 AM SLT, schedule for the next day
         if (slTime >= nextRun)
         {
             nextRun = nextRun.AddDays(1);
@@ -76,21 +90,19 @@ public class ExchangeRateUpdater : IHostedService, IDisposable
         {
             var response = await client.GetStringAsync(url);
             dynamic data = JsonConvert.DeserializeObject(response);
-            var lkrRate = (decimal)data.conversion_rates.LKR; // Explicitly cast to decimal
+            var lkrRate = (decimal)data.conversion_rates.LKR;
 
-            if(lkrRate > 0)
+            if (lkrRate > 0)
             {
-                SaveExchangeRateToDatabase(lkrRate);
+                SaveExchangeRateToDatabase(lkrRate, 1);
+                await UpdateRoomPrices(lkrRate);
             }
             else
             {
-                SaveExchangeRateToDatabase(-1);
+                SaveExchangeRateToDatabase(-1, 1);
             }
 
             _logger.LogInformation($"Fetched USD to LKR exchange rate: {lkrRate} at {DateTime.UtcNow}");
-
-            // Save exchange rate to the database
-            
         }
         catch (Exception ex)
         {
@@ -98,37 +110,133 @@ public class ExchangeRateUpdater : IHostedService, IDisposable
         }
         finally
         {
-            // Reschedule the next run after the update
-            ScheduleNextRun();
+            ScheduleNextRunForUSDToLKR();
         }
     }
 
-    private void SaveExchangeRateToDatabase(decimal lkrRate)
+    private async void UpdateExchangeRateLKRUSD(object state)
+    {
+        using var client = new HttpClient();
+        string apiKey = "ad8507a9a837efbac6968f4d";  // Replace with your real API key
+        string url = $"https://v6.exchangerate-api.com/v6/{apiKey}/latest/LKR";
+
+        try
+        {
+            var response = await client.GetStringAsync(url);
+            dynamic data = JsonConvert.DeserializeObject(response);
+         //   var usdRate = (decimal)data.conversion_rates.USD;
+            decimal usdRate = Convert.ToDecimal(data.conversion_rates.USD);
+
+            if (usdRate < 1)
+            {
+                SaveExchangeRateToDatabase(usdRate, 2);
+                await UpdateFoodUsdPrices(usdRate);
+            }
+            else
+            {
+                SaveExchangeRateToDatabase(-1, 2);
+            }
+
+            _logger.LogInformation($"Fetched LKR to USD exchange rate: {usdRate} at {DateTime.UtcNow}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error fetching exchange rate: {ex.Message}");
+        }
+        finally
+        {
+            ScheduleNextRunForLKRToUSD();
+        }
+    }
+
+    //private void SaveExchangeRateToDatabase(decimal rate, int type)
+    //{
+    //    using (var scope = _serviceScopeFactory.CreateScope())
+    //    {
+    //        var dbContext = scope.ServiceProvider.GetRequiredService<RazorPagesMovieContext>();
+    //        var exchangeRate = new ExchangeRate
+    //        {
+    //            CreatedDate = DateTime.UtcNow,
+    //            ExchangeRateName = type == 1 ? "USD" : "LKR",
+    //            ExchangeRateAmount = rate
+    //        };
+
+    //        dbContext.ExchangeRate.Add(exchangeRate);
+    //        dbContext.SaveChanges();
+    //    }
+    //}
+
+
+
+    private void SaveExchangeRateToDatabase(decimal rate, int type)
     {
         using (var scope = _serviceScopeFactory.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<RazorPagesMovieContext>();
-
             var exchangeRate = new ExchangeRate
             {
-                CreatedDate = DateTime.UtcNow, // Store the time in UTC
-                ExchangeRateName = "USD",
-                ExchangeRateAmount = lkrRate
+                CreatedDate = DateTime.UtcNow,
+                ExchangeRateName = type == 1 ? "USD" : "LKR",
+                ExchangeRateAmount = rate
             };
 
-            dbContext.ExchangeRate.Add(exchangeRate);  // Add the record
-            dbContext.SaveChanges();                  // Save it to the database
+            _logger.LogInformation($"Attempting to save exchange rate: {rate} for {exchangeRate.ExchangeRateName}.");
+
+            dbContext.ExchangeRate.Add(exchangeRate);
+            dbContext.SaveChanges();
+
+            // Log the value after the save to ensure it matches
+            _logger.LogInformation($"Saved exchange rate: {exchangeRate.ExchangeRateAmount}");
+        }
+    }
+
+
+    private async Task UpdateRoomPrices(decimal lkrRate)
+    {
+        using (var scope = _serviceScopeFactory.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<RazorPagesMovieContext>();
+            var rooms = dbContext.Room.ToList();
+
+            foreach (var room in rooms)
+            {
+                room.Price = room.PriceUSD * lkrRate;
+            }
+
+            dbContext.Room.UpdateRange(rooms);
+            await dbContext.SaveChangesAsync();
+            _logger.LogInformation("Room prices updated based on the new USD to LKR exchange rate.");
+        }
+    }
+
+    private async Task UpdateFoodUsdPrices(decimal usdRate)
+    {
+        using (var scope = _serviceScopeFactory.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<RazorPagesMovieContext>();
+            var foods = dbContext.Food.ToList();
+
+            foreach (var foodItem in foods)
+            {
+                foodItem.PriceUSD = foodItem.Price * usdRate;
+            }
+
+            dbContext.Food.UpdateRange(foods);
+            await dbContext.SaveChangesAsync();
+            _logger.LogInformation("Food USD prices updated based on the new LKR to USD exchange rate.");
         }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _timer?.Change(Timeout.Infinite, 0);
+        _timerUSDToLKR?.Change(Timeout.Infinite, 0);
+        _timerLKRToUSD?.Change(Timeout.Infinite, 0);
         return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-        _timer?.Dispose();
+        _timerUSDToLKR?.Dispose();
+        _timerLKRToUSD?.Dispose();
     }
 }

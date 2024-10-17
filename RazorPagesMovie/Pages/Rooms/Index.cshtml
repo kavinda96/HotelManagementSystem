@@ -14,8 +14,8 @@
 </div>
 
 <!-- Button to Fetch Exchange Rate -->
-<button id="fetch-exchange-rate" class="btn btn-info">Get LKR/USD Exchange Rate</button>
-<p id="exchange-rate" style="font-weight: bold; margin-top: 10px;"></p>
+@* <button id="fetch-exchange-rate" class="btn btn-info">Get LKR/USD Exchange Rate</button>
+<p id="exchange-rate" style="font-weight: bold; margin-top: 10px;"></p> *@
 
 <p>
     <a asp-page="Create" class="btn btn-success">Create New</a>
@@ -102,19 +102,5 @@
 </style>
 
 <script>
-    $(document).ready(function () {
-        $('#fetch-exchange-rate').click(function () {
-            $.ajax({
-                url: 'https://v6.exchangerate-api.com/v6/ad8507a9a837efbac6968f4d/latest/USD',
-                method: 'GET',
-                success: function (data) {
-                    var lkrRate = data.conversion_rates.LKR;
-                    $('#exchange-rate').text('Current LKR/USD exchange rate: ' + lkrRate);
-                },
-                error: function (xhr, status, error) {
-                    $('#exchange-rate').text('Error fetching exchange rate: ' + error);
-                }
-            });
-        });
-    });
+ 
 </script>

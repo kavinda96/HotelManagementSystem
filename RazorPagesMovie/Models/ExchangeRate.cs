@@ -1,4 +1,6 @@
-﻿namespace RazorPagesMovie.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace RazorPagesMovie.Models
 {
     public class ExchangeRate
     {
@@ -8,6 +10,8 @@
 
         public string ExchangeRateName { get; set;}
 
-        public decimal ExchangeRateAmount {  get; set;}
+        [Column(TypeName = "decimal(18, 6)")] // Ensure this is present
+        public decimal ExchangeRateAmount { get; set; }
+        
     }
 }
