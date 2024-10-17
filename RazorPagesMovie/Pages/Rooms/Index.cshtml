@@ -3,11 +3,9 @@
 @{
     ViewData["Title"] = "Rooms";
 }
-@* <h1>Room Reservation</h1>
- *@
 
 <link rel="stylesheet" href="~/css/table.css" />
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <div class="card mb-2" id="headbox">
     <div class="card-body text-center">
@@ -15,34 +13,10 @@
     </div>
 </div>
 
+<!-- Button to Fetch Exchange Rate -->
+<button id="fetch-exchange-rate" class="btn btn-info">Get LKR/USD Exchange Rate</button>
+<p id="exchange-rate" style="font-weight: bold; margin-top: 10px;"></p>
 
-@* 
-<div class="container">
-    @if (Model.VacantRooms != null && Model.VacantRooms.Any())
-    {
-      
-        <div class="row">
-            @foreach (var room in Model.VacantRooms)
-            {
-                <div class="col-md-2 mb-5">
-                    <div class="card" id="vr">
-                        <div class="card-body">
-                            <h5 class="card-title">Room @room.RoomNo</h5>
-                            <p class="card-text">
-                                Type: @room.RoomType
-                            </p>
-                            <a href="/Reserve?roomId=@room.Id" class="btn btn-primary">Reserve</a>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-warning">No vacant rooms available.</div>
-    }
-</div> *@
 <p>
     <a asp-page="Create" class="btn btn-success">Create New</a>
 </p>
@@ -56,31 +30,16 @@
     </p>
 </form>
 
-
-
-
 <div class="table-wrapper">
-        <table class="fl-table">
+    <table class="fl-table">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Room[0].RoomNo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Room[0].RoomType)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Room[0].Price)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Room[0].PriceUSD)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Room[0].BedsCount)
-                </th>
-                <th>
-                  Availability
-                </th>
+                <th>@Html.DisplayNameFor(model => model.Room[0].RoomNo)</th>
+                <th>@Html.DisplayNameFor(model => model.Room[0].RoomType)</th>
+                <th>@Html.DisplayNameFor(model => model.Room[0].Price)</th>
+                <th>@Html.DisplayNameFor(model => model.Room[0].PriceUSD)</th>
+                <th>@Html.DisplayNameFor(model => model.Room[0].BedsCount)</th>
+                <th>Availability</th>
                 <th></th>
             </tr>
         </thead>
@@ -88,13 +47,8 @@
             @foreach (var item in Model.Room)
             {
                 <tr>
+                    <td>@Html.DisplayFor(modelItem => item.RoomNo)</td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.RoomNo)
-                    </td>
-                    <td>
-                      
-
-
                         @{
                             string statusText = item.RoomType switch
                             {
@@ -107,23 +61,13 @@
                                 "7" => "Deluxe A/C Double Sea View Private Balcony",
                                 "8" => "Deluxe A/C Triple Sea View Private Balcony",
                                 _ => "Unknown Room Type"
-
-                             
-                                };
+                            };
                         }
                         @statusText
-
-
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Price)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PriceUSD)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BedsCount)
-                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                    <td>@Html.DisplayFor(modelItem => item.PriceUSD)</td>
+                    <td>@Html.DisplayFor(modelItem => item.BedsCount)</td>
                     <td>
                         @{
                             string IsAvailableText = item.IsAvailable switch
@@ -144,6 +88,7 @@
         </tbody>
     </table>
 </div>
+
 <style>
     .table-container {
         max-height: 700px; /* Set your desired max height here */
@@ -155,3 +100,21 @@
             width: 100%;
         }
 </style>
+
+<script>
+    $(document).ready(function () {
+        $('#fetch-exchange-rate').click(function () {
+            $.ajax({
+                url: 'https://v6.exchangerate-api.com/v6/ad8507a9a837efbac6968f4d/latest/USD',
+                method: 'GET',
+                success: function (data) {
+                    var lkrRate = data.conversion_rates.LKR;
+                    $('#exchange-rate').text('Current LKR/USD exchange rate: ' + lkrRate);
+                },
+                error: function (xhr, status, error) {
+                    $('#exchange-rate').text('Error fetching exchange rate: ' + error);
+                }
+            });
+        });
+    });
+</script>

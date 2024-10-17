@@ -26,6 +26,8 @@ namespace RazorPagesMovie.Data
 
         public DbSet<Bill> BillingTransactions { get; set; } = default!;
 
+         public DbSet<RazorPagesMovie.Models.ExchangeRate> ExchangeRate { get; set; } = default!;
+
         public DbSet<RazorPagesMovie.Models.RoomReservationcs> RoomReservationcs { get; set; } = default!;
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
@@ -223,16 +225,17 @@ namespace RazorPagesMovie.Data
 WITH TotalReservations AS (
     SELECT COUNT(*) AS total_reservation
     FROM Reservations
+    where validity =1
 ),
 UpcomingReservations AS (
     SELECT COUNT(*) AS upcoming_reservation
     FROM Reservations
-    WHERE CheckInDate > CAST(GETDATE() AS DATE)
+    WHERE CheckInDate > CAST(GETDATE() AS DATE) and validity =1
 ),
 ActiveReservations AS (
     SELECT COUNT(*) AS active_reservation
-    FROM Reservations
-    WHERE status  = 0
+    FROM Reservations 
+    WHERE status  = 0 and validity =1
 ),
 
 TotalRooms AS (
@@ -264,6 +267,7 @@ FROM RoomReservationcs rr
 JOIN Reservations res ON rr.ResevationId = res.Id
 WHERE rr.CheckOutDate = CAST(GETDATE() AS DATE) 
 AND res.Status =1
+and res.validity =1
 
 ),
 IntendedCheckinTomorrow as (
@@ -272,6 +276,7 @@ FROM RoomReservationcs rr
 JOIN Reservations res ON rr.ResevationId = res.Id
 WHERE rr.CheckInDate = CAST(DATEADD(DAY, 1, GETDATE()) AS DATE)
 AND res.Status = 0
+and res.validity =1
 ),
 
 IntendedCheckOutTomorrow as (
@@ -280,6 +285,7 @@ FROM RoomReservationcs rr
 JOIN Reservations res ON rr.ResevationId = res.Id
 WHERE rr.CheckOutDate = CAST(DATEADD(DAY, 1, GETDATE()) AS DATE)
 AND res.Status = 1
+and res.validity =1
 )
 SELECT 
     t.total_reservation,

@@ -3,26 +3,33 @@ using Microsoft.Extensions.DependencyInjection;
 using RazorPagesMovie.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using RazorPagesMovie.Models;
+using RazorPagesMovie.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+// Add DbContext with SQL Server configuration
 builder.Services.AddDbContext<RazorPagesMovieContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RazorPagesMovieContext") ?? throw new InvalidOperationException("Connection string 'RazorPagesMovieContext' not found.")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("RazorPagesMovieContext")
+        ?? throw new InvalidOperationException("Connection string 'RazorPagesMovieContext' not found.")));
 
-// Add other services
-builder.Services.AddSingleton<RazorPagesMovie.Services.InvoiceNoGenerator>();
-builder.Services.AddScoped<RazorPagesMovie.Services.ReservationService>();
-builder.Services.AddScoped<RazorPagesMovie.Services.BillingTransactionService>();
-builder.Services.AddSingleton<RazorPagesMovie.Services.PaginationService>();
+// Register other services
+builder.Services.AddSingleton<InvoiceNoGenerator>();
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<BillingTransactionService>();
+builder.Services.AddSingleton<PaginationService>();
 
-// Configure Identity with ApplicationUser
+// Add the ExchangeRateUpdater background service
+builder.Services.AddHostedService<ExchangeRateUpdater>();
+
+// Configure Identity with ApplicationUser and IdentityRole
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; // Disable email confirmation
+    options.SignIn.RequireConfirmedAccount = false;  // Disable email confirmation for demo or dev purposes
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
@@ -32,11 +39,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<RazorPagesMovieContext>()
 .AddDefaultTokenProviders();
 
-// Configure authentication
+// Configure cookie authentication for Identity
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Identity/Account/Login"; // Ensure the login path is correct
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Optional: custom access denied page
+    options.LoginPath = "/Identity/Account/Login";           // Correct login path
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Custom access denied page (optional)
 });
 
 // Set up logging
@@ -50,7 +57,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    app.UseHsts();  // Enforce strict transport security in non-dev environments
 }
 
 app.UseHttpsRedirection();
@@ -58,22 +65,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Enable authentication
-app.UseAuthorization(); // Enable authorization
+app.UseAuthentication();  // Enable authentication
+app.UseAuthorization();   // Enable authorization
 
-app.MapRazorPages();
-
-app.UseEndpoints(endpoints =>
+// Redirect to homepage on root access
+app.MapGet("/", context =>
 {
-    // Redirect to homepage on default access
-    endpoints.MapGet("/", context =>
-    {
-        context.Response.Redirect("/Homepage");
-        return Task.CompletedTask;
-    });
-    endpoints.MapRazorPages();
+    context.Response.Redirect("/Homepage");
+    return Task.CompletedTask;
 });
 
+app.MapRazorPages();  // Map Razor Pages
 
-
+// Run the application
 app.Run();

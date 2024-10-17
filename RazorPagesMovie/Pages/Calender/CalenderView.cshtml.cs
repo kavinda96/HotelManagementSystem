@@ -45,7 +45,7 @@ namespace RazorPagesMovie.Pages.Calender
 
             // Fetch reservations that overlap with the selected date range
             Reservations = await _context.RoomReservationcs
-                .Where(r => r.CheckInDate <= DateRange.Last() && r.CheckOutDate >= DateRange.First())
+                .Where(r => r.CheckInDate <= DateRange.Last() && r.CheckOutDate >= DateRange.First() && r.Status == 1)
                 .ToListAsync();
         }
     }
