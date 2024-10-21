@@ -25,6 +25,11 @@
     <label for="endDate">To:</label>
     <input type="date" id="endDate" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
 
+
+    <input type="hidden" name="showUpcoming" value="@Request.Query["showUpcoming"]" />  
+    <input type="hidden" name="showTPB" value="@Request.Query["showTPB"]" />
+
+
     <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
 </form>
 
@@ -48,7 +53,8 @@
                asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")"
                asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
                asp-route-showUpcoming="@Request.Query["showUpcoming"]"
-               asp-route-showFinalized="@Request.Query["showFinalized"]">« Previous</a>
+               asp-route-showFinalized="@Request.Query["showFinalized"]"
+               asp-route-showTPB="@Request.Query["showTPB"]">« Previous</a>
         }
 
         @for (int i = 1; i <= Model.TotalPages; i++)
@@ -59,7 +65,8 @@
                asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
                asp-route-showUpcoming="@Request.Query["showUpcoming"]"
                asp-route-showFinalized="@Request.Query["showFinalized"]"
-               class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+               class="@(i == Model.CurrentPage ? "active" : "")"
+               asp-route-showTPB="@Request.Query["showTPB"]">@i</a>
         }
 
         @if (Model.CurrentPage < Model.TotalPages)
@@ -69,40 +76,16 @@
                asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")"
                asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
                asp-route-showUpcoming="@Request.Query["showUpcoming"]"
-               asp-route-showFinalized="@Request.Query["showFinalized"]">Next »</a>
+               asp-route-showFinalized="@Request.Query["showFinalized"]"
+               asp-route-showTPB="@Request.Query["showTPB"]">Next »</a>
         }
     </div>
 </div>
 
 
-<!-- Bootstrap Modal -->
-@* <div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="customerInfoModalLabel">Customer Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
-                <p><strong>Guest Count:</strong> <span id="modalGuestCount"></span></p>
-                <p><strong>NIN:</strong> <span id="modalNIN"></span></p>
-                <p><strong>Address:</strong> <span id="modalAddress"></span></p>
-                <p><strong>Country:</strong> <span id="modalCountry"></span></p>
-                <p><strong>Mobile:</strong> <span id="modalMobile"></span></p>
-                <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-                <p><strong>Third Party Handler Name:</strong> <span id="modalcompanyId"></span></p>
-                <p><strong>Third Party Booking Ref:</strong> <span id="modalTPbookingRef"></span></p>
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div> *@
+
+
 
 <div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -165,7 +148,7 @@
 
 @section Scripts {
     <script>
-        function showCustomerInfo(customerName, nin, address, country, mobile, handlerId, bookingref, email, guestCount) {
+        function showCustomerInfo(customerName, nin, address, country, mobile, handlerId, bookingref, email, guestCount, isThirdPartyBooking) {
             document.getElementById('modalCustomerName').textContent = customerName;
             document.getElementById('modalNIN').textContent = nin;
             document.getElementById('modalAddress').textContent = address;
@@ -176,17 +159,23 @@
             document.getElementById('modalEmail').textContent = email;
 
             // AJAX call to fetch third-party handler name
-            $.ajax({
-                url: '/Reserve/Index?handler=ThirdPartyHandlerName', // URL to the Razor Page handler
-                type: 'GET',
-                data: { handlerId: handlerId },
-                success: function (handlerName) {
-                    document.getElementById('modalcompanyId').textContent = handlerName;
-                },
-                error: function () {
-                    document.getElementById('modalcompanyId').textContent = "N/A";
-                }
-            });
+            if (isThirdPartyBooking === 'True') {
+                // AJAX call to fetch third-party handler name
+                $.ajax({
+                    url: '/Reserve/Index?handler=ThirdPartyHandlerName', // URL to the Razor Page handler
+                    type: 'GET',
+                    data: { handlerId: handlerId },
+                    success: function (handlerName) {
+                        document.getElementById('modalcompanyId').textContent = handlerName;
+                    },
+                    error: function () {
+                        document.getElementById('modalcompanyId').textContent = "N/A";
+                    }
+                });
+            } else {
+                // If not third-party, set company ID to "N/A"
+                document.getElementById('modalcompanyId').textContent = "N/A";
+            }
 
             $('#customerInfoModal').modal('show');
         }

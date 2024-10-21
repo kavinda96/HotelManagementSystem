@@ -164,6 +164,16 @@
                     <i class="fas fa-calendar-alt me-2"></i> Upcoming Reservations
                 </a>
             </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link text-muted" id="tpbReservationsLink" asp-area="" asp-page="/Reserve/Index" asp-route-showTPB="true">
+                        <i class="fas fa-handshake me-2"></i> 3rd Party Reservations
+                    </a>
+                </li>
+
+
+
             <li class="nav-item">
                 <a class="nav-link text-muted" id="finalizedReservationsLink" asp-area="" asp-page="/Finalized/Index" >
                     <i class="fas fa-check-circle me-2"></i> Finalized Reservations
@@ -184,18 +194,15 @@
                     <i class="fas fa-utensils me-2"></i> Foods
                 </a>
             </li>
-        @*     <li class="nav-item">
-                <a class="nav-link text-muted" id="beveragesLink" asp-area="" asp-page="/BeverageData/Index">
-                    <i class="fas fa-wine-glass-alt me-2"></i> Beverages
-                </a>
-            </li> *@
+      
+
             <li class="nav-item">
                 <a class="nav-link text-muted" id="availabilityLink" asp-area="" asp-page="/Availability/Index">
                     <i class="fas fa-search me-2"></i> Availability
                 </a>
             </li>
                 <li class="nav-item">
-                    <a class="nav-link text-muted" id="thirdpartyhandlerlink" asp-area="" asp-page="/ThirdParty/Index">
+                    <a class="nav-link text-muted" id="thirdpartyhandlerLink" asp-area="" asp-page="/ThirdParty/Index">
                         <i class="fas fa-building me-2"></i>
                         Third Party Handlers                    
                     </a>
@@ -270,7 +277,9 @@
             $('#homeLink').addClass('active');
         } else if (currentPath.includes("/reserve") && currentQuery.includes("showupcoming=true")) {
             $('#upcomingReservationsLink').addClass('active');
-        } else if (currentPath.includes("/reserve") && currentQuery.includes("showfinalized=true")) {
+        } else if (currentPath.includes("/reserve") && currentQuery.includes("showtpb=true")) {
+            $('#tpbReservationsLink').addClass('active'); // Corrected ID
+        } else if (currentPath.includes("/finalized")) {
             $('#finalizedReservationsLink').addClass('active');
         } else if (currentPath.includes("/reserve")) {
             $('#allReservationsLink').addClass('active');
@@ -280,14 +289,15 @@
             $('#calendarLink').addClass('active');
         } else if (currentPath.includes("/fooddata")) {
             $('#foodsLink').addClass('active');
-        } else if (currentPath.includes("/beveragedata")) {
-            $('#beveragesLink').addClass('active');
-        } else if (currentPath.includes("/availability")) {
+        }  else if (currentPath.includes("/availability")) {
             $('#availabilityLink').addClass('active');
         } else if (currentPath.includes("/thirdparty")) {
-            $('#thirdpartyhandlerlink').addClass('active');
+            $('#thirdpartyhandlerLink').addClass('active');
+        } else if (currentPath.includes("/beveragedata")) {
+            $('#beveragesLink').addClass('active');
         }
     });
+
 
     function showLoader() {
         $("#loadingOverlay").show(); // Show the loader

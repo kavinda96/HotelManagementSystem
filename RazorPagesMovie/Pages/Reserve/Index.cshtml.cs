@@ -39,7 +39,7 @@ namespace RazorPagesMovie.Pages.Reserve
         [BindProperty(SupportsGet = true)]
         public DateTime? EndDate { get; set; }
 
-        public async Task OnGetAsync(DateTime? startDate, DateTime? endDate, int pageIndex = 1, bool showUpcoming = false, bool showFinalized = false)
+        public async Task OnGetAsync(DateTime? startDate, DateTime? endDate, int pageIndex = 1, bool showUpcoming = false, bool showFinalized = false, bool showTPB = false)
         {
             CurrentPage = pageIndex;
             StartDate = startDate;
@@ -60,8 +60,13 @@ namespace RazorPagesMovie.Pages.Reserve
                 PageTitle = "Finalized Reservations";
             }
 
-            // Apply date range filter
-            if (startDate.HasValue)
+            if (showTPB)
+            {
+                query = query.Where(r => r.IsThirdPartyBooking == true);
+
+            }
+                // Apply date range filter
+                if (startDate.HasValue)
             {
                 query = query.Where(r => r.CheckInDate >= startDate.Value);
             }

@@ -5,15 +5,12 @@
     <table class="fl-table">
         <thead>
             <tr>
-                <th>ID</th>
-               
-                <th>Name</th>
-             
+                <th>ID</th>             
+                <th>Name</th>            
                 <th>Checkin Date</th>
-                <th>Checkout Date</th>
-                <th>Currency</th>
-               
+                <th>Checkout Date</th>             
                 <th>Rooms</th>
+                <th>Currency</th>
                 <th>Final Amount</th>
                 <th>3rd Party ?</th>
                 <th colspan="2"></th>
@@ -23,15 +20,12 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => item.Id)</td>
-                
-                    <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
-                 
+                    <td>@Html.DisplayFor(modelItem => item.Id)</td>               
+                    <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>                
                     <td>@Html.DisplayFor(modelItem => item.CheckInDate)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)</td>
-                    <td>@Html.DisplayFor(modelItem => item.SelectedCurrency)</td>
-
+                    <td>@Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)</td>                    
                     <td>@Html.DisplayFor(modelItem => item.SelectedRoomsNos)</td>
+                    <td>@Html.DisplayFor(modelItem => item.SelectedCurrency)</td>
                     <td style="text-align: right;">@Html.DisplayFor(modelItem => item.TotalFinalAmount)</td>
                     <td>
 
