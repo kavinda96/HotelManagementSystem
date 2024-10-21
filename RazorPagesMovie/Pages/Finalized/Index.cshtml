@@ -1,0 +1,209 @@
+﻿@page
+@model RazorPagesMovie.Pages.Finalized.IndexModel
+
+@{
+    ViewData["Title"] = "Reservations";
+}
+<link rel="stylesheet" href="~/css/table.css" />
+<div class="card mb-2" id="headbox">
+    <div class="card-body text-center">
+        <h2 class="m-0 display-6 display-md-5 display-lg-4">@Model.PageTitle</h2>
+    </div>
+</div>
+
+<form method="get">
+    <label for="startDate">From:</label>
+    <input type="date" id="startDate" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+
+    <label for="endDate">To:</label>
+    <input type="date" id="endDate" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+</form>
+
+<div id="reservationTable">
+    @await Html.PartialAsync("_ReservationFinTable", Model.Reservations)
+</div>
+
+
+<div class="pagination-container">
+    <div class="record-count-container">
+        <div class="record-count">
+            <span>@Model.TotalRecords Records Found </span>
+        </div>
+    </div>
+    <div class="pagination">
+        @if (Model.CurrentPage > 1)
+        {
+            <a asp-page="./Index"
+               asp-route-pageIndex="@(Model.CurrentPage - 1)"
+               asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")"
+               asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
+               asp-route-showUpcoming="@Request.Query["showUpcoming"]"
+               asp-route-showFinalized="@Request.Query["showFinalized"]">« Previous</a>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a asp-page="./Index"
+               asp-route-pageIndex="@i"
+               asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")"
+               asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
+               asp-route-showUpcoming="@Request.Query["showUpcoming"]"
+               asp-route-showFinalized="@Request.Query["showFinalized"]"
+               class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+        }
+
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <a asp-page="./Index"
+               asp-route-pageIndex="@(Model.CurrentPage + 1)"
+               asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")"
+               asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
+               asp-route-showUpcoming="@Request.Query["showUpcoming"]"
+               asp-route-showFinalized="@Request.Query["showFinalized"]">Next »</a>
+        }
+    </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="customerInfoModal" tabindex="-1" role="dialog" aria-labelledby="customerInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerInfoModalLabel">More Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th>Customer Name</th>
+                            <td id="modalCustomerName"></td>
+                        </tr>
+                        <tr>
+                            <th>Guest Count</th>
+                            <td id="modalGuestCount"></td>
+                        </tr>
+                        <tr>
+                            <th>NIN</th>
+                            <td id="modalNIN"></td>
+                        </tr>
+                        <tr>
+                            <th>Address</th>
+                            <td id="modalAddress"></td>
+                        </tr>
+                        <tr>
+                            <th>Country</th>
+                            <td id="modalCountry"></td>
+                        </tr>
+                        <tr>
+                            <th>Mobile</th>
+                            <td id="modalMobile"></td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td id="modalEmail"></td>
+                        </tr>
+                        <tr>
+                            <th>Third Party Handler Name</th>
+                            <td id="modalcompanyId"></td>
+                        </tr>
+                        <tr>
+                            <th>Third Party Booking Ref</th>
+                            <td id="modalTPbookingRef"></td>
+                        </tr>
+                        <tr>
+                            <th>Discounted Amount</th>
+                            <td id="modalDsicAmt"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function showCustomerInfop(customerName, nin, address, country, mobile, handlerId, bookingref, email, guestCount, discountedAmt, isThirdPartyBooking) {
+        // Populate the modal fields with customer info
+        document.getElementById('modalCustomerName').textContent = customerName;
+        document.getElementById('modalNIN').textContent = nin;
+        document.getElementById('modalAddress').textContent = address;
+        document.getElementById('modalCountry').textContent = country;
+        document.getElementById('modalMobile').textContent = mobile;
+        document.getElementById('modalTPbookingRef').textContent = bookingref;
+        document.getElementById('modalGuestCount').textContent = guestCount;
+        document.getElementById('modalEmail').textContent = email;
+        document.getElementById('modalDsicAmt').textContent = discountedAmt;
+
+
+     
+        // Check if the booking is a third-party booking
+        if (isThirdPartyBooking === 'True') {
+            // AJAX call to fetch third-party handler name
+            $.ajax({
+                url: '/Reserve/Index?handler=ThirdPartyHandlerName', // URL to the Razor Page handler
+                type: 'GET',
+                data: { handlerId: handlerId },
+                success: function (handlerName) {
+                    document.getElementById('modalcompanyId').textContent = handlerName;
+                },
+                error: function () {
+                    document.getElementById('modalcompanyId').textContent = "N/A";
+                }
+            });
+        } else {
+            // If not third-party, set company ID to "N/A"
+            document.getElementById('modalcompanyId').textContent = "N/A";
+        }
+
+        // Show the modal
+        $('#customerInfoModal').modal('show');
+    }
+
+
+ </script>
+
+
+
+<style>
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .record-count {
+        margin-left: 10px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 12px;
+            border: 1px solid #007bff;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+            .pagination a.active {
+                background-color: #007bff;
+                color: white;
+            }
+</style>
