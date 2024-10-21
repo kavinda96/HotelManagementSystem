@@ -26,7 +26,7 @@ namespace RazorPagesMovie.Pages.Reserve
             _reservationService = reservationService;
         }
 
-        public IList<Reservations> Reservations { get; set; } = default!;
+        public IList<ReservationViewModel> Reservations { get; set; } = default!;
         public int PageSize { get; set; } = 10; // Number of records per page
         public int CurrentPage { get; set; } = 1; // Current page number
         public int TotalPages { get; set; } // Total number of pages
@@ -63,10 +63,11 @@ namespace RazorPagesMovie.Pages.Reserve
             if (showTPB)
             {
                 query = query.Where(r => r.IsThirdPartyBooking == true);
-
+                PageTitle = "Third Party Reservations";
             }
-                // Apply date range filter
-                if (startDate.HasValue)
+
+            // Apply date range filter
+            if (startDate.HasValue)
             {
                 query = query.Where(r => r.CheckInDate >= startDate.Value);
             }
@@ -76,16 +77,47 @@ namespace RazorPagesMovie.Pages.Reserve
                 query = query.Where(r => r.CheckInDate <= endDate.Value);
             }
 
-            // Fetch total records count (before pagination)
-            //TotalRecords = query.Count();
-
-            // Fetch paginated reservations using the pagination service
-            var paginatedResult = await _paginationService.GetPaginatedListAsync(query, pageIndex, PageSize);
+            // Fetch paginated reservations using the pagination service, projecting to the ViewModel
+            var paginatedResult = await _paginationService.GetPaginatedListAsync(query
+                .Select(r => new ReservationViewModel
+                {
+                    Id = r.Id,
+                    CustomerName = r.CustomerName,
+                    NIN = r.NIN,
+                    Address = r.Address,
+                    Country = r.Country,
+                    Mobile = r.Mobile,
+                    CheckInDate = r.CheckInDate,
+                    ExpectedCheckOutDate = r.ExpectedCheckOutDate,
+                    GuestCount = r.GuestCount,
+                    RealCheckOutDate = r.RealCheckOutDate,
+                    SelectedRooms = r.SelectedRooms,
+                    SelectedRoomsNos = r.SelectedRoomsNos,
+                    MasterbillId = r.MasterbillId,
+                    Status = r.status,
+                    DiscountRate = r.DiscountRate,
+                    IsThirdPartyBooking = r.IsThirdPartyBooking,
+                    CreatedDate = r.CreatedDate,
+                    DiscountedPrice = r.DiscountedPrice,
+                    TotalAmount = r.TotalAmount,
+                    TotalFinalAmount = r.TotalFinalAmount,
+                    ThirdPartyHandlerId = r.ThirdPartyHandlerId,
+                    BookingReference = r.BookingReference,
+                    SelectedCurrency = r.SelectedCurrency,
+                    Email = r.Email,
+                    Validity = r.validity,
+                    UserId = r.UserId,
+                    ThirdPartyHandlerName = r.IsThirdPartyBooking
+                        ? _context.ThirdPartyHandlers
+                            .Where(h => h.Id == r.ThirdPartyHandlerId)
+                            .Select(h => h.CompanyName)
+                            .FirstOrDefault()
+                        : "N/A" // Or any default value for non-third party bookings
+                }), pageIndex, PageSize);
 
             Reservations = paginatedResult.Items;
             TotalPages = paginatedResult.TotalPages;
             TotalRecords = paginatedResult.TotalRecords;
-
         }
 
         public async Task<IActionResult> OnGetThirdPartyHandlerNameAsync(int handlerId)
@@ -100,9 +132,5 @@ namespace RazorPagesMovie.Pages.Reserve
             }
             return new JsonResult(handlerName);
         }
-
-
-
-
     }
 }

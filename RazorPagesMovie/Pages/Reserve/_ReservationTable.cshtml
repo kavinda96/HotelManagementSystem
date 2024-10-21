@@ -1,77 +1,135 @@
-﻿@model IEnumerable<RazorPagesMovie.Models.Reservations>
+﻿@model IEnumerable<RazorPagesMovie.Models.ReservationViewModel>
 
 <div class="table-wrapper">
-   
     <table class="fl-table">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Created Date</th>
                 <th>Name</th>
+
+                @if ((bool)ViewData["showTPB"])
+                {
+                    <th>Booking Ref</th>
+                    <th>Company Name</th>
+                }
+
                 <th>Status</th>
                 <th>Checkin Date</th>
                 <th>Checkout Date</th>
-                <th>Currency</th>
-               
+                @if (!(bool)ViewData["showTPB"])
+                {
+                    <th>Currency</th>
+                }
                 <th>Rooms</th>
-                <th>Third party Booking</th>
+
+                @if (!(bool)ViewData["showTPB"])
+                {
+                    <th>TP booking?</th>
+                }
+
                 <th colspan="4"></th>
             </tr>
         </thead>
         <tbody id="reservationGrid">
-            @foreach (var item in Model)
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr data-status="@item.Status">
+                        <!-- Add a data attribute for status -->
+                        <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
+
+                        @if ((bool)ViewData["showTPB"])
+                        {
+                            <td>@Html.DisplayFor(modelItem => item.BookingReference)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ThirdPartyHandlerName)</td>
+                        }
+
+                        <td>
+                            @{
+                                string statusText = item.Status switch
+                                {
+                                    0 => "Pending",
+                                    1 => "Checked In",
+                                    2 => "Checked Out",
+                                    3 => "Finalized",
+                                    _ => "Unknown"
+                                };
+                            }
+                            @statusText
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.CheckInDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)</td>
+
+                        @if (!(bool)ViewData["showTPB"])
+                        {
+                            <td>@Html.DisplayFor(modelItem => item.SelectedCurrency)</td>
+                        }
+                        <td>@Html.DisplayFor(modelItem => item.SelectedRoomsNos)</td>
+
+                        @if (!(bool)ViewData["showTPB"])
+                        {
+                            <td>
+                                <span>@(item.IsThirdPartyBooking ? "Yes" : "No")</span>
+                            </td>
+                        }
+
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm"
+                                    onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile', '@item.ThirdPartyHandlerId', '@item.BookingReference', '@item.Email', '@item.GuestCount', '@item.IsThirdPartyBooking', '@item.SelectedCurrency')">
+                                Info
+                            </button>
+                        </td>
+
+                        <td>
+                            <a asp-page="./Edit" asp-route-id="@item.Id" class="edit-button">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a asp-page="./Delete" asp-route-id="@item.Id" class="delete-button">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a asp-page="/Billing/Index" asp-route-id="@item.Id" class="btn btn-info btn-sm">Billing</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => item.Id)</td>
-                    <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
-                    <td>@Html.DisplayFor(modelItem => item.CustomerName)</td>
-                    <td>
-                        @{
-                            string statusText = item.status switch
-                            {
-                                0 => "Pending",
-                                1 => "Checked In",
-                                2 => "Checked Out",
-                                3 => "Finalized",
-                                _ => "Unknown"
-                            };
-                        }
-                        @statusText
-                    </td>
-                    <td>@Html.DisplayFor(modelItem => item.CheckInDate)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ExpectedCheckOutDate)</td>
-                    <td>@Html.DisplayFor(modelItem => item.SelectedCurrency)</td>
-                    <td>@Html.DisplayFor(modelItem => item.SelectedRoomsNos)</td>
-                    <td>
-
-                        @{
-                            // Use the boolean property directly
-                            string IsThirdPartyBookingText = item.IsThirdPartyBooking ? "Yes" : "No";
-                        }
-                        @IsThirdPartyBookingText
-                    
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-warning btn-sm"
-                                onclick="showCustomerInfo('@item.CustomerName', '@item.NIN', '@item.Address', '@item.Country', '@item.Mobile','@item.ThirdPartyHandlerId' ,'@item.BookingReference' ,'@item.Email'  ,'@item.GuestCount' , '@item.IsThirdPartyBooking')">
-                            Info
-                        </button>
-                    </td>
-                    <td>
-                        <a asp-page="./Edit" asp-route-id="@item.Id" class="edit-button">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </td>
-                    <td>
-                        <a asp-page="./Delete" asp-route-id="@item.Id" class="delete-button">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                    </td>
-                    <td>
-                        <a asp-page="/Billing/Index" asp-route-id="@item.Id" class="btn btn-info btn-sm">Billing</a>
-                    </td>
+                    <td colspan="12" style="text-align:center;">No reservations found.</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<script>
+    // JavaScript to disable edit and delete buttons if the status is Finalized
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('#reservationGrid tr');
+        rows.forEach(row => {
+            const status = row.getAttribute('data-status');
+            if (status == 3) { // Check if status is Finalized
+                const editLink = row.querySelector('.edit-button');
+                const deleteLink = row.querySelector('.delete-button');
+
+                if (editLink) {
+                    editLink.style.pointerEvents = 'none';
+                    editLink.style.opacity = '0.5';
+                }
+
+                if (deleteLink) {
+                    deleteLink.style.pointerEvents = 'none';
+                    deleteLink.style.opacity = '0.5';
+                }
+            }
+        });
+    });
+</script>
