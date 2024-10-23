@@ -26,27 +26,54 @@ namespace RazorPagesMovie.Pages.Calender
         public List<DateTime> DateRange { get; set; }
 
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }  // New EndDate property
+        public DateTime EndDate { get; set; }
 
-        // OnGet method to fetch room and reservation data
+        // Lookup to hold reservation data
+        public List<ReservationDetails> ReservationLookup { get; set; }
+
+        public class ReservationDetails
+        {
+            public int RoomId { get; set; }
+            public DateTime CheckInDate { get; set; }
+            public DateTime CheckOutDate { get; set; }
+            public int ReservationId { get; set; }
+            public bool IsThirdPartyBooking { get; set; }
+            public int? ThirdPartyHandlerId { get; set; } // Nullable since normal bookings won't have a handler
+        }
+
         public async Task OnGetAsync(DateTime? startDate, DateTime? endDate)
         {
-            // Set default start date to today if not provided
             StartDate = startDate ?? DateTime.Today;
-
-            // Set default end date to one month from start date if not provided
             EndDate = endDate ?? StartDate.AddDays(29);
 
-            // Create a date range based on the start and end date
-            DateRange = Enumerable.Range(0, (EndDate - StartDate).Days + 1).Select(i => StartDate.AddDays(i)).ToList();
+            DateRange = Enumerable.Range(0, (EndDate - StartDate).Days + 1)
+                .Select(i => StartDate.AddDays(i)).ToList();
 
-            // Fetch all rooms
             Rooms = await _context.Room.ToListAsync();
 
-            // Fetch reservations that overlap with the selected date range
-            Reservations = await _context.RoomReservationcs
-                .Where(r => r.CheckInDate <= DateRange.Last() && r.CheckOutDate >= DateRange.First() && r.Status == 1)
-                .ToListAsync();
+            // Fetch reservations that overlap with the selected date range and join with Reservations table
+            ReservationLookup = await _context.RoomReservationcs
+            .Where(rr => rr.CheckInDate <= DateRange.Last()
+                         && rr.CheckOutDate >= DateRange.First()
+                         && rr.Status == 1)
+            .Join(
+                _context.Reservations, // Joining with Reservations table
+                rr => rr.ResevationId,
+                r => r.Id,
+                (rr, r) => new { rr, r } // Temporary anonymous object to apply further filters
+            )
+            .Where(joined => joined.r.validity == 1) // Filtering on Validity = 1
+            .Select(joined => new ReservationDetails
+            {
+                RoomId = joined.rr.RoomId,
+                CheckInDate = joined.rr.CheckInDate,
+                CheckOutDate = joined.rr.CheckOutDate,
+                ReservationId = joined.rr.ResevationId,
+                IsThirdPartyBooking = joined.r.IsThirdPartyBooking,
+                ThirdPartyHandlerId = joined.r.ThirdPartyHandlerId // Fetching handler ID
+            })
+            .ToListAsync();
+
         }
     }
 }

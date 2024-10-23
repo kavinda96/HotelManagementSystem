@@ -1,39 +1,96 @@
-﻿/* Date Range Selector styling */
-.date-range-selector {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
+﻿/* Calendar Wrapper with Horizontal Scroll */
+.calendar-wrapper {
+    overflow-x: auto; /* Enable horizontal scroll */
+    max-width: 100%;
+    margin-bottom: 30px;
+    max-height: 625px;
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #b2beb5 transparent; /* For Firefox */
 }
 
-    .date-range-selector input {
-        margin: 0 5px;
+    /* Table and Cell Styling */
+    .calendar-wrapper table {
+        border-collapse: collapse;
+        min-width: 100%; /* Ensure the table is wide enough to scroll */
     }
 
-/* Calendar Styles */
-.calendar-wrapper {
-    overflow-x: auto;
-    max-width: 100%;
-    margin-bottom:30px;
-}
+    .calendar-wrapper th, .calendar-wrapper td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: center;
+    }
 
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
+    /* Sticky Header */
+    .calendar-wrapper th {
+        position: -webkit-sticky; /* For Safari */
+        position: sticky;
+        top: 0; /* Stick to the top */
+        background-color: #B2BEB5; /* Background color for the sticky header */
+        z-index: 10; /* Ensure the sticky header stays on top */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Optional shadow for separation */
+    }
 
-table, th, td {
-    border: 1px solid black;
-    padding: 10px;
-    text-align: center;
-}
+        /* Sticky Room No Column */
+        .calendar-wrapper td:first-child,
+        .calendar-wrapper th:first-child {
+            position: -webkit-sticky; /* For Safari */
+            position: sticky;
+            left: 0; /* Stick to the left */
+            background-color: #B2BEB5; /* Background color for the sticky column */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Optional: small shadow to visually separate sticky column */
+        }
 
+/* Reserved Classes for Different Handlers */
 .reserved {
-    background-color: #FFD700;
+    background-color: #FFD700; /* Default yellow for reserved */
 }
 
+    .reserved.red {
+        background-color: #FF6347; /* Tomato */
+    }
+
+    .reserved.blue {
+        background-color: #1E90FF; /* DodgerBlue */
+    }
+
+    .reserved.green {
+        background-color: #32CD32; /* LimeGreen */
+    }
+
+    .reserved.pink {
+        background-color: #FFC0CB; /* Pink */
+    }
+
+    .reserved.purple {
+        background-color: #A020F0; /* Purple */
+    }
+
+    .reserved.orange {
+        background-color: #FFA500; /* Orange */
+    }
+
+/* iPhone Style Scrollbar */
+.calendar-wrapper::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.calendar-wrapper::-webkit-scrollbar-track {
+    background: transparent; /* Background of the scrollbar track */
+}
+
+.calendar-wrapper::-webkit-scrollbar-thumb {
+    background-color: #B2BEB5; /* Color of the scrollbar thumb */
+    border-radius: 10px; /* Round edges for the scrollbar thumb */
+}
+
+    .calendar-wrapper::-webkit-scrollbar-thumb:hover {
+        background-color: #9CAFA5; /* Color on hover */
+    }
+
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
     .calendar-wrapper table {
-        width: auto;
+        min-width: auto; /* Allow responsive tables */
     }
 
     .date-range-selector {

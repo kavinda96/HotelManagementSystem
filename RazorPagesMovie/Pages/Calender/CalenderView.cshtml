@@ -1,11 +1,9 @@
 ﻿@page
 @model RazorPagesMovie.Pages.Calender.CalendarViewModel
 @{
-    ViewData["Title"] = "Calender";
+    ViewData["Title"] = "Calendar";
 }
 <link rel="stylesheet" href="~/css/calender.css" />
-
-
 
 <div class="card mb-2" id="headbox">
     <div class="card-body text-center">
@@ -14,17 +12,22 @@
 </div>
 
 <!-- Date Range Selector -->
-<div class="d-flex justify-content-center mb-3">
+<div class="d-flex justify-content-center mb-3 align-items-center">
     <label for="startDate" class="me-2">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control me-2" />
+    <input type="date" id="startDate" name="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control me-3" />
 
     <label for="endDate" class="me-2">End Date:</label>
-    <input type="date" id="endDate" name="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control me-2" />
+    <input type="date" id="endDate" name="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control me-3" />
 
-    <button id="filterButton" class="btn btn-primary">Filter</button>
+    <button id="filterButton" class="btn btn-primary me-2">Filter</button>
+    <button id="fullScreenButton" class="btn btn-secondary">
+        <i class="fas fa-expand"></i> <!-- Font Awesome icon for fullscreen -->
+      
+    </button>
 </div>
 
-<!-- Calendar Table (same as before) -->
+
+<!-- Calendar Table -->
 <div class="calendar-wrapper">
     <table>
         <thead>
@@ -37,12 +40,6 @@
             </tr>
         </thead>
         <tbody>
-            @{
-                // Create a lookup for reservations based on RoomId and Date
-                var reservationLookup = Model.Reservations
-                .Select(r => new { r.RoomId, r.CheckInDate, r.CheckOutDate, r.ResevationId }) // Include reservation Id
-                .ToList();
-            }
             @foreach (var room in Model.Rooms)
             {
                 <tr>
@@ -50,17 +47,32 @@
                     @foreach (var date in Model.DateRange)
                     {
                         // Find the reservation for this room and date
-                        var reservation = reservationLookup
-                        .FirstOrDefault(r =>
-                        r.RoomId == room.Id &&
-                        r.CheckInDate <= date &&
-                        r.CheckOutDate >= date);
+                        var reservation = Model.ReservationLookup
+                        .FirstOrDefault(r => r.RoomId == room.Id && r.CheckInDate <= date && r.CheckOutDate >= date);
 
                         if (reservation != null)
                         {
-                            // Create a link for the reserved date
-                            <td class="reserved">
-                                <a href="/Billing?id=@reservation.ResevationId" style="color: white; text-decoration: none;">...</a>
+                            // Determine the background color based on third-party handler or normal reservation
+                            string colorClass = "yellow"; // Default color for normal reservations
+
+                            if (reservation.IsThirdPartyBooking)
+                            {
+                                // Assign colors based on ThirdPartyHandlerId
+                                switch (reservation.ThirdPartyHandlerId)
+                                {
+                                    case 1: colorClass = "green"; break;
+                                    case 2: colorClass = "blue"; break;
+                                    case 3: colorClass = "red"; break;
+                                    case 4: colorClass = "pink"; break;
+                                    case 5: colorClass = "purple"; break;
+                                    // Add more handlers here as needed
+                                    default: colorClass = "yellow"; break;
+                                }
+                            }
+
+                            // Create a link for the reserved date with color styling
+                            <td class="reserved @colorClass">
+                                <a href="/Billing?id=@reservation.ReservationId" style="color: white; text-decoration: none;">...</a>
                             </td>
                         }
                         else
@@ -73,12 +85,13 @@
         </tbody>
     </table>
 </div>
+
 <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(255, 255, 255, 0.8); z-index:1000; text-align:center;">
     <img src="~/loading.gif" alt="Loading..." style="margin-top:20%; width:100px; height:auto;" />
 </div>
 
-
 <script>
+
     function showLoader() {
         $("#loadingOverlay").show(); // Show the loader
     }
@@ -86,14 +99,6 @@
     function hideLoader() {
         $("#loadingOverlay").hide(); // Hide the loader
     }
-
-    $(document).ready(function () {
-        // Show loader on form submission
-        $("form").on("submit", function () {
-            showLoader(); // Show loader when any form is submitted
-        });
-    });
-
 
     $(document).ready(function () {
         $('#filterButton').click(function () {
@@ -120,5 +125,23 @@
                 }
             });
         });
+    });
+
+     // Full-screen function
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            // Enter full-screen mode
+            document.documentElement.requestFullscreen();
+        } else {
+            // Exit full-screen mode
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    // Attach event listener to the Full Screen button
+    document.getElementById('fullScreenButton').addEventListener('click', function () {
+        toggleFullScreen();
     });
 </script>
