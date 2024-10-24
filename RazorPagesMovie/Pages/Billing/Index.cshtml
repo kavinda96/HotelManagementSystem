@@ -230,7 +230,13 @@
                                 
                             </td>
                         </tr>
-
+                        @if (@Model.Reservation.IsThirdPartyBooking)
+                        {
+                        <tr class="keep-row">
+                            <td> @ViewData["ThirdPartyHandlerName"]</td>
+                            <td>@Model.Reservation.BookingReference</td>
+                        </tr>
+                        }
 
                 }
                 else
@@ -249,109 +255,28 @@
     
     
     <div class="col-md-6">
-        <div class="print-exclude">
-            <table class="table-borderless" style="min-width:100%">
-                <thead>
-                    <tr>
-                        <th colspan="2" class="text-center">Food & Beverage Billing</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <form method="post" id="billingForm">
-                    <tr>
-                        <td class="fw-bold">Food Category</td>
-                        <td>
-                            <select asp-for="NewTransaction.Category" class="form-control" id="billingCategory">
-                                <option value="1">Food</option>
-                                <option value="2">Beverages</option>
-                               @*  <option value="3">VAS</option>
-                                <option value="4">ETC</option> *@
-                            </select>
-                            <span asp-validation-for="NewTransaction.Category" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Food Item</td>
-                        <td>
-                            <div class="d-flex">
-                                <input id="foodItemSearch" class="form-control me-2" asp-for="NewTransaction.BillingItem" placeholder="Search for a food item" disabled />
-                                <input type="hidden" id="selectedFoodId" />
-
-                                <input id="beverageItemSearch" class="form-control ms-2" asp-for="NewTransaction.BillingItem" placeholder="Search for a beverage" disabled />
-                                <input type="hidden" id="selectedBeverageId" />
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Item Amount</td>
-                        <td>
-                            <input id="itemPrice" asp-for="NewTransaction.ItemPrice" class="form-control" type="number" step="0.01" required readonly />
-                            <span asp-validation-for="NewTransaction.ItemPrice" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Item Quantity</td>
-                        <td>
-                            <input asp-for="NewTransaction.ItemQty" class="form-control" type="number" step="0.01" required />
-                            <span asp-validation-for="NewTransaction.ItemQty" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Description</td>
-                        <td>
-                            <textarea asp-for="NewTransaction.Description" class="form-control"></textarea>
-                            <span asp-validation-for="NewTransaction.Description" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="text-end">
-                            <input type="hidden" asp-for="Reservation.MasterbillId" />
-                            <input type="hidden" asp-for="Reservation.Id" />
-                            <input type="hidden" asp-for="Reservation.CustomerName" />
-                            <input type="hidden" asp-for="Reservation.SelectedRooms" />
-                            <input type="hidden" asp-for="Reservation.CheckInDate" />
-                            <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate" />
-                            <input type="hidden" asp-for="Reservation.Mobile" />
-                            <input type="hidden" asp-for="Reservation.Address" />
-                            <input type="hidden" asp-for="Reservation.Country" />
-                            <input type="hidden" asp-for="Reservation.GuestCount" />
-                            <input type="hidden" asp-for="Reservation.NIN" />
-                            <input type="hidden" asp-for="Reservation.Email" />
-                            <input type="hidden" asp-for="Reservation.SelectedCurrency" id="SelectedCurrency"/>
-                            <input type="hidden" asp-for="Reservation.DiscountRate" />
-
-                            @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
-                            {
-                                <button type="submit" id="submitBtn" class="btn btn-success rounded-pill mt-2 mb-4" disabled>Add Transaction</button>
-                            }
-                            else
-                            {
-                               <button type="submit" id="submitBtn" class="btn btn-success rounded-pill mt-2 mb-4 disabled" disabled>Add Transaction</button>
-                            }
-                        </td>
-                    </tr>
-                    </form>
-                </tbody>
-            </table>
 
 
-    </div>
-        <div class="row g-3">
+
+        <div class="row g-2">
             <!-- Additional Charges -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card border-primary shadow-sm h-100">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <p class="fw-bold">Additional Charges</p>
+                    <div class="card-header text-center bg-primary text-white p-2">
+                        <i class="bi bi-wallet2 fs-4"></i>
+                       @*  <p class="fw-bold mt-1 mb-1"> Charges</p> *@
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center p-2">
                         @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
                         {
-                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
-                                Add
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
+                                <i class="bi bi-plus-circle me-1"></i> Add Charges
                             </button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-primary w-100 disabled" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
-                                Add
+                            <button type="button" class="btn btn-primary btn-sm disabled" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
+                                <i class="bi bi-plus-circle me-1"></i> Add Charges
                             </button>
                         }
                     </div>
@@ -359,38 +284,163 @@
             </div>
 
             <!-- Print Invoice -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card border-success shadow-sm h-100">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <p class="fw-bold">Print Invoice</p>
+                    <div class="card-header text-center bg-success text-white p-2">
+                        <i class="bi bi-printer fs-4"></i>
+                      @*   <p class="fw-bold mt-1 mb-1">Print Invoice</p> *@
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center p-2">
                         @if (@Model.Reservation.status == 3)
-                        {   
-                           <button class="btn btn-success w-100" onclick="printPDF()">Print</button>
+                        {
+                            <button class="btn btn-success btn-sm" onclick="printPDF()">
+                                <i class="bi bi-file-earmark-pdf me-1"></i> Print
+                            </button>
                         }
                         else
                         {
-                            <button class="btn btn-success w-100 disabled" onclick="printPDF()">Print</button>
+                            <button class="btn btn-success btn-sm disabled" onclick="printPDF()">
+                                <i class="bi bi-file-earmark-pdf me-1"></i> Print
+                            </button>
                         }
                     </div>
                 </div>
             </div>
 
             <!-- Finalize the Bill -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card border-warning shadow-sm h-100">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <p class="fw-bold">Finalize the Bill</p>
-                         @if (@Model.Reservation.status == 2)
-                         {            
-                           <button class="btn btn-warning w-100" onclick="finalizeBill()">Finalize</button>
-                         }
-                         else{
-                            <button class="btn btn-warning w-100 disabled" onclick="finalizeBill()">Finalize</button>
-                         }
+                    <div class="card-header text-center bg-warning text-dark p-2">
+                        <i class="bi bi-check-circle fs-4"></i>
+                      @*   <p class="fw-bold mt-1 mb-1">Finalize the Bill</p> *@
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center p-2">
+                        @if (@Model.Reservation.status == 2)
+                        {
+                            <button class="btn btn-warning btn-sm" onclick="finalizeBill()">
+                                <i class="bi bi-cash me-1"></i> Finalize
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-warning btn-sm disabled" onclick="finalizeBill()">
+                                <i class="bi bi-cash me-1"></i> Finalize
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Notes -->
+            <div class="col-md-3">
+                <div class="card border-info shadow-sm h-100">
+                    <div class="card-header text-center bg-info text-white p-2">
+                        <i class="bi bi-journal-text fs-4"></i>
+                      @*   <p class="fw-bold mt-1 mb-1">Add Notes</p> *@
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center p-2">
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addNotesModal">
+                            <i class="bi bi-pencil-square me-1"></i> Add Note
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+
+
+        <div class="print-exclude card shadow-sm" style="margin-top:10px">
+            <div class="card-header bg-secondary text-white text-center">
+                <h5 class="fw-bold mb-0">Food & Beverage Billing</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" id="billingForm">
+                    <table class="table table-borderless table-sm mb-0" style="min-width:100%">
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold align-middle">Food Category</td>
+                                <td>
+                                    <select asp-for="NewTransaction.Category" class="form-control form-control-sm" id="billingCategory">
+                                        <option value="1">Food</option>
+                                        <option value="2">Beverages</option>
+                                        @* <option value="3">VAS</option>
+                                        <option value="4">ETC</option> *@
+                                    </select>
+                                    <span asp-validation-for="NewTransaction.Category" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold align-middle">Food Item</td>
+                                <td>
+                                    <div class="d-flex">
+                                        <input id="foodItemSearch" class="form-control form-control-sm me-2" asp-for="NewTransaction.BillingItem" placeholder="Search for a food item" disabled />
+                                        <input type="hidden" id="selectedFoodId" />
+
+                                        <input id="beverageItemSearch" class="form-control form-control-sm ms-2" asp-for="NewTransaction.BillingItem" placeholder="Search for a beverage" disabled />
+                                        <input type="hidden" id="selectedBeverageId" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold align-middle">Item Amount</td>
+                                <td>
+                                    <input id="itemPrice" asp-for="NewTransaction.ItemPrice" class="form-control form-control-sm" type="number" step="0.01" required readonly />
+                                    <span asp-validation-for="NewTransaction.ItemPrice" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold align-middle">Item Quantity</td>
+                                <td>
+                                    <input asp-for="NewTransaction.ItemQty" class="form-control form-control-sm" type="number" step="0.01" required />
+                                    <span asp-validation-for="NewTransaction.ItemQty" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold align-middle">Description</td>
+                                <td>
+                                    <textarea asp-for="NewTransaction.Description" class="form-control form-control-sm"></textarea>
+                                    <span asp-validation-for="NewTransaction.Description" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-end">
+                                    <input type="hidden" asp-for="Reservation.MasterbillId" />
+                                    <input type="hidden" asp-for="Reservation.Id" />
+                                    <input type="hidden" asp-for="Reservation.CustomerName" />
+                                    <input type="hidden" asp-for="Reservation.SelectedRooms" />
+                                    <input type="hidden" asp-for="Reservation.CheckInDate" />
+                                    <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate" />
+                                    <input type="hidden" asp-for="Reservation.Mobile" />
+                                    <input type="hidden" asp-for="Reservation.Address" />
+                                    <input type="hidden" asp-for="Reservation.Country" />
+                                    <input type="hidden" asp-for="Reservation.GuestCount" />
+                                    <input type="hidden" asp-for="Reservation.NIN" />
+                                    <input type="hidden" asp-for="Reservation.Email" />
+                                    <input type="hidden" asp-for="Reservation.SelectedCurrency" id="SelectedCurrency" />
+                                    <input type="hidden" asp-for="Reservation.DiscountRate" />
+
+                                    @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
+                                    {
+                                        <button type="submit" id="submitBtn" class="btn btn-success btn-sm rounded-pill mt-2" disabled>Add Transaction</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" id="submitBtn" class="btn btn-success btn-sm rounded-pill mt-2 disabled" disabled>Add Transaction</button>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+       
+
+
+
     </div>
 
 </div>
@@ -799,12 +849,14 @@ else
     </style>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- jQuery UI library -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
 
     <script>
         function showLoader() {
