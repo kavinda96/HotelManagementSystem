@@ -158,8 +158,8 @@ namespace RazorPagesMovie.Services
        .Where(room => !_dbContext.RoomReservationcs
            .Any(reservation =>
                reservation.RoomId == room.Id &&
-               reservation.CheckInDate <= checkOutDate &&
-               reservation.CheckOutDate >= checkInDate &&
+               reservation.CheckInDate.Date <= checkOutDate.Date &&
+               reservation.CheckOutDate.Date >= checkInDate.Date &&
                reservation.Status == 1)) // Add status condition here
        .ToListAsync();
 
@@ -174,8 +174,8 @@ namespace RazorPagesMovie.Services
        .Where(room => !_dbContext.RoomReservationcs
            .Any(reservation =>
                reservation.RoomId == room.Id &&
-               reservation.CheckInDate <= checkOutDate &&
-               reservation.CheckOutDate >= checkInDate &&
+               reservation.CheckInDate.Date <= checkOutDate.Date &&
+               reservation.CheckOutDate.Date >= checkInDate.Date &&
                reservation.Status == 1 &&
                reservation.ResevationId != resId)) // Add status condition here
        .ToListAsync();

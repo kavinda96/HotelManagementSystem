@@ -1,0 +1,38 @@
+﻿@model List<RazorPagesMovie.Models.ReservationNotes>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Created Date</th>
+                <th scope="col">Added By</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                // Define the Sri Lanka time zone (UTC+5:30)
+                var sriLankaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Sri Lanka Standard Time");
+
+                foreach (var note in Model)
+                {
+                    // Convert the CreatedDate to Sri Lankan time
+                    var createdDateInSriLankanTime = TimeZoneInfo.ConvertTimeFromUtc(note.CreatedDate, sriLankaTimeZone);
+
+                    <tr>
+                        <td>@createdDateInSriLankanTime.ToString("g")</td> <!-- Format the date as needed -->
+                        <td>@note.AddedUserId</td>
+                        <td>@note.Description</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" class="text-center">No notes available.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

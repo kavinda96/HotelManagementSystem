@@ -5,7 +5,15 @@
 }
 
 
-<input type="hidden" id="reservationId" value="@Model.Reservation.Id" />
+@* <input type="hidden" id="reservationId" value="@Model.Reservation.Id" />
+ *@
+
+
+ @if (@Model.Reservation != null ){
+
+
+<input type="hidden" id="reservationId" value="@ViewData["resId"]" />
+
 
 
 
@@ -19,39 +27,39 @@
 <div class="row">
     <div class="col-md-6" id="invoice_details">
         <div class="printtab">
-        <table class="table table-bordered invoice-info ">
-            <thead>
-                <tr class="keep-row">
-                    <th  colspan="2">Invoice Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.Reservation != null)
-                {
-                    <input type="hidden" asp-for="Reservation.MasterbillId">
-                    <input type="hidden" asp-for="Reservation.Id">
-                    <input type="hidden" asp-for="Reservation.CustomerName">
-                    <input type="hidden" asp-for="Reservation.SelectedRooms">
-                    <input type="hidden" asp-for="Reservation.SelectedRoomsNos">
-                    <input type="hidden" asp-for="Reservation.CheckInDate">
-                    <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate">
-                    <input type="hidden" asp-for="Reservation.Mobile">
-                    <input type="hidden" asp-for="Reservation.Address">
-                    <input type="hidden" asp-for="Reservation.Country">
-                    <input type="hidden" asp-for="Reservation.GuestCount">
-                    <input type="hidden" asp-for="Reservation.NIN">
-                    <input type="hidden" asp-for="Reservation.Email" />
-                    <input type="hidden" asp-for="Reservation.SelectedCurrency" />
-                    <input type="hidden" asp-for="Reservation.DiscountRate" />
-
-
+            <table class="table table-bordered invoice-info ">
+                <thead>
                     <tr class="keep-row">
-                        <td >Invoice No:</td>
-                        <td>@Model.Reservation.CheckInDate.ToString("yyyyMMdd") - @Model.Reservation.Id</td>
+                        <th colspan="2">Invoice Details</th>
                     </tr>
-                    <tr class="keep-row">
-                        <td>Status:</td>
-                        <td>
+                </thead>
+                <tbody>
+                    @if (Model.Reservation != null)
+                    {
+                        <input type="hidden" asp-for="Reservation.MasterbillId">
+                        <input type="hidden" asp-for="Reservation.Id">
+                        <input type="hidden" asp-for="Reservation.CustomerName">
+                        <input type="hidden" asp-for="Reservation.SelectedRooms">
+                        <input type="hidden" asp-for="Reservation.SelectedRoomsNos">
+                        <input type="hidden" asp-for="Reservation.CheckInDate">
+                        <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate">
+                        <input type="hidden" asp-for="Reservation.Mobile">
+                        <input type="hidden" asp-for="Reservation.Address">
+                        <input type="hidden" asp-for="Reservation.Country">
+                        <input type="hidden" asp-for="Reservation.GuestCount">
+                        <input type="hidden" asp-for="Reservation.NIN">
+                        <input type="hidden" asp-for="Reservation.Email" />
+                        <input type="hidden" asp-for="Reservation.SelectedCurrency" />
+                        <input type="hidden" asp-for="Reservation.DiscountRate" />
+
+
+                        <tr class="keep-row">
+                            <td>Invoice No:</td>
+                            <td>@Model.Reservation.CheckInDate.ToString("yyyyMMdd") - @Model.Reservation.Id</td>
+                        </tr>
+                        <tr class="keep-row">
+                            <td>Status:</td>
+                            <td>
 
 
                                 @if (@Model.Reservation.status == 0)
@@ -71,16 +79,16 @@
                                     <div>Finalized Invoice</div>
                                 }
 
-                                                   
-                    </tr>
-                    <tr class="keep-row">
-                        <td>Customer Name:</td>
-                        <td>@Model.Reservation.CustomerName</td>
-                    </tr>
-                    <tr class="keep-row">
-                        <td>Reserved Rooms:</td>
-                        <td>@Model.Reservation.SelectedRoomsNos</td>
-                    </tr>
+
+                        </tr>
+                        <tr class="keep-row">
+                            <td>Customer Name:</td>
+                            <td>@Model.Reservation.CustomerName</td>
+                        </tr>
+                        <tr class="keep-row">
+                            <td>Reserved Rooms:</td>
+                            <td>@Model.Reservation.SelectedRoomsNos</td>
+                        </tr>
                         <tr>
                             <td>Check-In Initialize:</td>
                             <td>
@@ -103,45 +111,45 @@
                                                 CheckIn
                                             </button>
                                         }
-                                       
-                                      
-                                       
+
+
+
                                     </div>
                                 </form>
                             </td>
                         </tr>
-                  
+
                         @* <tr>
-                            <td>Check-Out Date:</td>
-                            <td>
-                                <form id="checkOutDateForm" method="post" asp-page-handler="EditCheckoutDate">
-                                    <div class="d-flex">
-                                        <input type="hidden" name="sid" value="@Model.Reservation.Id" />
+                    <td>Check-Out Date:</td>
+                    <td>
+                    <form id="checkOutDateForm" method="post" asp-page-handler="EditCheckoutDate">
+                    <div class="d-flex">
+                    <input type="hidden" name="sid" value="@Model.Reservation.Id" />
 
 
 
 
 
-                                        @if (@Model.Reservation.status == 1)
-                                        {
-                                            <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" disabled />
+                    @if (@Model.Reservation.status == 1)
+                    {
+                    <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" disabled />
 
-                                            <!-- Submit Button -->
-                                            <button type="submit" class="btn btn-primary btn-sm disabled" id="checkOutDateBtn">
-                                                Update
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" disabled/>
-                                            <button type="submit" class="btn btn-primary btn-sm disabled" id="checkOutDateBtn">
-                                                Update
-                                            </button>
-                                        }
-                                    </div>
-                                </form>
-                            </td>
-                        </tr> *@
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-sm disabled" id="checkOutDateBtn">
+                    Update
+                    </button>
+                    }
+                    else
+                    {
+                    <input asp-for="Reservation.ExpectedCheckOutDate" class="form-control me-2" disabled/>
+                    <button type="submit" class="btn btn-primary btn-sm disabled" id="checkOutDateBtn">
+                    Update
+                    </button>
+                    }
+                    </div>
+                    </form>
+                    </td>
+                    </tr> *@
 
                         <tr>
                             <td>Check Out:</td>
@@ -177,29 +185,29 @@
 
 
 
-                      @*   <tr class="print-exclude">
+                        @*   <tr class="print-exclude">
 
 
-                            <td>Initialize Check-Out</td>
-                            <td>
+                    <td>Initialize Check-Out</td>
+                    <td>
 
-                                <form method="post"  asp-page-handler="CheckOut" id="checkOutForm" class="text-right" style="margin-right: 70px;">
-                                    @if (@Model.Reservation.status == 1)
-                                    {
-                                        <input type="hidden" name="sid" value="@Model.Reservation.Id" />
-                                        <button type="submit" class="btn btn-danger btn-sm" id="checkOutBtn">
-                                            Check Out
-                                       </button>
-                                    }
-                                    else
-                                    {
-                                        <input type="hidden" name="sid" value="@Model.Reservation.Id" disabled/>
-                                        <button type="submit" class="btn btn-danger btn-sm disabled" id="checkOutBtn">
-                                            Check Out
-                                        </button>
-                                    }
-                            </form>
-                        </td>
+                    <form method="post"  asp-page-handler="CheckOut" id="checkOutForm" class="text-right" style="margin-right: 70px;">
+                    @if (@Model.Reservation.status == 1)
+                    {
+                    <input type="hidden" name="sid" value="@Model.Reservation.Id" />
+                    <button type="submit" class="btn btn-danger btn-sm" id="checkOutBtn">
+                    Check Out
+                    </button>
+                    }
+                    else
+                    {
+                    <input type="hidden" name="sid" value="@Model.Reservation.Id" disabled/>
+                    <button type="submit" class="btn btn-danger btn-sm disabled" id="checkOutBtn">
+                    Check Out
+                    </button>
+                    }
+                    </form>
+                    </td>
                     </tr> *@
                         <tr class="keep-row">
                             <td>Currency:</td>
@@ -208,15 +216,15 @@
                         <tr class="print-exclude">
                             <td>Room Charges Discount % :</td>
                             <td>
-                               
-                                    
-                                   
-                                    <form method="post" asp-page-handler="Discount" id="discountForm">
+
+
+
+                                <form method="post" asp-page-handler="Discount" id="discountForm">
                                     <div class="d-flex">
 
-                                     
+
                                         <input type="hidden" name="sid" value="@Model.Reservation.Id" />
-                                        <input   asp-for="Reservation.DiscountRate" class="form-control me-2" value="@Model.Reservation.DiscountRate" type="number" min="0" max="100" step="0.01" />
+                                        <input asp-for="Reservation.DiscountRate" class="form-control me-2" value="@Model.Reservation.DiscountRate" type="number" min="0" max="100" step="0.01" />
                                         @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
                                         {
                                             <button type="submit" class="btn btn-primary btn-sm" id="updateDiscountBtn">Update</button>
@@ -226,45 +234,46 @@
                                             <button type="submit" class="btn btn-primary btn-sm disabled" id="updateDiscountBtn">Update</button>
                                         }
                                     </div>
-                                    </form>
-                                
+                                </form>
+
                             </td>
                         </tr>
                         @if (@Model.Reservation.IsThirdPartyBooking)
                         {
-                        <tr class="keep-row">
-                            <td> @ViewData["ThirdPartyHandlerName"]</td>
-                            <td>@Model.Reservation.BookingReference</td>
-                        </tr>
+                            <tr class="keep-row">
+                                <td> @ViewData["ThirdPartyHandlerName"]</td>
+                                <td>@Model.Reservation.BookingReference</td>
+                            </tr>
                         }
 
-                }
-                else
-                {
+                    }
+                    else
+                    {
 
-                    <tr>
-                        <td colspan="2">Reservation not found.</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        <tr>
+                            <td colspan="2">Reservation not found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
         </div>
     </div>
 
-    
-    
+
+
     <div class="col-md-6">
 
 
 
         <div class="row g-2">
+
             <!-- Additional Charges -->
             <div class="col-md-3">
                 <div class="card border-primary shadow-sm h-100">
                     <div class="card-header text-center bg-primary text-white p-2">
                         <i class="bi bi-wallet2 fs-4"></i>
-                       @*  <p class="fw-bold mt-1 mb-1"> Charges</p> *@
+                        @*  <p class="fw-bold mt-1 mb-1"> Charges</p> *@
                     </div>
                     <div class="card-body d-flex justify-content-center align-items-center p-2">
                         @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
@@ -288,7 +297,7 @@
                 <div class="card border-success shadow-sm h-100">
                     <div class="card-header text-center bg-success text-white p-2">
                         <i class="bi bi-printer fs-4"></i>
-                      @*   <p class="fw-bold mt-1 mb-1">Print Invoice</p> *@
+                        @*   <p class="fw-bold mt-1 mb-1">Print Invoice</p> *@
                     </div>
                     <div class="card-body d-flex justify-content-center align-items-center p-2">
                         @if (@Model.Reservation.status == 3)
@@ -312,7 +321,7 @@
                 <div class="card border-warning shadow-sm h-100">
                     <div class="card-header text-center bg-warning text-dark p-2">
                         <i class="bi bi-check-circle fs-4"></i>
-                      @*   <p class="fw-bold mt-1 mb-1">Finalize the Bill</p> *@
+                        @*   <p class="fw-bold mt-1 mb-1">Finalize the Bill</p> *@
                     </div>
                     <div class="card-body d-flex justify-content-center align-items-center p-2">
                         @if (@Model.Reservation.status == 2)
@@ -336,11 +345,11 @@
                 <div class="card border-info shadow-sm h-100">
                     <div class="card-header text-center bg-info text-white p-2">
                         <i class="bi bi-journal-text fs-4"></i>
-                      @*   <p class="fw-bold mt-1 mb-1">Add Notes</p> *@
+                        @*   <p class="fw-bold mt-1 mb-1">Add Notes</p> *@
                     </div>
                     <div class="card-body d-flex justify-content-center align-items-center p-2">
                         <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addNotesModal">
-                            <i class="bi bi-pencil-square me-1"></i> Add Note
+                            <i class="bi bi-pencil-square me-1"></i> Notes
                         </button>
                     </div>
                 </div>
@@ -437,7 +446,7 @@
             </div>
         </div>
 
-       
+
 
 
 
@@ -474,98 +483,98 @@
 
 
 <div class="col-md-6" id="invoice_display">
-<table class="table table-bordered invoice-info"  style="display:none" >
-    <thead>
-        <tr class="keep-row">
-            <th colspan="2">Invoice Details</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Reservation != null)
-        {
-            <input type="hidden" asp-for="Reservation.MasterbillId">
-            <input type="hidden" asp-for="Reservation.Id">
-            <input type="hidden" asp-for="Reservation.CustomerName">
-            <input type="hidden" asp-for="Reservation.SelectedRooms">
-            <input type="hidden" asp-for="Reservation.SelectedRoomsNos">
-            <input type="hidden" asp-for="Reservation.CheckInDate">
-            <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate">
-            <input type="hidden" asp-for="Reservation.Mobile">
-            <input type="hidden" asp-for="Reservation.Address">
-            <input type="hidden" asp-for="Reservation.Country">
-            <input type="hidden" asp-for="Reservation.GuestCount">
-            <input type="hidden" asp-for="Reservation.NIN">
-
-
+    <table class="table table-bordered invoice-info" style="display:none">
+        <thead>
             <tr class="keep-row">
-                <td>Invoice No:</td>
-                <td>@Model.Reservation.CheckInDate.ToString("yyyyMMdd") - @Model.Reservation.Id</td>
+                <th colspan="2">Invoice Details</th>
             </tr>
-            <tr class="keep-row">
-                <td>Status:</td>
-                <td>
+        </thead>
+        <tbody>
+            @if (Model.Reservation != null)
+            {
+                <input type="hidden" asp-for="Reservation.MasterbillId">
+                <input type="hidden" asp-for="Reservation.Id">
+                <input type="hidden" asp-for="Reservation.CustomerName">
+                <input type="hidden" asp-for="Reservation.SelectedRooms">
+                <input type="hidden" asp-for="Reservation.SelectedRoomsNos">
+                <input type="hidden" asp-for="Reservation.CheckInDate">
+                <input type="hidden" asp-for="Reservation.ExpectedCheckOutDate">
+                <input type="hidden" asp-for="Reservation.Mobile">
+                <input type="hidden" asp-for="Reservation.Address">
+                <input type="hidden" asp-for="Reservation.Country">
+                <input type="hidden" asp-for="Reservation.GuestCount">
+                <input type="hidden" asp-for="Reservation.NIN">
 
 
-                    @if (@Model.Reservation.status == 0)
-                    {
-                        <div>PENDING</div>
-                    }
-                    else if (@Model.Reservation.status == 1)
-                    {
-                        <div>Checked-In</div>
-                    }
-                    else if (@Model.Reservation.status == 2)
-                    {
-                        <div>Checked-Out</div>
-                    }
-                    else if (@Model.Reservation.status == 3)
-                    {
-                        <div>Finalized Invoice</div>
-                    }
+                <tr class="keep-row">
+                    <td>Invoice No:</td>
+                    <td>@Model.Reservation.CheckInDate.ToString("yyyyMMdd") - @Model.Reservation.Id</td>
+                </tr>
+                <tr class="keep-row">
+                    <td>Status:</td>
+                    <td>
+
+
+                        @if (@Model.Reservation.status == 0)
+                        {
+                            <div>PENDING</div>
+                        }
+                        else if (@Model.Reservation.status == 1)
+                        {
+                            <div>Checked-In</div>
+                        }
+                        else if (@Model.Reservation.status == 2)
+                        {
+                            <div>Checked-Out</div>
+                        }
+                        else if (@Model.Reservation.status == 3)
+                        {
+                            <div>Finalized Invoice</div>
+                        }
 
 
 
 
-            </tr>
-            <tr class="keep-row">
-                <td>Customer Name:</td>
-                <td>@Model.Reservation.CustomerName</td>
-            </tr>
-            <tr class="keep-row">
-                <td>Reserved Rooms:</td>
-                <td>@Model.Reservation.SelectedRoomsNos</td>
-            </tr>
-           
+                </tr>
+                <tr class="keep-row">
+                    <td>Customer Name:</td>
+                    <td>@Model.Reservation.CustomerName</td>
+                </tr>
+                <tr class="keep-row">
+                    <td>Reserved Rooms:</td>
+                    <td>@Model.Reservation.SelectedRoomsNos</td>
+                </tr>
 
-            <tr class="keep-row">
-                <td>Check-In Date:</td>
+
+                <tr class="keep-row">
+                    <td>Check-In Date:</td>
                     <td>@Model.Reservation.CheckInDate.ToString("yyyy-MM-dd")</td>
-            </tr>
-            <tr class="keep-row">
-                <td>Check-Out Date:</td>
+                </tr>
+                <tr class="keep-row">
+                    <td>Check-Out Date:</td>
                     <td>@Model.Reservation.ExpectedCheckOutDate.ToString("yyyy-MM-dd")</td>
-            </tr>
+                </tr>
 
-            <tr class="keep-row">
-                <td>Currency:</td>
-                <td>@Model.Reservation.SelectedCurrency</td>
-            </tr>
+                <tr class="keep-row">
+                    <td>Currency:</td>
+                    <td>@Model.Reservation.SelectedCurrency</td>
+                </tr>
 
-            <tr class="keep-row">
-                <td>Room Charge Discount %:</td>
-                <td>@Model.Reservation.DiscountRate</td>
-            </tr>
+                <tr class="keep-row">
+                    <td>Room Charge Discount %:</td>
+                    <td>@Model.Reservation.DiscountRate</td>
+                </tr>
 
-        }
-        else
-        {
+            }
+            else
+            {
 
-            <tr>
-                <td colspan="2">Reservation not found.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                <tr>
+                    <td colspan="2">Reservation not found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 
@@ -594,28 +603,28 @@
                 <input type="hidden" asp-for="Reservation.NIN">
                 <input type="hidden" asp-for="Reservation.BookingReference">
                 <input type="hidden" asp-for="Reservation.ThirdPartyHandlerId">
-               @*  <input type="hidden" asp-for="Reservation.Handler.CompanyName"> *@
+                @*  <input type="hidden" asp-for="Reservation.Handler.CompanyName"> *@
 
                 <input type="hidden" asp-for="Reservation.IsThirdPartyBooking" id="isTpbooking">
 
 
-             
-                    <tr class="keep-row">
-                        <td>Name :</td>
 
-                      @*   <td>@Model.Reservation.ThirdPartyHandlerId</td> *@
+                <tr class="keep-row">
+                    <td>Name :</td>
+
+                    @*   <td>@Model.Reservation.ThirdPartyHandlerId</td> *@
                     <td>@ViewData["ThirdPartyHandlerName"]</td>
                 </tr>
 
-              
+
 
                 <tr class="keep-row">
                     <td>Booking Ref :</td>
                     <td>@Model.Reservation.BookingReference</td>
                 </tr>
 
-               
-            
+
+
             }
             else
             {
@@ -639,96 +648,97 @@
 @if (Model.BillingTransactions != null && Model.BillingTransactions.Any())
 {
     <div class="printtab">
-    <div id="billing_table">
-    <table class="table table-bordered" id="invoiceTable">
-        <thead>
-            <tr>
-                <th class="center-text">#</th>
-@*                 <th class="center-text">Date</th>
- *@                <th class="center-text" style="  min-width: 120px;">Date</th>
-                <th class="center-text">Category</th>
-                <th class="center-text">Item</th>
-                <th class="center-text">Description</th>
-                <th class="center-text">Amount</th>
-                <th class="center-text">Quantity</th>
-                <th class="center-text">Total</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+        <div id="billing_table">
+            <table class="table table-bordered" id="invoiceTable">
+                <thead>
+                    <tr>
+                        <th class="center-text">#</th>
+                        @*                 <th class="center-text">Date</th>
+                    *@
+                        <th class="center-text" style="  min-width: 120px;">Date</th>
+                        <th class="center-text">Category</th>
+                        <th class="center-text">Item</th>
+                        <th class="center-text">Description</th>
+                        <th class="center-text">Amount</th>
+                        <th class="center-text">Quantity</th>
+                        <th class="center-text">Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
 
-            @{
-                int rowNumber = 1;
-            }
+                    @{
+                        int rowNumber = 1;
+                    }
 
-            @foreach (var transaction in Model.BillingTransactions)
-            {
-                decimal? itemTotal = @transaction.ItemPrice * @transaction.ItemQty;
-                <tr>
-                    <td class="center-text fw-bold small">@rowNumber</td>
-                    <td class="center-text">@transaction.createdDate?.ToString("yyyy-MM-dd")</td>
-                    <td class="center-text">
-                        @if (@transaction.Category == "1")
-                        {
-                            <div>Food</div>
-                        }
-                        else if (@transaction.Category == "2")
-                        {
-                            <div>Beverages</div>
-                        }
-                        else if (@transaction.Category == "3")
-                        {
-                            <div>Additional</div>
-                        }
-                        else if (@transaction.Category == "4")
+                    @foreach (var transaction in Model.BillingTransactions)
+                    {
+                        decimal? itemTotal = @transaction.ItemPrice * @transaction.ItemQty;
+                        <tr>
+                            <td class="center-text fw-bold small">@rowNumber</td>
+                            <td class="center-text">@transaction.createdDate?.ToString("yyyy-MM-dd")</td>
+                            <td class="center-text">
+                                @if (@transaction.Category == "1")
+                                {
+                                    <div>Food</div>
+                                }
+                                else if (@transaction.Category == "2")
+                                {
+                                    <div>Beverages</div>
+                                }
+                                else if (@transaction.Category == "3")
+                                {
+                                    <div>Additional</div>
+                                }
+                                else if (@transaction.Category == "4")
                                 {
                                     <div>VAS</div>
                                 }
-                        else if (@transaction.Category == "5")
+                                else if (@transaction.Category == "5")
                                 {
                                     <div>OTHER</div>
                                 }
 
-                    </td>
-                    <td>@transaction.BillingItem</td>
-                    <td>@transaction.Description</td>
-                    <td class="right-text">@transaction.ItemPrice</td>
-                    <td class="right-text">@transaction.ItemQty</td>
-                    <td class="right-text">@itemTotal</td>
+                            </td>
+                            <td>@transaction.BillingItem</td>
+                            <td>@transaction.Description</td>
+                            <td class="right-text">@transaction.ItemPrice</td>
+                            <td class="right-text">@transaction.ItemQty</td>
+                            <td class="right-text">@itemTotal</td>
 
 
-                  
-                    <td class="center-text">
-                        <form method="post" asp-page-handler="Deleteddd" onsubmit="return confirmDelete();">
-                            <input type="hidden" name="id" value="@transaction.Id" />
 
-                           @if (@Model.Reservation.status == 0 || @Model.Reservation.status == 1 || @Model.Reservation.status == 2)
-                           {
-                            <button type="submit" class="delete-button btn-sm">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                           }
-                           
-                        </form>
-                    </td>
+                            <td class="center-text">
+                                <form method="post" asp-page-handler="Deleteddd" onsubmit="return confirmDelete();">
+                                    <input type="hidden" name="id" value="@transaction.Id" />
 
-                    
-                </tr>
-                rowNumber++;
-                @if (Model.TotalAmount == 0) // Avoid redundant calculations
-                {
-                    Model.TotalAmount = Model.BillingTransactions.Sum(t => t.ItemPrice * t.ItemQty);
-                }
-            }
-            <tr>
-                <th colspan="7" style="text-align: right;">Grand Total</th>
-                <td class="right-text">@Model.BillingTransactions.Sum(t => t.ItemPrice * t.ItemQty)</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+                                    @if (@Model.Reservation.status == 0 || @Model.Reservation.status == 1 || @Model.Reservation.status == 2)
+                                    {
+                                        <button type="submit" class="delete-button btn-sm">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    }
+
+                                </form>
+                            </td>
+
+
+                        </tr>
+                        rowNumber++;
+                        @if (Model.TotalAmount == 0) // Avoid redundant calculations
+                        {
+                            Model.TotalAmount = Model.BillingTransactions.Sum(t => t.ItemPrice * t.ItemQty);
+                        }
+                    }
+                    <tr>
+                        <th colspan="7" style="text-align: right;">Grand Total</th>
+                        <td class="right-text">@Model.BillingTransactions.Sum(t => t.ItemPrice * t.ItemQty)</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
 
     <div id="pdf_footer" style="display:none;">
         <table class="footer-table" style="width: 100%; margin-top: 20px;">
@@ -749,6 +759,41 @@
 
 
 
+    <!-- Add Notes Modal -->
+        <div class="modal fade" id="addNotesModal" tabindex="-1" aria-labelledby="addNotesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="addNotesModalLabel">Add Notes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addNoteForm">
+                            <input type="hidden" id="reservationId" value="@Model.Reservation.Id" />
+                            <input type="hidden" id="addedUserId" value="@ViewData["SecondaryUserId"]" />
+
+                            <div class="mb-3">
+                                <label for="noteDescription" class="form-label">Notes</label>
+                                <textarea id="noteDescription" class="form-control" rows="5" placeholder="Enter your notes..."></textarea>
+                            </div>
+                            <button type="button" class="btn btn-info" onclick="addNote()">Add</button>
+                        </form>
+                        <hr />
+                        <h6>Previous Notes</h6>
+                        <div id="notesList">
+                            <!-- Notes will be loaded here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -764,11 +809,11 @@
                             <input type="date" class="form-control" id="checkoutDate" name="newCheckoutDate" required>
                         </div>
                         <div class="modal-footer">
-                           
+
 
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" id="saveCheckoutDateBtn" class="btn btn-primary">Save Changes</button>
-                         </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -790,15 +835,16 @@
                         <div class="mb-3">
                             <label for="category" class="form-label">Category</label>
                             <select asp-for="NewTransaction.Category" class="form-control" id="category" name="category" required>
-                               @*  <option value="1">Food</option>
-                                <option value="2">Beverages</option> *@
-                                  <option value="3">Additional Charges</option>
-                                  <option value="4">VAS</option>
-                                  <option value="5">OTHER</option>
+                                @*  <option value="1">Food</option>
+                            <option value="2">Beverages</option> *@
+                                <option value="3">Additional Charges</option>
+                                <option value="4">VAS</option>
+                                <option value="5">OTHER</option>
                             </select>
                             <span asp-validation-for="NewTransaction.Category" class="text-danger"></span>
-@*                             <input type="text" class="form-control" id="category" name="category" required>
- *@                        </div>
+                            @*                             <input type="text" class="form-control" id="category" name="category" required>
+                        *@
+                        </div>
                         <div class="mb-3">
                             <label for="item" class="form-label">Item</label>
                             <input type="text" class="form-control" id="item" name="item" required>
@@ -835,6 +881,12 @@ else
 {
     <div class="alert alert-warning">No billing transactions found..</div>
 }
+
+}
+else
+{
+    <p>No reservation data available.</p>
+}
 @section Scripts {
 
     <style>
@@ -844,8 +896,6 @@ else
             background-color: #f9f9f9; /* Light background color */
         }
 
-  
-      
     </style>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -876,7 +926,7 @@ else
 
 
         //below is the food search auto complete in billing page
-   
+
 
         $(document).ready(function () {
             $("#foodItemSearch").autocomplete({
@@ -909,12 +959,12 @@ else
             });
         });
 
-    
-    //below is the beverage search auto complete in billing page
+
+        //below is the beverage search auto complete in billing page
         $(document).ready(function () {
             $("#beverageItemSearch").autocomplete({
                 source: function (request, response) {
-                   
+
                     var currency = $('#SelectedCurrency').val();
 
                     $.ajax({
@@ -923,7 +973,7 @@ else
                         data: { term: request.term, currency: currency },
                         success: function (data) {
                             response($.map(data, function (item) {
-                                return {                              
+                                return {
                                     label: item.beverageCode + " - " + item.beverageName,
                                     value: item.beverageName,
                                     id: item.id,
@@ -943,7 +993,7 @@ else
 
 
 
-     document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const categoryDropdown = document.getElementById('billingCategory');
             const foodInput = document.getElementById('foodItemSearch');
             const beverageInput = document.getElementById('beverageItemSearch');
@@ -974,7 +1024,8 @@ else
 
         function finalizeBill() {
             // SweetAlert2 confirmation dialog
-            
+            var reservationId = $('#reservationId').val();
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Do you want to finalize the bill?",
@@ -1091,7 +1142,7 @@ else
                             if (cells.length === 2) {
                                 const label = cells[0].innerText;
                                 const value = cells[1].innerText;
-                                
+
                                 doc.text(`${label} ${value}`, handlerDetailsX, yOffset);
                                 yOffset += 5; // Adjust for next line
                             }
@@ -1161,7 +1212,7 @@ else
 
 
 
-        
+
 
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('billingForm');
@@ -1203,10 +1254,10 @@ else
         }
 
         function confirmUpdateCheckOut() {
-            
+
             return confirm("Are you sure you want to update the check-out date?");
         }
-        
+
 
 
 
@@ -1316,7 +1367,7 @@ else
         });
 
 
-       
+
 
         $(document).ready(function () {
             $('#saveAdditionalCharges').click(function (event) {
@@ -1395,16 +1446,74 @@ else
                 updateCurrencyLabel();
             });
         });
+        function loadNotes(reservationId) {
+            $.ajax({
+                url: '/Billing/Index?handler=Notes',  // Ensure this matches your handler
+                type: 'GET',
+                data: { reservationId: reservationId },
+                success: function (response) {
+                    $('#notesList').html(response); // Directly set HTML response
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error while loading notes:", xhr.responseText, "Status:", status, "Error:", error);
+                    $('#notesList').html("<div class='alert alert-danger'>Failed to load notes. Please try again later.</div>");
+                }
+            });
+        }
+
+      
+        $('#addNotesModal').on('show.bs.modal', function (e) {
+            var reservationId = $('#reservationId').val();
+            loadNotes(reservationId);
+        });
+
+      
+
+        function addNote() {
+            var noteDescription = $('#noteDescription').val();
+            var reservationId = $('#reservationId').val();
+            var addedUserId = $('#addedUserId').val();
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            if (noteDescription.trim() === "") {
+                alert("Please enter a note.");
+                return;
+            }
+
+            $.ajax({
+                url: '/Billing/Index?handler=AddNote',            // Update this URL to match your Razor Page handler route
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: token,
+                    description: noteDescription,
+                    reservationId: parseInt(reservationId), // Ensure it's an integer
+                    addedUserId: parseInt(addedUserId) // Ensure it's an integer
+                },
+                success: function (response) {
+                    // Clear the textarea
+                    $('#noteDescription').val('');
+
+                    // Reload the notes list
+                    loadNotes(reservationId);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error while adding the note: " + error);
+                }
+            });
+        }
+
+      
 
 
-
+       
 
 
 
     </script>
 
     <style>
-      
+
     </style>
 }
 

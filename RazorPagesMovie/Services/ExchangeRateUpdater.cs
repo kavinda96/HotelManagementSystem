@@ -25,8 +25,8 @@ public class ExchangeRateUpdater : IHostedService, IDisposable
     public Task StartAsync(CancellationToken cancellationToken)
     {
         // Execute both updates immediately on startup
-        UpdateExchangeRate(null);
-        UpdateExchangeRateLKRUSD(null);
+        //UpdateExchangeRate(null);
+        //UpdateExchangeRateLKRUSD(null);
 
         // Schedule the next runs for both methods
         ScheduleNextRunForUSDToLKR();

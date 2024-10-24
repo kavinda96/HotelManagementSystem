@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,16 @@ namespace RazorPagesMovie.Pages.Billing
         private readonly BillingTransactionService _billingTransactionService;
         private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
         private readonly ILogger<IndexModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context, ReservationService reservationService, BillingTransactionService billingTransactionService, ILogger<IndexModel> logger)
+
+        public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context, ReservationService reservationService, BillingTransactionService billingTransactionService, ILogger<IndexModel> logger, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _reservationService = reservationService;
             _billingTransactionService = billingTransactionService;
             _logger = logger;
+            _userManager = userManager;
         }
 
 
@@ -82,6 +86,17 @@ namespace RazorPagesMovie.Pages.Billing
                 {
                     ViewData["ThirdPartyHandlerName"] = "No Handler Assigned"; // In case the handler is not found
                 }
+
+                // Get the current user synchronously
+                var currentUser = _userManager.GetUserAsync(User).Result; // Synchronously wait for the task to complete
+                var secondaryUserId = currentUser?.SecondaryUserId;
+
+                ViewData["SecondaryUserId"] = secondaryUserId;
+                ViewData["resId"] = invoice_no;
+
+                ViewData["resStatus"] = Reservation.status;
+
+
             }
 
             // Retrieve available food items
@@ -411,6 +426,61 @@ namespace RazorPagesMovie.Pages.Billing
             // Return success response
             return new JsonResult(new { success = true, message = "Bill finalized successfully." });
         }
+
+
+
+
+        public async Task<IActionResult> OnPostAddNoteAsync(string Description, int ReservationId, int AddedUserId)
+        {
+          
+           // Reservation = _reservationService.GetReservationById(ReservationId);
+            var note = new ReservationNotes
+            {
+                ReservationId = ReservationId,
+                Description = Description,
+                AddedUserId = AddedUserId,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            _context.ReservationNotes.Add(note);
+            await _context.SaveChangesAsync();
+
+            return new JsonResult(new { success = true });
+        }
+
+        
+
+
+        public async Task<IActionResult> OnGetNotesAsync(int reservationId)
+        {
+           
+
+            try
+            {
+                var notes = await _context.ReservationNotes
+                    .Where(n => n.ReservationId == reservationId)
+                    .OrderByDescending(n => n.Id)
+                    .ToListAsync();
+
+             //   _logger.LogInformation($"*********************Found {notes.Count} notes for Reservation ID: {reservationId}");
+
+                if (notes == null || !notes.Any())
+                {
+                   // _logger.LogWarning($"No notes found for Reservation ID: {reservationId}");
+                    return Partial("_NotesListPartial", new List<RazorPagesMovie.Models.ReservationNotes>());
+                }
+
+                // Return the notes as a partial view
+                return Partial("_NotesListPartial", notes);
+            }
+            catch (Exception ex)
+            {
+               // _logger.LogError(ex, $"Error fetching notes for Reservation ID: {reservationId}");
+                return Partial("_Error"); // Create a partial view for error handling
+            }
+        }
+
+
     }
 }
 

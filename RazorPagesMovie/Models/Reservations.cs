@@ -12,7 +12,7 @@ namespace RazorPagesMovie.Models
         [StringLength(100)]
         public string CustomerName { get; set; }
 
-        [Display(Name = "NIN")]
+        [Display(Name = "NIC/Passport")]
         [Required]
         [StringLength(20)]
         public string NIN { get; set; }

@@ -11,5 +11,8 @@ namespace RazorPagesMovie.Models
         public string? Description { get; set; }
 
         public int AddedUserId { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }
