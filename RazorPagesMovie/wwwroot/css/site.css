@@ -230,3 +230,9 @@ body {
 
 
 
+@media (max-width: 768px) {
+    #billing_table {
+        overflow-x: auto;
+    }
+}
+

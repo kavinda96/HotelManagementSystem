@@ -225,7 +225,7 @@
 
                                         <input type="hidden" name="sid" value="@Model.Reservation.Id" />
                                         <input asp-for="Reservation.DiscountRate" class="form-control me-2" value="@Model.Reservation.DiscountRate" type="number" min="0" max="100" step="0.01" />
-                                        @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
+                                        @if (@Model.Reservation.status == 1)
                                         {
                                             <button type="submit" class="btn btn-primary btn-sm" id="updateDiscountBtn">Update</button>
                                         }
@@ -644,11 +644,11 @@
 
 
 <!-- Display Billing Transactions -->
-<h4 class="border border-2 border" style="background-color: #8294C4; color:azure;">Billing Transactions</h4>
-@if (Model.BillingTransactions != null && Model.BillingTransactions.Any())
+    <h4 class="border border" style="background-color: #6C757D; color: azure; padding: 5px 10px;">Billing Transactions</h4>
+    @if (Model.BillingTransactions != null && Model.BillingTransactions.Any())
 {
     <div class="printtab">
-        <div id="billing_table">
+            <div id="billing_table" class="table-responsive">
             <table class="table table-bordered" id="invoiceTable">
                 <thead>
                     <tr>
