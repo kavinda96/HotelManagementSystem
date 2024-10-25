@@ -6,7 +6,10 @@
     <title>@ViewData["Title"] - RITAS.KEEPER</title>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+@*     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+ *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -256,8 +259,13 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+@*     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ *@    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="~/lib/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
@@ -318,6 +326,47 @@
             showLoader(); // Show loader when any form is submitted
         });
     });
+
+
+    const inactivityTimeLimit = 600000; // 10 minutes
+    let inactivityTimer;
+
+    // Function to reset the timer
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(logoutUser, inactivityTimeLimit);
+    }
+
+    // Function to log out the user
+    function logoutUser() {
+        // Check if we're already on the logout page
+        if (window.location.pathname !== "/Identity/Account/Logout") {
+            // Store a flag in session storage to indicate logout
+            sessionStorage.setItem('loggedOut', 'true');
+            window.location.href = "/Identity/Account/Logout"; // Adjust to your logout page URL
+        }
+    }
+
+    // Check if the user is logged out
+    if (sessionStorage.getItem('loggedOut') === 'true') {
+        // Clear the session storage flag
+        sessionStorage.removeItem('loggedOut');
+        // Stop tracking inactivity on the logout/login page
+        clearTimeout(inactivityTimer);
+    } else {
+        // Add event listeners to reset the timer on user activity
+        window.onload = resetInactivityTimer;
+        document.onmousemove = resetInactivityTimer;
+        document.onkeydown = resetInactivityTimer;
+        document.onscroll = resetInactivityTimer;
+    }
+
+    // Optional: Stop tracking inactivity on the logout and login pages
+    if (window.location.pathname === "/Identity/Account/Logout" || window.location.pathname === "/Identity/Account/Login") {
+        clearTimeout(inactivityTimer);
+    }
+
+
 
 </script>
 

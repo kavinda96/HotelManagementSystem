@@ -15,18 +15,23 @@ public class ExchangeRateUpdater : IHostedService, IDisposable
     private Timer _timerLKRToUSD;
     private readonly ILogger<ExchangeRateUpdater> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IHostEnvironment _hostEnvironment;
 
-    public ExchangeRateUpdater(ILogger<ExchangeRateUpdater> logger, IServiceScopeFactory serviceScopeFactory)
+    public ExchangeRateUpdater(ILogger<ExchangeRateUpdater> logger, IServiceScopeFactory serviceScopeFactory, IHostEnvironment hostEnvironment)
     {
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
+        _hostEnvironment = hostEnvironment;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        // Execute both updates immediately on startup
-        //UpdateExchangeRate(null);
-        //UpdateExchangeRateLKRUSD(null);
+        if (_hostEnvironment.IsProduction())
+        {
+            // Execute both updates immediately on startup
+            UpdateExchangeRate(null);
+            UpdateExchangeRateLKRUSD(null);
+        }
 
         // Schedule the next runs for both methods
         ScheduleNextRunForUSDToLKR();

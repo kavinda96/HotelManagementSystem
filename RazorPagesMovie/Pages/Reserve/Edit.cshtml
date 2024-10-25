@@ -12,13 +12,13 @@
 </div>
 
 
-<hr />
+@* <hr /> *@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8" style="margin-bottom:30px">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5>Update Form</h5>
+                <div class="card-header bg-secondary text-white">
+                    <h5>Reservation ID: @Model.Reservations.Id</h5>
                 </div>
                 <div class="card-body">
                     <form method="post">
@@ -167,7 +167,7 @@
                             <button type="button" onclick="checkAvailability()" class="btn btn-warning">Check Availability</button>
                         </div>
 
-                        <h4 style="margin-top:20px">Available Rooms</h4>
+                        <div class="control-label" style="margin-top:20px; margin-bottom:10px;">Available Rooms</div>
                         <div id="availableRooms">
                             <p>Select check-in and check-out dates to see available rooms.</p>
                         </div>

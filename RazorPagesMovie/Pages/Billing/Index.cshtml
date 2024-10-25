@@ -760,34 +760,7 @@
 
 
     <!-- Add Notes Modal -->
-        <div class="modal fade" id="addNotesModal" tabindex="-1" aria-labelledby="addNotesModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header bg-info text-white">
-                        <h5 class="modal-title" id="addNotesModalLabel">Add Notes</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="addNoteForm">
-                            <input type="hidden" id="reservationId" value="@Model.Reservation.Id" />
-                            <input type="hidden" id="addedUserId" value="@ViewData["SecondaryUserId"]" />
-
-                            <div class="mb-3">
-                                <label for="noteDescription" class="form-label">Notes</label>
-                                <textarea id="noteDescription" class="form-control" rows="5" placeholder="Enter your notes..."></textarea>
-                            </div>
-                            <button type="button" class="btn btn-info" onclick="addNote()">Add</button>
-                        </form>
-                        <hr />
-                        <h6>Previous Notes</h6>
-                        <div id="notesList">
-                            <!-- Notes will be loaded here dynamically -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+       
 
 
 
@@ -819,6 +792,39 @@
             </div>
         </div>
     </div>
+
+
+
+        <div class="modal fade" id="addNotesModal" tabindex="-1" aria-labelledby="addNotesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="addNotesModalLabel">Add Notes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addNoteForm">
+                            <input type="hidden" id="reservationId" value="@Model.Reservation.Id" />
+                            <input type="hidden" id="addedUserId" value="@ViewData["SecondaryUserId"]" />
+
+                            <div class="mb-3">
+                                <label for="noteDescription" class="form-label">Notes</label>
+                                <textarea id="noteDescription" class="form-control" rows="5" placeholder="Enter your notes..."></textarea>
+                            </div>
+                            <button type="button" class="btn btn-info" onclick="addNote()">Add</button>
+                        </form>
+                        <hr />
+                        <h6>Previous Notes</h6>
+                        <div id="notesList">
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+
+
 
 
     <div class="modal fade" id="additionalChargesModal" tabindex="-1" aria-labelledby="additionalChargesModalLabel" aria-hidden="true">
@@ -898,6 +904,10 @@ else
 
     </style>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
@@ -909,6 +919,11 @@ else
 
 
     <script>
+
+
+       
+
+
         function showLoader() {
             $("#loadingOverlay").show(); // Show the loader
         }
@@ -1503,9 +1518,8 @@ else
             });
         }
 
-      
 
-
+        
        
 
 

@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,12 @@ namespace RazorPagesMovie.Areas.Identity.Pages.Account
         {
             _signInManager = signInManager;
             _logger = logger;
+        }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            await _signInManager.SignOutAsync(); // Sign out the user
+            return RedirectToPage("/Account/Login"); // Redirect to the login page
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)

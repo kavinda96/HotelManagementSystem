@@ -44,6 +44,17 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";           // Correct login path
     options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Custom access denied page (optional)
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);  // Set session timeout
+    options.SlidingExpiration = true; // Extend session on activity
+    //options.LogoutPath = "Identity/Account/Logout"; // Set your logout path
+
+});
+
+// Enable session management
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10); // Set idle timeout
+    options.Cookie.HttpOnly = true; // Make the session cookie HttpOnly
 });
 
 // Set up logging
@@ -65,6 +76,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession(); // Enable session management
 app.UseAuthentication();  // Enable authentication
 app.UseAuthorization();   // Enable authorization
 
