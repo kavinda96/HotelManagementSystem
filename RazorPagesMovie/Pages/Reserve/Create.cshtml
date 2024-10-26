@@ -227,7 +227,6 @@
             }
         }
 
-
         function showLoader() {
             $("#loadingOverlay").show(); // Show the loader
         }
@@ -237,11 +236,22 @@
         }
 
         $(document).ready(function () {
-            // Show loader on form submission
-            $("form").on("submit", function () {
-                showLoader(); // Show loader when any form is submitted
+            $("form").on("submit", function (e) {
+                e.preventDefault(); // Prevent the default form submission
+                e.stopPropagation(); // Stop further event propagation
+
+                // Validate the form
+                if (this.checkValidity()) {
+                    showLoader(); // Only show the loader if the form is valid
+                    this.submit(); // Submit the form programmatically if valid
+                } else {
+                    hideLoader(); // Ensure the loader stays hidden if invalid
+                    $(this).addClass("was-validated"); // Apply validation styling
+                }
             });
         });
+
+
 
 
         function toggleThirdPartyFields() {
