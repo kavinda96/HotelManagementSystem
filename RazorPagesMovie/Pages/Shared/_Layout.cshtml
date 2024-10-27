@@ -118,6 +118,13 @@
                             <i class="fas fa-calendar-alt me-2"></i> 3rd Party Reservations
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-page="/Reserve/Index" asp-route-showActive="true">
+                            <i class="fas fa-play-circle me-2"></i> Active Reservations
+                        </a>
+                    </li>
+
                 <li class="nav-item">
                     <a class="nav-link"  asp-area="" asp-page="/Rooms/Index">
                         <i class="fas fa-bed me-2"></i> Rooms
@@ -174,11 +181,17 @@
             </li>
 
 
-                <li class="nav-item">
-                    <a class="nav-link text-muted" id="tpbReservationsLink" asp-area="" asp-page="/Reserve/Index" asp-route-showTPB="true">
-                        <i class="fas fa-handshake me-2"></i> 3rd Party Reservations
-                    </a>
-                </li>
+            <li class="nav-item">
+                <a class="nav-link text-muted" id="tpbReservationsLink" asp-area="" asp-page="/Reserve/Index" asp-route-showTPB="true">
+                    <i class="fas fa-handshake me-2"></i> 3rd Party Reservations
+                </a>
+            </li>
+
+            <li class="nav-item">
+                    <a class="nav-link text-muted" id="activeReservationsLink" asp-area="" asp-page="/Reserve/Index" asp-route-showActive="true">
+                        <i class="fas fa-play-circle me-2"></i> Active Reservations
+                </a>
+            </li>
 
 
 
@@ -288,6 +301,8 @@
         // Highlight the link based on the current page URL
         if (currentPath.includes("/homepage")) {
             $('#homeLink').addClass('active');
+        } else if (currentPath.includes("/reserve") && currentQuery.includes("showactive=true")) {
+            $('#activeReservationsLink').addClass('active');
         } else if (currentPath.includes("/reserve") && currentQuery.includes("showupcoming=true")) {
             $('#upcomingReservationsLink').addClass('active');
         } else if (currentPath.includes("/reserve") && currentQuery.includes("showtpb=true")) {
@@ -309,6 +324,7 @@
         } else if (currentPath.includes("/beveragedata")) {
             $('#beveragesLink').addClass('active');
         }
+       
     });
 
 

@@ -5,6 +5,7 @@
     ViewData["Title"] = "Reservations";
     
     ViewData["showTPB"] = Request.Query["showTPB"] == "true";
+    ViewData["showActive"] = Request.Query["showActive"] == "true";
 
 }
 
@@ -31,6 +32,8 @@
 
     <input type="hidden" name="showUpcoming" value="@Request.Query["showUpcoming"]" />  
     <input type="hidden" name="showTPB" value="@Request.Query["showTPB"]" />
+    <input type="hidden" name="showActive" value="@Request.Query["showActive"]" />
+
 
 
     <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
@@ -57,7 +60,10 @@
                asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
                asp-route-showUpcoming="@Request.Query["showUpcoming"]"
                asp-route-showFinalized="@Request.Query["showFinalized"]"
-               asp-route-showTPB="@Request.Query["showTPB"]">« Previous</a>
+               asp-route-showTPB="@Request.Query["showTPB"]"
+               asp-route-showActive="@Request.Query["showActive"]">« Previous</a>
+
+
         }
 
         @for (int i = 1; i <= Model.TotalPages; i++)
@@ -69,7 +75,8 @@
                asp-route-showUpcoming="@Request.Query["showUpcoming"]"
                asp-route-showFinalized="@Request.Query["showFinalized"]"
                class="@(i == Model.CurrentPage ? "active" : "")"
-               asp-route-showTPB="@Request.Query["showTPB"]">@i</a>
+               asp-route-showTPB="@Request.Query["showTPB"]"
+               asp-route-showActive="@Request.Query["showActive"]">@i</a>
         }
 
         @if (Model.CurrentPage < Model.TotalPages)
@@ -80,7 +87,8 @@
                asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
                asp-route-showUpcoming="@Request.Query["showUpcoming"]"
                asp-route-showFinalized="@Request.Query["showFinalized"]"
-               asp-route-showTPB="@Request.Query["showTPB"]">Next »</a>
+               asp-route-showTPB="@Request.Query["showTPB"]"
+               asp-route-showActive="@Request.Query["showActive"]">Next »</a>
         }
     </div>
 </div>

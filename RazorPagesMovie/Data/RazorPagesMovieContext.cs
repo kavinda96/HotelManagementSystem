@@ -232,12 +232,12 @@ WITH TotalReservations AS (
 UpcomingReservations AS (
     SELECT COUNT(*) AS upcoming_reservation
     FROM Reservations
-    WHERE CheckInDate > CAST(GETDATE() AS DATE) and validity =1
+    WHERE CheckInDate >= CAST(GETDATE() AS DATE) and validity =1
 ),
 ActiveReservations AS (
     SELECT COUNT(*) AS active_reservation
     FROM Reservations 
-    WHERE status  = 0 and validity =1
+    WHERE status  in  (1, 2) and validity =1
 ),
 
 TotalRooms AS (
