@@ -31,10 +31,11 @@ namespace RazorPagesMovie.Services
         {
             return _dbContext.Reservations.FirstOrDefault(r => r.Id == reservationId);
         }
+
         public List<RoomReservationcs>  GetRoomReservationsById(int reservationId)
         {
             return _dbContext.RoomReservationcs
-           .Where(r => r.ResevationId == reservationId)
+           .Where(r => r.ResevationId == reservationId && r.Status == 1)
            .ToList();
         }
 
@@ -158,14 +159,28 @@ namespace RazorPagesMovie.Services
        .Where(room => !_dbContext.RoomReservationcs
            .Any(reservation =>
                reservation.RoomId == room.Id &&
-               reservation.CheckInDate.Date <= checkOutDate.Date &&
-               reservation.CheckOutDate.Date >= checkInDate.Date &&
+               reservation.CheckInDate.Date < checkOutDate.Date &&
+               reservation.CheckOutDate.Date > checkInDate.Date &&
                reservation.Status == 1)) // Add status condition here
        .ToListAsync();
 
 
             return availableRooms;
         }
+
+        //        public async Task<List<Room>> GetAvailableRooms(DateTime checkInDate, DateTime checkOutDate)
+        //{
+        //    var availableRooms = await _dbContext.Room
+        //        .Where(room => !_dbContext.RoomReservationcs
+        //            .Any(reservation =>
+        //                reservation.RoomId == room.Id &&
+        //                EF.Functions.DateDiffDay(reservation.CheckInDate, checkOutDate) <= 0 &&
+        //                EF.Functions.DateDiffDay(reservation.CheckOutDate, checkInDate) >= 0 &&
+        //                reservation.Status == 1))
+        //        .ToListAsync();
+
+        //    return availableRooms;
+        //}
 
 
         public async Task<List<Room>> GetAvailableRoomsEdit(DateTime checkInDate, DateTime checkOutDate, int resId)
@@ -174,8 +189,8 @@ namespace RazorPagesMovie.Services
        .Where(room => !_dbContext.RoomReservationcs
            .Any(reservation =>
                reservation.RoomId == room.Id &&
-               reservation.CheckInDate.Date <= checkOutDate.Date &&
-               reservation.CheckOutDate.Date >= checkInDate.Date &&
+               reservation.CheckInDate.Date < checkOutDate.Date &&
+               reservation.CheckOutDate.Date > checkInDate.Date &&
                reservation.Status == 1 &&
                reservation.ResevationId != resId)) // Add status condition here
        .ToListAsync();

@@ -30,6 +30,8 @@ namespace RazorPagesMovie.Data
 
         public DbSet<RazorPagesMovie.Models.RoomReservationcs> RoomReservationcs { get; set; } = default!;
 
+        public DbSet<RazorPagesMovie.Models.SysPara> SysPara { get; set; } = default!; 
+
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         
         public DbSet<RazorPagesMovie.Models.ReservationNotes> ReservationNotes { get; set; } = default!;

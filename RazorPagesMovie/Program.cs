@@ -22,6 +22,9 @@ builder.Services.AddSingleton<InvoiceNoGenerator>();
 builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<BillingTransactionService>();
 builder.Services.AddSingleton<PaginationService>();
+builder.Services.AddScoped<IHotelInfoService, HotelInfoService>();
+
+
 
 // Add the ExchangeRateUpdater background service
 builder.Services.AddHostedService<ExchangeRateUpdater>();

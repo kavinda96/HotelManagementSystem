@@ -209,6 +209,33 @@ namespace RazorPagesMovie.Pages.Billing
             }
 
 
+            //below is to update room prices when check out in roomReservationcs table
+            var roomReservations = _reservationService.GetRoomReservationsById(sid);
+
+            if (roomReservations != null)
+            {
+                foreach (var roomRes in roomReservations)
+                {
+                    // Retrieve room details from the Rooms table
+                    var room = await _context.Room.FindAsync(roomRes.RoomId);
+                    if (room != null)
+                    {
+                        if (reservationToUpdate.SelectedCurrency == "USD")
+                        {
+                            roomRes.roomPrice = room.PriceUSD;
+                        }
+                        else
+                        {
+                            roomRes.roomPrice = room.Price;
+
+                        }
+                    
+                        _context.RoomReservationcs.Update(roomRes); // Update each room reservation
+                    }
+                }
+            }
+
+
             var newTransaction = new Bill
             {
                 InvoiceNo = sid,
@@ -402,9 +429,7 @@ namespace RazorPagesMovie.Pages.Billing
 
             // Update the reservation status to 'finalized'
             reservationToUpdate.status = 3; // 3 = finalized
-          
-
-
+ 
             TotalWithoutDiscount = await _context.CalculateTotalWithoutDiscountAsync(reservationToUpdate.Id); //  total without discount
             reservationToUpdate.TotalAmount = TotalWithoutDiscount;
 

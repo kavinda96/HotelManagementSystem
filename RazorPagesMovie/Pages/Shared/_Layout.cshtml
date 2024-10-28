@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@inject IHotelInfoService HotelInfoService
+
+@* Render the hotel name using async retrieval *@
+@{
+    var hotelName = await HotelInfoService.GetHotelNameAsync();
+}
+
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -44,7 +53,7 @@
 
 
 
-                <a class="navbar-brand" asp-area="" asp-page="/Homepage/Index">RITAS GROUP</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Homepage/Index">@hotelName</a>
 
                 <!-- Authentication Links -->
                 <ul class="navbar-nav ms-auto">

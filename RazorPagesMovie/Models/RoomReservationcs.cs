@@ -12,6 +12,8 @@ namespace RazorPagesMovie.Models
 
         public int Status { get; set; }
 
+        public decimal roomPrice { get; set; }
+
     }
 }
 //test 

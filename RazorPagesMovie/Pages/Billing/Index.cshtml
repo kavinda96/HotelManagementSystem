@@ -1,7 +1,16 @@
 ﻿@page
 @model RazorPagesMovie.Pages.Billing.IndexModel
+@inject IHotelInfoService HotelInfoService
+
+
 @{
     ViewData["Title"] = "Billing";
+    var hotelName = await HotelInfoService.GetHotelNameAsync();
+    var phone = await HotelInfoService.GetHotelContactAsync();
+    var address1 = await HotelInfoService.GetHotelAddressline1Async();
+    var address2 = await HotelInfoService.GetHotelAddressline2Async();
+    var email = await HotelInfoService.GetHotelEmailAsync();
+
 }
 
 
@@ -464,16 +473,16 @@
     <table class="header-table" style="display:none">
         <tr>
             <th>
-                <h1 class="name">Hotel Ritas</h1>
+                <h1 class="name">@hotelName</h1>
             </th>
         </tr>
         <tbody>
             <tr>
                 <td style="font-size: 12px;">
-                    Narigama, Hikkaduwa<br>
+                    @address1, @address2<br>
                     <span style="font-size: 10px;">
-                        Phone: +94 0912 277 496<br>
-                        Email: info@hotelritas.com
+                        Phone: @phone<br>
+                        Email: @email
                     </span>
                 </td>
             </tr>
