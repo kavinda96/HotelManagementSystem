@@ -39,7 +39,7 @@ namespace RazorPagesMovie.Pages.Reserve
         [BindProperty(SupportsGet = true)]
         public DateTime? EndDate { get; set; }
 
-        public async Task OnGetAsync(DateTime? startDate, DateTime? endDate, int pageIndex = 1, bool showUpcoming = false, bool showFinalized = false, bool showTPB = false, bool showActive = false)
+        public async Task OnGetAsync(DateTime? startDate, DateTime? endDate, int pageIndex = 1, bool showUpcoming = false, bool showFinalized = false, bool showTPB = false, bool showActive = false, string customerName = null, string roomNo = null, string bookingRef = null)
         {
             CurrentPage = pageIndex;
             StartDate = startDate;
@@ -65,11 +65,13 @@ namespace RazorPagesMovie.Pages.Reserve
                 query = query.Where(r => r.IsThirdPartyBooking == true);
                 PageTitle = "Third Party Reservations";
             }
+
             if (showActive)
             {
-                query = query.Where(r => r.status == 1 || r.status ==2);
+                query = query.Where(r => r.status == 1 || r.status == 2);
                 PageTitle = "Active Reservations";
             }
+
             // Apply date range filter
             if (startDate.HasValue)
             {
@@ -79,6 +81,24 @@ namespace RazorPagesMovie.Pages.Reserve
             if (endDate.HasValue)
             {
                 query = query.Where(r => r.CheckInDate <= endDate.Value);
+            }
+
+            // Apply customer name filter
+            if (!string.IsNullOrEmpty(customerName))
+            {
+                query = query.Where(r => r.CustomerName.Contains(customerName));
+            }
+
+            // Apply room number filter
+            if (!string.IsNullOrEmpty(roomNo))
+            {
+                query = query.Where(r => r.SelectedRoomsNos.Contains(roomNo));
+            }
+
+            // Apply booking reference filter
+            if (!string.IsNullOrEmpty(bookingRef))
+            {
+                query = query.Where(r => r.BookingReference.Contains(bookingRef));
             }
 
             // Fetch paginated reservations using the pagination service, projecting to the ViewModel
@@ -123,6 +143,7 @@ namespace RazorPagesMovie.Pages.Reserve
             TotalPages = paginatedResult.TotalPages;
             TotalRecords = paginatedResult.TotalRecords;
         }
+
 
         public async Task<IActionResult> OnGetThirdPartyHandlerNameAsync(int handlerId)
         {

@@ -2,8 +2,7 @@
 @model RazorPagesMovie.Pages.Reserve.IndexModel
 
 @{
-    ViewData["Title"] = "Reservations";
-    
+    ViewData["Title"] = "Reservations";    
     ViewData["showTPB"] = Request.Query["showTPB"] == "true";
     ViewData["showActive"] = Request.Query["showActive"] == "true";
 
@@ -22,22 +21,47 @@
     <a asp-page="Create" class="btn btn-primary btn-success">Create New</a>
 </p>
 
-<form method="get">
-    <label for="startDate">From:</label>
-    <input type="date" id="startDate" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+<form method="get" class="d-flex align-items-center gap-2 p-2 border rounded shadow-sm bg-light flex-wrap">
+    <!-- Date Range Filters with Inline Labels -->
+    <div class="d-flex align-items-center flex-fill">
+        <span class="me-1 small text-muted">From:</span>
+        <input type="date" id="startDate" name="startDate" class="form-control form-control-sm" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+    </div>
 
-    <label for="endDate">To:</label>
-    <input type="date" id="endDate" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+    <div class="d-flex align-items-center flex-fill">
+        <span class="me-1 small text-muted">To:</span>
+        <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+    </div>
 
+    <!-- Customer Name Filter -->
+    <div class="flex-fill">
+        <input type="text" id="customerName" name="customerName" class="form-control form-control-sm" value="@Request.Query["customerName"]" placeholder="Customer Name" />
+    </div>
 
-    <input type="hidden" name="showUpcoming" value="@Request.Query["showUpcoming"]" />  
+    <!-- Room Number Filter -->
+    <div class="flex-fill">
+        <input type="text" id="roomNo" name="roomNo" class="form-control form-control-sm" value="@Request.Query["roomNo"]" placeholder="Room No" />
+    </div>
+
+    <!-- Booking Reference Filter -->
+    <div class="flex-fill">
+        <input type="text" id="bookingRef" name="bookingRef" class="form-control form-control-sm" value="@Request.Query["bookingRef"]" placeholder="Booking Ref" />
+    </div>
+
+    <!-- Hidden Filters -->
+    <input type="hidden" name="showUpcoming" value="@Request.Query["showUpcoming"]" />
+    <input type="hidden" name="showFinalized" value="@Request.Query["showFinalized"]" />
     <input type="hidden" name="showTPB" value="@Request.Query["showTPB"]" />
     <input type="hidden" name="showActive" value="@Request.Query["showActive"]" />
 
-
-
-    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <!-- Submit Button -->
+    <div class="flex-shrink-0">
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    </div>
 </form>
+
+
+
 
 
 <div id="reservationTable">
@@ -222,7 +246,7 @@
 
         .pagination a {
             margin: 0 5px;
-            padding: 8px 12px;
+            padding: 5px 10px;
             border: 1px solid #007bff;
             color: #007bff;
             text-decoration: none;

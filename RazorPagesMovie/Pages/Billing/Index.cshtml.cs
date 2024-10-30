@@ -19,15 +19,21 @@ namespace RazorPagesMovie.Pages.Billing
         private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
         private readonly ILogger<IndexModel> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly EmailService _emailService;
+        private readonly IHotelInfoService _hotelInfoService;
 
 
-        public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context, ReservationService reservationService, BillingTransactionService billingTransactionService, ILogger<IndexModel> logger, UserManager<ApplicationUser> userManager)
+
+
+        public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context, ReservationService reservationService, BillingTransactionService billingTransactionService, ILogger<IndexModel> logger, UserManager<ApplicationUser> userManager, EmailService emailService, IHotelInfoService hotelInfoService)
         {
             _context = context;
             _reservationService = reservationService;
             _billingTransactionService = billingTransactionService;
             _logger = logger;
             _userManager = userManager;
+            _emailService = emailService;
+            _hotelInfoService = hotelInfoService;
         }
 
 
@@ -418,7 +424,6 @@ namespace RazorPagesMovie.Pages.Billing
 
         public async Task<IActionResult> OnPostBillFinalizedAsync(int ReservationId)
         {
-
             // Find the reservation in the database
             var reservationToUpdate = await _context.Reservations.FindAsync(ReservationId);
 
@@ -427,12 +432,18 @@ namespace RazorPagesMovie.Pages.Billing
                 return new JsonResult(new { success = false, message = "Reservation not found." });
             }
 
+            // Check if reservation is already finalized to prevent duplicate finalization
+            if (reservationToUpdate.status == 3)
+            {
+                return new JsonResult(new { success = false, message = "Reservation is already finalized." });
+            }
+
             // Update the reservation status to 'finalized'
             reservationToUpdate.status = 3; // 3 = finalized
- 
-            TotalWithoutDiscount = await _context.CalculateTotalWithoutDiscountAsync(reservationToUpdate.Id); //  total without discount
-            reservationToUpdate.TotalAmount = TotalWithoutDiscount;
 
+            // Calculate the total amounts
+            TotalWithoutDiscount = await _context.CalculateTotalWithoutDiscountAsync(reservationToUpdate.Id); // total without discount
+            reservationToUpdate.TotalAmount = TotalWithoutDiscount;
 
             if (!reservationToUpdate.IsThirdPartyBooking)
             {
@@ -444,13 +455,117 @@ namespace RazorPagesMovie.Pages.Billing
                 reservationToUpdate.TotalFinalAmount = TotalWithoutDiscount;
             }
 
-
             // Save changes to the database
             await _context.SaveChangesAsync();
 
+            // Retrieve hotel info and customer email dynamically
+            var toEmail = reservationToUpdate.Email;
+            var subject = "Your Bill has been Finalized";
+            var hotelName = await _hotelInfoService.GetHotelNameAsync();
+            var hotelContact = await _hotelInfoService.GetHotelContactAsync();
+            var hotelAddress1 = await _hotelInfoService.GetHotelAddressline1Async();
+            var hotelAddress2 = await _hotelInfoService.GetHotelAddressline2Async();
+            var hotelEmail = await _hotelInfoService.GetHotelEmailAsync();
+            var customerName = reservationToUpdate.CustomerName;
+            var totalAmount = reservationToUpdate.TotalFinalAmount.ToString("N2");
+            var currency = reservationToUpdate.SelectedCurrency;
+
+            // Updated email body with dynamic data
+            var body = $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Bill Finalization</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            background-color: #004080;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 24px;
+        }}
+        .content {{
+            padding: 20px;
+        }}
+        .content h2 {{
+            font-size: 20px;
+            color: #004080;
+        }}
+        .content p {{
+            line-height: 1.6;
+            font-size: 16px;
+        }}
+        .footer {{
+            background-color: #f1f1f1;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }}
+        .footer p {{
+            margin: 5px 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>{hotelName}</h1>
+            <p>{hotelAddress1}, {hotelAddress2}</p>
+            <p>Contact: {hotelContact} | Email: {hotelEmail}</p>
+        </div>
+        <div class='content'>
+            <h2>Dear {customerName},</h2>
+            <p>We are pleased to inform you that your bill for reservation #{ReservationId} has been finalized.</p>
+            <p><strong>Total Amount Due: {currency} {totalAmount}</strong></p>
+            <p>Thank you for choosing {hotelName}. We hope you had a pleasant stay and look forward to welcoming you back in the future.</p>
+            <p>Should you have any questions, please do not hesitate to reach out to us.</p>
+            <br>
+            <p>Best Regards,</p>
+            <p>The {hotelName} Team</p>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.Now.Year} {hotelName}. All rights reserved.</p>
+            <p>{hotelAddress1}, {hotelAddress2}</p>
+        </div>
+    </div>
+</body>
+</html>";
+
+            try
+            {
+                _logger.LogInformation("Sending email to {Email}", toEmail);
+                await _emailService.SendEmailAsync(toEmail, subject, body);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending email");
+                // Handle email error
+            }
+
             // Return success response
-            return new JsonResult(new { success = true, message = "Bill finalized successfully." });
+            return new JsonResult(new { success = true, message = "Bill finalized and email sent successfully." });
         }
+
 
 
 

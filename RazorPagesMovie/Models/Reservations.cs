@@ -85,5 +85,8 @@ namespace RazorPagesMovie.Models
         public int validity { get; set; } = 1; // 1= valid, 2 = invalid
 
         public string? UserId { get; set;}
+
+        public DateTime UpdatedDate { get; set; } = DateTime.Now;
+
     }
 }

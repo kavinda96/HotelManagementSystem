@@ -476,6 +476,9 @@ namespace RazorPagesMovie.Migrations
                     b.Property<decimal>("TotalFinalAmount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 

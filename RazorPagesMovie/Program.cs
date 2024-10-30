@@ -22,7 +22,10 @@ builder.Services.AddSingleton<InvoiceNoGenerator>();
 builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<BillingTransactionService>();
 builder.Services.AddSingleton<PaginationService>();
+builder.Services.AddScoped<EmailService>();
+
 builder.Services.AddScoped<IHotelInfoService, HotelInfoService>();
+
 
 
 
