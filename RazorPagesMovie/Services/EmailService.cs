@@ -1,24 +1,29 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
 public class EmailService
 {
-    private readonly IConfiguration _configuration;
+    private readonly IHotelInfoService _hotelInfoService;
 
-    public EmailService(IConfiguration configuration)
+    public EmailService(IHotelInfoService hotelInfoService)
     {
-        _configuration = configuration;
+        _hotelInfoService = hotelInfoService;
     }
 
     public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
-        var smtpServer = _configuration["EmailSettings:SmtpServer"];
-        var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"]);
-        var senderEmail = _configuration["EmailSettings:SenderEmail"];
-        var senderName = _configuration["EmailSettings:SenderName"];
-        var senderPassword = _configuration["EmailSettings:SenderPassword"];
+        // Retrieve email settings
+        var emailSettings = await _hotelInfoService.GetEmailSettingsAsync();
+
+        // Extract settings or use defaults
+        var smtpServer = emailSettings.TryGetValue("SmtpServer", out var server) ? server : "default.smtp.server";
+        var smtpPort = emailSettings.TryGetValue("SmtpPort", out var port) ? int.Parse(port) : 25;
+        var senderEmail = emailSettings.TryGetValue("SenderEmail", out var email) ? email : "default@hotel.com";
+        var senderName = emailSettings.TryGetValue("SenderName", out var name) ? name : "Default Hotel";
+        var senderPassword = emailSettings.TryGetValue("SenderPassword", out var password) ? password : "defaultpassword";
 
         var smtpClient = new SmtpClient(smtpServer)
         {
