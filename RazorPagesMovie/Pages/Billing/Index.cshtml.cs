@@ -458,20 +458,122 @@ namespace RazorPagesMovie.Pages.Billing
             // Save changes to the database
             await _context.SaveChangesAsync();
 
-            // Retrieve hotel info and customer email dynamically
-            var toEmail = reservationToUpdate.Email;
-            var subject = "Your Bill has been Finalized";
-            var hotelName = await _hotelInfoService.GetHotelNameAsync();
-            var hotelContact = await _hotelInfoService.GetHotelContactAsync();
-            var hotelAddress1 = await _hotelInfoService.GetHotelAddressline1Async();
-            var hotelAddress2 = await _hotelInfoService.GetHotelAddressline2Async();
-            var hotelEmail = await _hotelInfoService.GetHotelEmailAsync();
-            var customerName = reservationToUpdate.CustomerName;
-            var totalAmount = reservationToUpdate.TotalFinalAmount.ToString("N2");
-            var currency = reservationToUpdate.SelectedCurrency;
+           
 
-            // Updated email body with dynamic data
-            var body = $@"
+            // Return success response
+            return new JsonResult(new { success = true, message = "Bill finalized." });
+        }
+
+
+
+
+
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OnPostSendEmailWithPDF(IFormFile pdf, int reservationId)
+        {
+            try
+            {
+                // Retrieve reservation data
+                var reservationToUpdate = await _context.Reservations.FindAsync(reservationId);
+                if (reservationToUpdate == null)
+                {
+                    _logger.LogWarning("Reservation not found for ID: {ReservationId}", reservationId);
+                    return new JsonResult(new { success = false, message = "Reservation not found." });
+                }
+
+                // Validate the PDF file
+                if (pdf == null || !pdf.ContentType.Equals("application/pdf"))
+                {
+                    _logger.LogWarning("Invalid or missing PDF file. ContentType: {ContentType}", pdf?.ContentType);
+                    return new JsonResult(new { success = false, message = "Invalid PDF file." });
+                }
+
+                // Update reservation status and calculate final amount if necessary
+               
+
+
+                // Convert PDF IFormFile to byte array for email attachment
+                byte[] pdfBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    await pdf.CopyToAsync(memoryStream);
+                    pdfBytes = memoryStream.ToArray();
+                }
+
+
+                DateTime currentDateTime = DateTime.Now;
+
+                // Format the date-time as yyyymmddhhmm
+                string formattedDateTime = currentDateTime.ToString("yyyyMMddHHmm");
+
+                string subject = $"Your Bill has been Finalized : {formattedDateTime} - {reservationId}";
+
+
+
+                // Define the email body content
+                var toEmail = reservationToUpdate.Email;
+                var hotelName = await _hotelInfoService.GetHotelNameAsync();
+                var hotelContact = await _hotelInfoService.GetHotelContactAsync();
+                var hotelAddress1 = await _hotelInfoService.GetHotelAddressline1Async();
+                var hotelAddress2 = await _hotelInfoService.GetHotelAddressline2Async();
+                var hotelEmail = await _hotelInfoService.GetHotelEmailAsync();
+                var customerName = reservationToUpdate.CustomerName;
+                var totalAmount = reservationToUpdate.TotalFinalAmount.ToString("N2");
+                var currency = reservationToUpdate.SelectedCurrency;
+
+                // Updated email body with dynamic data
+                var bodyEmail = GetBillFinalizationEmailBody(hotelName, hotelAddress1, hotelAddress2, hotelContact, hotelEmail, customerName, reservationId, currency, totalAmount);
+
+                // Send email with the PDF attached
+                try
+                {
+                    string attachmentFileName = $"invoice_{reservationId}.pdf";
+
+                    // var toEmail = reservationToUpdate.Email;
+                    var emailSettings = await _hotelInfoService.GetEmailSettingsAsync();
+                    await _emailService.SendEmailWithAttachmentAsync(
+                        toEmail,
+                        subject,
+                        bodyEmail,
+                        pdfBytes,
+                       attachmentFileName
+                    );
+
+                    return new JsonResult(new { success = true, message = "Email sent successfully." });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error sending email with PDF attachment to {Email}", reservationToUpdate.Email);
+                    return new JsonResult(new { success = false, message = "Error sending email." });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error handling the request.");
+                return new JsonResult(new { success = false, message = "Server error." });
+            }
+        }
+
+
+
+
+
+  private string GetBillFinalizationEmailBody(
+    string hotelName,
+    string hotelAddress1,
+    string hotelAddress2,
+    string hotelContact,
+    string hotelEmail,
+    string customerName,
+    int reservationId,
+    string currency,
+    string totalAmount)
+        {
+            return $@"
 <!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -535,8 +637,8 @@ namespace RazorPagesMovie.Pages.Billing
         </div>
         <div class='content'>
             <h2>Dear {customerName},</h2>
-            <p>We are pleased to inform you that your bill for reservation #{ReservationId} has been finalized.</p>
-            <p><strong>Total Amount Due: {currency} {totalAmount}</strong></p>
+            <p>We are pleased to inform you that your bill for reservation #{reservationId} has been finalized.</p>
+            <p><strong>Total Amount Due: {currency} {totalAmount:N2}</strong></p>
             <p>Thank you for choosing {hotelName}. We hope you had a pleasant stay and look forward to welcoming you back in the future.</p>
             <p>Should you have any questions, please do not hesitate to reach out to us.</p>
             <br>
@@ -550,20 +652,6 @@ namespace RazorPagesMovie.Pages.Billing
     </div>
 </body>
 </html>";
-
-            try
-            {
-                _logger.LogInformation("Sending email to {Email}", toEmail);
-                await _emailService.SendEmailAsync(toEmail, subject, body);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending email");
-                // Handle email error
-            }
-
-            // Return success response
-            return new JsonResult(new { success = true, message = "Bill finalized and email sent successfully." });
         }
 
 

@@ -86,7 +86,7 @@ namespace RazorPagesMovie.Models
 
         public string? UserId { get; set;}
 
-        public DateTime UpdatedDate { get; set; } = DateTime.Now;
+     //   public DateTime UpdatedDate { get; set; } = DateTime.Now;
 
     }
 }

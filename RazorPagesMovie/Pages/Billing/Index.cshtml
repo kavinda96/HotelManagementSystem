@@ -14,8 +14,8 @@
 }
 
 
-@* <input type="hidden" id="reservationId" value="@Model.Reservation.Id" />
- *@
+@* <input type="hidden" id="reservationId" value="@Model.Reservation.Id" /> *@
+
 
 
  @if (@Model.Reservation != null ){
@@ -23,6 +23,7 @@
 
 <input type="hidden" id="reservationId" value="@ViewData["resId"]" />
 
+<input type="hidden" id="reservationEmail" value="@Model.Reservation.Email" />
 
 
 
@@ -31,6 +32,12 @@
         <h2 class="m-0 display-6 display-md-5 display-lg-4">Billing Information</h2>
     </div>
 </div>
+
+@*     <input type="hidden" name="__RequestVerificationToken" value=@Html.AntiForgeryToken() />
+ *@
+
+@*     <button id="sendBillButton" style="display: none;" onclick="generateAndSendPDF()">Send Bill</button>
+ *@    <button id="sendBillButton"  onclick="generateAndSendPDF()">Send Bill</button>
 
 
 <div class="row">
@@ -275,95 +282,98 @@
 
 
 
-        <div class="row g-2">
+            <div class="row g-2">
+                <div class="d-flex justify-content-between align-items-center flex-wrap w-100">
 
-            <!-- Additional Charges -->
-            <div class="col-md-3">
-                <div class="card border-primary shadow-sm h-100">
-                    <div class="card-header text-center bg-primary text-white p-2">
-                        <i class="bi bi-wallet2 fs-4"></i>
-                        @*  <p class="fw-bold mt-1 mb-1"> Charges</p> *@
+                    <!-- Additional Charges -->
+                    <div class="card border-primary shadow-sm flex-fill m-2">
+                        <div class="card-header text-center bg-primary text-white p-2">
+                            <i class="bi bi-wallet2 fs-4"></i>
+                        </div>
+                        <div class="card-body d-flex justify-content-center align-items-center p-2">
+                            @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
+                            {
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
+                                    <i class="bi bi-plus-circle me-1"></i>  Charges
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-primary btn-sm disabled" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
+                                    <i class="bi bi-plus-circle me-1"></i>  Charges
+                                </button>
+                            }
+                        </div>
                     </div>
-                    <div class="card-body d-flex justify-content-center align-items-center p-2">
-                        @if (@Model.Reservation.status == 1 || @Model.Reservation.status == 2)
-                        {
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
-                                <i class="bi bi-plus-circle me-1"></i> Add Charges
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-primary btn-sm disabled" data-bs-toggle="modal" data-bs-target="#additionalChargesModal">
-                                <i class="bi bi-plus-circle me-1"></i> Add Charges
-                            </button>
-                        }
+
+                    <!-- Print Invoice -->
+                    <div class="card border-success shadow-sm flex-fill m-2">
+                        <div class="card-header text-center bg-success text-white p-2">
+                            <i class="bi bi-printer fs-4"></i>
+                        </div>
+                        <div class="card-body d-flex justify-content-center align-items-center p-2">
+                            @if (@Model.Reservation.status == 3)
+                            {
+                                <button class="btn btn-success btn-sm" onclick="printPDF()">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i> Print
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-success btn-sm disabled" onclick="printPDF()">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i> Print
+                                </button>
+                            }
+                        </div>
                     </div>
+
+                    <!-- Finalize the Bill -->
+                    <div class="card border-warning shadow-sm flex-fill m-2">
+                        <div class="card-header text-center bg-warning text-dark p-2">
+                            <i class="bi bi-check-circle fs-4"></i>
+                        </div>
+                        <div class="card-body d-flex justify-content-center align-items-center p-2">
+                            @if (@Model.Reservation.status == 2)
+                            {
+                                <button class="btn btn-warning btn-sm" onclick="finalizeBill()">
+                                    <i class="bi bi-cash me-1"></i> Finalize
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-warning btn-sm disabled" onclick="finalizeBill()">
+                                    <i class="bi bi-cash me-1"></i> Finalize
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Add Notes -->
+                    <div class="card border-info shadow-sm flex-fill m-2">
+                        <div class="card-header text-center bg-info text-white p-2">
+                            <i class="bi bi-journal-text fs-4"></i>
+                        </div>
+                        <div class="card-body d-flex justify-content-center align-items-center p-2">
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addNotesModal">
+                                <i class="bi bi-pencil-square me-1"></i> Notes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Send Email -->
+                    <div class="card border-info shadow-sm flex-fill m-2">
+                        <div class="card-header text-center bg-info text-white p-2">
+                            <i class="bi bi-envelope fs-4"></i>
+                        </div>
+                        <div class="card-body d-flex justify-content-center align-items-center p-2">
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#sendEmailModal">
+                                <i class="bi bi-send-fill me-1"></i> Send Email
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
-            <!-- Print Invoice -->
-            <div class="col-md-3">
-                <div class="card border-success shadow-sm h-100">
-                    <div class="card-header text-center bg-success text-white p-2">
-                        <i class="bi bi-printer fs-4"></i>
-                        @*   <p class="fw-bold mt-1 mb-1">Print Invoice</p> *@
-                    </div>
-                    <div class="card-body d-flex justify-content-center align-items-center p-2">
-                        @if (@Model.Reservation.status == 3)
-                        {
-                            <button class="btn btn-success btn-sm" onclick="printPDF()">
-                                <i class="bi bi-file-earmark-pdf me-1"></i> Print
-                            </button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-success btn-sm disabled" onclick="printPDF()">
-                                <i class="bi bi-file-earmark-pdf me-1"></i> Print
-                            </button>
-                        }
-                    </div>
-                </div>
-            </div>
-
-            <!-- Finalize the Bill -->
-            <div class="col-md-3">
-                <div class="card border-warning shadow-sm h-100">
-                    <div class="card-header text-center bg-warning text-dark p-2">
-                        <i class="bi bi-check-circle fs-4"></i>
-                        @*   <p class="fw-bold mt-1 mb-1">Finalize the Bill</p> *@
-                    </div>
-                    <div class="card-body d-flex justify-content-center align-items-center p-2">
-                        @if (@Model.Reservation.status == 2)
-                        {
-                            <button class="btn btn-warning btn-sm" onclick="finalizeBill()">
-                                <i class="bi bi-cash me-1"></i> Finalize
-                            </button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-warning btn-sm disabled" onclick="finalizeBill()">
-                                <i class="bi bi-cash me-1"></i> Finalize
-                            </button>
-                        }
-                    </div>
-                </div>
-            </div>
-
-            <!-- Add Notes -->
-            <div class="col-md-3">
-                <div class="card border-info shadow-sm h-100">
-                    <div class="card-header text-center bg-info text-white p-2">
-                        <i class="bi bi-journal-text fs-4"></i>
-                        @*   <p class="fw-bold mt-1 mb-1">Add Notes</p> *@
-                    </div>
-                    <div class="card-body d-flex justify-content-center align-items-center p-2">
-                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addNotesModal">
-                            <i class="bi bi-pencil-square me-1"></i> Notes
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
 
 
@@ -1529,8 +1539,160 @@ else
 
 
         
-       
 
+
+
+        async function generateAndSendPDF() {
+            // Retrieve reservationId from the hidden input field
+            const reservationId = document.getElementById("reservationId").value;
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            if (!window.jspdf) {
+                console.error('jsPDF is not loaded');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            try {
+                // Set up document font and styling
+                doc.setFont("PTSans");
+                doc.setTextColor(33, 47, 60);
+
+                // Invoice Header
+                doc.autoTable({
+                    html: '#invoice_header table',
+                    startY: 20,
+                    styles: { halign: 'center', fontSize: 16, font: 'PTSans' },
+                    didParseCell: function (data) {
+                        if (data.cell.raw && data.cell.raw.innerText.includes('Narigama, Hikkaduwa')) {
+                            data.cell.styles.fontSize = 12;  // Smaller font for address
+                        }
+                        if (data.cell.raw && data.cell.raw.innerText.includes('Phone:')) {
+                            data.cell.styles.fontSize = 10;  // Smaller font for phone and email
+                        }
+                    }
+                });
+
+                // Determine Y position for the next section after header
+                const afterFirstTableY1 = doc.lastAutoTable.finalY + 10;
+
+                // Invoice Display
+                doc.autoTable({
+                    html: '#invoice_display table',
+                    startY: afterFirstTableY1,
+                    theme: 'plain',
+                    tableWidth: 'wrap',
+                    columnStyles: {
+                        0: { cellWidth: 45 },
+                        1: { cellWidth: 55 },
+                    },
+                    styles: { overflow: 'linebreak', cellPadding: 1.5, fontSize: 11, font: 'PTSans' },
+                });
+
+                // Third-party Handler Details
+                const isThirdPartyBooking = document.getElementById('isTpbooking').value;
+                const handlerDetailsX = 130;
+                const handlerDetailsY = afterFirstTableY1 + 10;
+
+                if (isThirdPartyBooking === 'True') {
+                    const handlerTable = document.querySelector('#thirdPartyHanderDetails table');
+                    if (handlerTable) {
+                        const rows = handlerTable.querySelectorAll('tbody tr');
+                        doc.setFontSize(12);
+                        doc.text("Third-party Handler Details:", handlerDetailsX, handlerDetailsY);
+                        doc.setFontSize(10);
+
+                        let yOffset = handlerDetailsY + 10;
+                        rows.forEach(row => {
+                            const cells = row.querySelectorAll('td');
+                            if (cells.length === 2) {
+                                const label = cells[0].innerText;
+                                const value = cells[1].innerText;
+                                doc.text(`${label} ${value}`, handlerDetailsX, yOffset);
+                                yOffset += 5;
+                            }
+                        });
+                    } else {
+                        console.error('Handler details table not found');
+                    }
+                }
+
+                // Adjust Y position for Billing Transactions
+                const afterHandlerDetailsY = isThirdPartyBooking ? Math.max(doc.lastAutoTable.finalY, handlerDetailsY + 30) + 10 : afterFirstTableY1 + 70;
+
+                // Billing Transactions
+                doc.autoTable({
+                    html: '#billing_table table',
+                    startY: afterHandlerDetailsY,
+                    margin: { bottom: 35 },
+                    headStyles: { fillColor: [33, 47, 60], halign: 'center' },
+                    columnStyles: {
+                        0: { halign: 'left' },
+                        1: { halign: 'left' },
+                        2: { halign: 'left' },
+                        3: { halign: 'center' },
+                        4: { halign: 'left' },
+                        5: { halign: 'right' },
+                        6: { halign: 'right' },
+                        7: { halign: 'right' }
+                    },
+                    styles: { lineHeight: 1, fontSize: 10, cellPadding: 2 }
+                });
+
+                // Footer with Terms and Conditions
+                const footerY = doc.internal.pageSize.height - 40;
+                doc.setLineWidth(0.5);
+                doc.line(10, footerY, 200, footerY);
+                doc.setTextColor(33, 47, 60);
+                doc.setFontSize(10);
+                doc.text("Terms and Conditions:", 10, footerY + 10);
+                doc.text("1. All payments are non-refundable.", 10, footerY + 15);
+                doc.text("2. Check-in time is at 2:00 PM and check-out time is at 11:00 AM.", 10, footerY + 20);
+                doc.text("3. Guests are responsible for any damages to the property.", 10, footerY + 25);
+                doc.text("4. Please present your ID upon check-in.", 10, footerY + 30);
+                doc.text("5. Management reserves the right to refuse service.", 10, footerY + 35);
+
+                // Generate PDF Blob
+                const pdfBlob = doc.output('blob');
+
+                // Prepare form data with the anti-forgery token
+                const formData = new FormData();
+                formData.append("pdf", pdfBlob, "Bill.pdf");
+                formData.append("reservationId", reservationId);
+                formData.append("__RequestVerificationToken", token); // Include the anti-forgery token
+
+                // Send request to server
+                const response = await fetch('/Billing/Index?handler=SendEmailWithPDF', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                // Check response status before parsing JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Server returned an error:", response.status, response.statusText, errorText);
+                    throw new Error(errorText || `Server returned an error with status ${response.status}`);
+                }
+
+                // Parse JSON response
+                const result = await response.json();
+                if (result.success) {
+                    alert("Bill finalized and email sent successfully!");
+                } else {
+                    alert("Failed to send email: " + (result.message || "Unknown server error"));
+                }
+
+                // Open PDF in a new window for user
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                window.open(pdfUrl);
+
+            } catch (error) {
+                console.error("Error generating or sending PDF:", error);
+                alert("An error occurred: " + error.message);
+            }
+        }
 
 
     </script>

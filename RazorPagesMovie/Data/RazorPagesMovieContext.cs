@@ -229,88 +229,86 @@ namespace RazorPagesMovie.Data
 WITH TotalReservations AS (
     SELECT COUNT(*) AS total_reservation
     FROM Reservations
-    where validity =1
+    WHERE validity = 1
 ),
 UpcomingReservations AS (
     SELECT COUNT(*) AS upcoming_reservation
     FROM Reservations
-    WHERE CheckInDate >= CAST(GETDATE() AS DATE) and validity =1
+    WHERE CAST(CheckInDate AS DATE) >= CAST(DATEADD(MINUTE, 330, GETUTCDATE()) AS DATE) AND validity = 1
 ),
 ActiveReservations AS (
     SELECT COUNT(*) AS active_reservation
     FROM Reservations 
-    WHERE status  in  (1, 2) and validity =1
+    WHERE status IN (1, 2) AND validity = 1
 ),
-
 TotalRooms AS (
     SELECT COUNT(*) AS totRooms
     FROM Room
-    WHERE IsAvailable  = 1
+    WHERE IsAvailable = 1
 ),
-
-AvailableRoomCountToday as (SELECT count(r.id) as available_today
-FROM Room r
-WHERE NOT EXISTS (
-    SELECT 1
+AvailableRoomCountToday AS (
+    SELECT COUNT(r.id) AS available_today
+    FROM Room r
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM RoomReservationcs rr
+        WHERE rr.RoomId = r.Id
+          AND rr.Status = 1
+          AND CAST(rr.CheckInDate AS DATE) <= CAST(DATEADD(MINUTE, 330, GETUTCDATE()) AS DATE)
+          AND CAST(rr.CheckOutDate AS DATE) >= CAST(DATEADD(MINUTE, 330, GETUTCDATE()) AS DATE)
+    )
+),
+IntendedCheckinsToday AS (
+    SELECT COUNT(DISTINCT res.Id) AS IntendedCheckInCount
     FROM RoomReservationcs rr
-    WHERE rr.RoomId = r.Id
-      AND rr.Status = 1
-      AND rr.CheckInDate <= GETDATE()
-      AND rr.CheckOutDate >= GETDATE()
-)
+    JOIN Reservations res ON rr.ResevationId = res.Id
+    WHERE CAST(rr.CheckInDate AS DATE) = CAST(DATEADD(MINUTE, 330, GETUTCDATE()) AS DATE) 
+      AND res.Status = 0
 ),
-IntendedCheckinsToday as (
-SELECT COUNT(DISTINCT res.Id) AS IntendedCheckInCount
-FROM RoomReservationcs rr
-JOIN Reservations res ON rr.ResevationId = res.Id
-WHERE rr.CheckInDate = CAST(GETDATE() AS DATE) 
-  AND res.Status = 0),
-IntendedCheckoutsToday as (
-SELECT COUNT(DISTINCT res.Id) AS IntendedCheckOutCount
-FROM RoomReservationcs rr
-JOIN Reservations res ON rr.ResevationId = res.Id
-WHERE rr.CheckOutDate = CAST(GETDATE() AS DATE) 
-AND res.Status =1
-and res.validity =1
-
+IntendedCheckoutsToday AS (
+    SELECT COUNT(DISTINCT res.Id) AS IntendedCheckOutCount
+    FROM RoomReservationcs rr
+    JOIN Reservations res ON rr.ResevationId = res.Id
+    WHERE CAST(rr.CheckOutDate AS DATE) = CAST(DATEADD(MINUTE, 330, GETUTCDATE()) AS DATE) 
+      AND res.Status = 1
+      AND res.validity = 1
 ),
-IntendedCheckinTomorrow as (
-SELECT COUNT(DISTINCT res.Id) AS IntendedCheckInCountTomorrow
-FROM RoomReservationcs rr
-JOIN Reservations res ON rr.ResevationId = res.Id
-WHERE rr.CheckInDate = CAST(DATEADD(DAY, 1, GETDATE()) AS DATE)
-AND res.Status = 0
-and res.validity =1
+IntendedCheckinTomorrow AS (
+    SELECT COUNT(DISTINCT res.Id) AS IntendedCheckInCountTomorrow
+    FROM RoomReservationcs rr
+    JOIN Reservations res ON rr.ResevationId = res.Id
+    WHERE CAST(rr.CheckInDate AS DATE) = CAST(DATEADD(DAY, 1, DATEADD(MINUTE, 330, GETUTCDATE())) AS DATE)
+      AND res.Status = 0
+      AND res.validity = 1
 ),
-
-IntendedCheckOutTomorrow as (
-SELECT COUNT(DISTINCT res.Id) AS IntendedCheckOutCountTomorrow
-FROM RoomReservationcs rr
-JOIN Reservations res ON rr.ResevationId = res.Id
-WHERE rr.CheckOutDate = CAST(DATEADD(DAY, 1, GETDATE()) AS DATE)
-AND res.Status = 1
-and res.validity =1
+IntendedCheckOutTomorrow AS (
+    SELECT COUNT(DISTINCT res.Id) AS IntendedCheckOutCountTomorrow
+    FROM RoomReservationcs rr
+    JOIN Reservations res ON rr.ResevationId = res.Id
+    WHERE CAST(rr.CheckOutDate AS DATE) = CAST(DATEADD(DAY, 1, DATEADD(MINUTE, 330, GETUTCDATE())) AS DATE)
+      AND res.Status = 1
+      AND res.validity = 1
 )
 SELECT 
     t.total_reservation,
     u.upcoming_reservation,
-	a.active_reservation,
-	r.totRooms,
-	av.available_today,
-	x.IntendedCheckInCount,
-	y.IntendedCheckOutCount,
-	z.IntendedCheckInCountTomorrow,
-	b.IntendedCheckOutCountTomorrow
+    a.active_reservation,
+    r.totRooms,
+    av.available_today,
+    x.IntendedCheckInCount,
+    y.IntendedCheckOutCount,
+    z.IntendedCheckInCountTomorrow,
+    b.IntendedCheckOutCountTomorrow
 FROM 
     TotalReservations t,
     UpcomingReservations u,
-	ActiveReservations a,
-	TotalRooms r,
-	AvailableRoomCountToday av,
-	IntendedCheckinsToday x,
-	IntendedCheckoutsToday y,
-	IntendedCheckinTomorrow z,
-	IntendedCheckOutTomorrow b;";
+    ActiveReservations a,
+    TotalRooms r,
+    AvailableRoomCountToday av,
+    IntendedCheckinsToday x,
+    IntendedCheckoutsToday y,
+    IntendedCheckinTomorrow z,
+    IntendedCheckOutTomorrow b;";
 
             using (var command = this.Database.GetDbConnection().CreateCommand())
             {
